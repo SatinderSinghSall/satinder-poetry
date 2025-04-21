@@ -105,20 +105,35 @@ export default function Home() {
       <section className="text-center my-5">
         <h2 className="text-secondary fw-bold">🌎 Connect with Us</h2>
         <div className="d-flex flex-wrap justify-content-center gap-3 mt-3">
-          <a href="https://twitter.com" className="btn btn-outline-info shadow">
+          <a
+            href="https://x.com/SallSatinder"
+            className="btn btn-outline-info shadow"
+          >
             Twitter
           </a>
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/satinder.singhsall"
             className="btn btn-outline-primary shadow"
           >
             Facebook
           </a>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/satindersinghsall/?hl=en"
             className="btn btn-outline-danger shadow"
           >
             Instagram
+          </a>
+          <a
+            href="https://github.com/SatinderSinghSall"
+            className="btn btn-outline-dark shadow"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/in/satinder-singh-sall-b62049204/"
+            className="btn btn-outline-info shadow"
+          >
+            LinkedIn
           </a>
         </div>
       </section>
