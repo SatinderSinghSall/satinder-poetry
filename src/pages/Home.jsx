@@ -135,12 +135,6 @@ export default function Home() {
           >
             LinkedIn
           </a>
-          <a
-            href="https://www.linkedin.com/in/satinder-singh-sall-b62049204/"
-            className="btn btn-outline-info shadow"
-          >
-            LinkedIn
-          </a>
         </div>
       </section>
     </div>
