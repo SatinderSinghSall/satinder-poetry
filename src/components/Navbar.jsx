@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
-import AuthContext from "../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth(); // ✅ use hook (NOT useContext)
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,7 +19,7 @@ export default function Navbar() {
           📜 Poetry Web
         </Link>
 
-        {/* Desktop links */}
+        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8 text-sm">
           <Link
             to="/poems"
@@ -59,7 +59,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile menu button */}
+        {/* Mobile toggle */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden text-slate-700"
@@ -68,7 +68,7 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile dropdown */}
+      {/* Mobile menu */}
       {open && (
         <div className="md:hidden border-t bg-white/90 backdrop-blur">
           <div className="flex flex-col p-6 gap-4 text-sm">
