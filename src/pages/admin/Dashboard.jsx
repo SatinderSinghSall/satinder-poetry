@@ -14,13 +14,13 @@ export default function Dashboard() {
       try {
         const [p, u, s] = await Promise.all([
           API.get("/poems"),
-          API.get("/users"),
-          API.get("/subscribers/count"),
+          API.get("/users/count"),
+          API.get("/subscribe/count"),
         ]);
 
         setStats({
           poems: p.data.length,
-          users: u.data.length,
+          users: u.data.count,
           subscribers: s.data.count,
         });
       } catch (err) {
