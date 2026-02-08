@@ -1,94 +1,132 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import AuthContext from "../context/AuthContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import API from "@/api/api";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  /* ---------------- VALIDATION ---------------- */
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!form.email.includes("@")) {
+      newErrors.email = "Enter valid email";
+    }
+
+    if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /* ---------------- SUBMIT ---------------- */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
+
     setLoading(true);
-    setError("");
 
     try {
-      const { data } = await axios.post(
-        "https://full-stack-poetry-management-system.onrender.com/api/auth/login",
-        { email, password }
-      );
-      localStorage.setItem("token", data.token); // Store token
+      const { data } = await API.post("/auth/login", form);
+
+      localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data));
+
       login(data);
       navigate("/poems");
-    } catch (error) {
-      setError("Invalid email or password.");
+    } catch {
+      setErrors({ general: "Invalid email or password" });
     } finally {
       setLoading(false);
     }
   };
 
+  /* ---------------- UI ---------------- */
+
   return (
-    <div
-      className="container-fluid d-flex align-items-center justify-content-center vh-100"
-      style={{
-        backgroundImage: "url('./assets/images/main-background.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        padding: "20px",
-      }}
-    >
-      <div className="row w-100 justify-content-center">
-        <div className="col-12 col-sm-8 col-md-6 col-lg-4">
-          <div
-            className="card shadow p-4 w-100"
-            style={{ maxWidth: "400px", margin: "auto" }}
-          >
-            <h2 className="text-center mb-3">User Login:</h2>
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/assets/images/main-background.jpg')",
+        }}
+      />
 
-            {error && <div className="alert alert-danger">{error}</div>}
+      {/* lighter overlay (LESS blur) */}
+      <div className="absolute inset-0 bg-black/25 backdrop-blur-[2px]" />
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-
-              <button
-                className="btn btn-primary w-100"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Login"}
-              </button>
-            </form>
-          </div>
+      {/* loading screen */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-transparent" />
         </div>
-      </div>
+      )}
+
+      {/* card */}
+      <Card className="relative z-10 w-full max-w-md rounded-3xl bg-white/90 shadow-2xl backdrop-blur-sm">
+        <CardContent className="p-10">
+          <h2 className="text-3xl font-serif text-center mb-8">Welcome Back</h2>
+
+          {errors.general && (
+            <p className="text-red-500 text-sm text-center mb-4">
+              {errors.general}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <Input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+              {errors.email && (
+                <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-slate-900 text-white hover:bg-slate-800"
+              disabled={loading}
+            >
+              Login
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

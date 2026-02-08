@@ -37,13 +37,13 @@ export default function AdminPanel() {
   const fetchDashboardStats = async () => {
     try {
       const poemsRes = await axios.get(
-        "https://full-stack-poetry-management-system.onrender.com/api/poems"
+        "https://full-stack-poetry-management-system.onrender.com/api/poems",
       );
       const usersRes = await axios.get(
-        "https://full-stack-poetry-management-system.onrender.com/api/users"
+        "https://full-stack-poetry-management-system.onrender.com/api/users",
       );
       const emailRes = await axios.get(
-        "https://full-stack-poetry-management-system.onrender.com/subscribers-count"
+        "https://full-stack-poetry-management-system.onrender.com/subscribers-count",
       );
 
       setStats({
@@ -60,7 +60,7 @@ export default function AdminPanel() {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        "https://full-stack-poetry-management-system.onrender.com/api/users"
+        "https://full-stack-poetry-management-system.onrender.com/api/users",
       );
       setUsers(response.data);
     } catch (error) {
@@ -83,7 +83,7 @@ export default function AdminPanel() {
   const fetchSubscribers = async () => {
     try {
       const response = await axios.get(
-        "https://full-stack-poetry-management-system.onrender.com/subscribers-count"
+        "https://full-stack-poetry-management-system.onrender.com/subscribers-count",
       );
       setSubscribers(response.data);
     } catch (error) {
@@ -311,7 +311,7 @@ function PoemForm() {
           headers: {
             Authorization: `Bearer ${token}`, // Attach token
           },
-        }
+        },
       );
 
       if (response.status === 201) {
@@ -324,7 +324,7 @@ function PoemForm() {
             title,
             author,
             date: new Date().toISOString(),
-          }
+          },
         );
 
         setTitle("");

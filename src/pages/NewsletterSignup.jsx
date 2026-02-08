@@ -1,80 +1,86 @@
 import { useState } from "react";
-import axios from "axios";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import API from "@/api/api";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
     if (!email) {
-      setMessage("⚠️ Please enter a valid email!");
+      setMessage("Please enter a valid email.");
       return;
     }
 
-    setLoading(true); // Show loading state
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://full-stack-poetry-management-system.onrender.com/subscribe",
-        {
-          email,
-        }
-      );
-      setMessage(`✅ ${response.data.message}`);
-      setEmail(""); // Clear input field
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setMessage(`⚠️ ${error.response.data.message}`);
-      } else {
-        setMessage("❌ Subscription failed. Try again.");
-      }
+      const res = await API.post("/subscribe", { email });
+
+      setMessage(res.data.message);
+      setEmail("");
+    } catch {
+      setMessage("Subscription failed. Try again.");
     } finally {
-      setLoading(false); // Hide loading state
+      setLoading(false);
     }
   };
 
   return (
-    <section className="bg-dark text-white py-5">
-      <div className="container text-center">
-        <h2 className="text-light fw-bold">📩 Stay Inspired</h2>
-        <p className="text-light-50">
-          Subscribe for the latest poetry updates.
-        </p>
+    <section className="relative py-40 bg-slate-50">
+      {/* subtle glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05),transparent_60%)]" />
 
-        {/* Responsive Input Section */}
-        <div className="row justify-content-center mt-3">
-          <div className="col-12 col-md-8 col-lg-6">
-            <div className="input-group">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="form-control border-0 px-3"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading} // Disable input when loading
-              />
-              <button
-                onClick={handleSubscribe}
-                className="btn btn-primary px-4"
-                disabled={loading} // Disable button when loading
-              >
-                {loading ? "Subscribing..." : "Subscribe"}
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="relative max-w-2xl mx-auto px-6">
+        <div
+          className="
+          bg-white/80
+          backdrop-blur
+          rounded-3xl
+          shadow-xl
+          p-12
+          text-center
+        "
+        >
+          <h2 className="text-4xl font-serif text-slate-800 mb-4">
+            Stay Inspired
+          </h2>
 
-        {/* Message Display with Styling */}
-        {message && (
-          <p
-            className={`mt-3 ${
-              message.includes("✅") ? "text-success" : "text-warning"
-            }`}
-          >
-            {message}
+          <p className="text-slate-500 mb-10">
+            Receive new poems directly in your inbox.
           </p>
-        )}
+
+          <div className="flex gap-3">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              disabled={loading}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-12"
+            />
+
+            <Button
+              onClick={handleSubscribe}
+              type="button"
+              disabled={loading}
+              className="
+              bg-slate-900
+              text-white
+              hover:bg-slate-800
+              px-6
+              rounded-xl
+            "
+            >
+              {loading ? "Subscribing..." : "Subscribe"}
+            </Button>
+          </div>
+
+          {message && <p className="mt-6 text-sm text-slate-500">{message}</p>}
+        </div>
       </div>
     </section>
   );

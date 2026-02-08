@@ -1,126 +1,95 @@
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-light shadow"
-      style={{
-        background: "linear-gradient(to right, #6a11cb, #2575fc)",
-      }}
-    >
-      <div className="container">
+    <header className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
+      <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link
-          className="navbar-brand fw-bold text-white d-flex align-items-center"
           to="/"
+          className="font-serif text-2xl text-slate-800 tracking-wide"
         >
           📜 Poetry Web
         </Link>
 
-        {/* Mobile Toggle Button */}
-        <button
-          className="navbar-toggler border-0"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded={isOpen}
-          aria-label="Toggle navigation"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-8 text-sm">
+          <Link
+            to="/poems"
+            className="text-slate-600 hover:text-black transition"
+          >
+            Poems
+          </Link>
 
-        {/* Navbar Links */}
-        <div
-          className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}
-          id="navbarNav"
-        >
-          <ul className="navbar-nav ms-auto text-center text-lg-start">
-            <li className="nav-item">
-              <Link
-                className="nav-link fw-semibold text-white px-3 py-2"
-                to="/poems"
-                style={{
-                  fontSize: "1.1rem",
-                  transition: "all 0.3s ease-in-out",
-                  borderRadius: "8px",
-                  marginRight: "40px",
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.background = "rgba(255, 255, 255, 0.2)";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.background = "transparent";
-                }}
+          {user ? (
+            <>
+              {user.role === "admin" && (
+                <Link to="/admin">
+                  <Button size="sm">Admin</Button>
+                </Link>
+              )}
+
+              <button
+                onClick={logout}
+                className="text-slate-600 hover:text-red-600 transition"
               >
-                📖 Poems
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-slate-600 hover:text-black transition"
+              >
+                Login
               </Link>
-            </li>
+
+              <Link to="/register">
+                <Button size="sm">Register</Button>
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden text-slate-700"
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {open && (
+        <div className="md:hidden border-t bg-white/90 backdrop-blur">
+          <div className="flex flex-col p-6 gap-4 text-sm">
+            <Link to="/poems" onClick={() => setOpen(false)}>
+              Poems
+            </Link>
 
             {user ? (
               <>
-                {user.role === "admin" && (
-                  <li className="nav-item text-center text-lg-start">
-                    <Link
-                      className="btn btn-warning fw-semibold text-dark mb-2 mb-lg-0 me-lg-3"
-                      to="/admin"
-                    >
-                      Admin Panel
-                    </Link>
-                  </li>
-                )}
-
-                {/* User Dropdown */}
-                <li className="nav-item dropdown">
-                  <button
-                    className="btn btn-outline-light dropdown-toggle fw-semibold"
-                    id="userDropdown"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {user.name}
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-end shadow">
-                    <li>
-                      <button
-                        className="dropdown-item text-danger fw-semibold"
-                        onClick={logout}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                </li>
+                {user.role === "admin" && <Link to="/admin">Admin</Link>}
+                <button onClick={logout}>Logout</button>
               </>
             ) : (
               <>
-                <li className="nav-item text-center text-lg-start">
-                  <Link
-                    className="btn btn-outline-light fw-semibold me-lg-2 mb-2 mb-lg-0"
-                    to="/login"
-                  >
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item text-center text-lg-start">
-                  <Link
-                    className="btn btn-light fw-semibold text-dark"
-                    to="/register"
-                  >
-                    Register
-                  </Link>
-                </li>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
               </>
             )}
-          </ul>
+          </div>
         </div>
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

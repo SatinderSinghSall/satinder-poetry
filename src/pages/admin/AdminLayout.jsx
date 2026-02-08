@@ -1,0 +1,13 @@
+import { Outlet } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
+
+export default function AdminLayout() {
+  return (
+    <div className="flex min-h-screen bg-muted/40">
+      <AdminSidebar />
+      <main className="flex-1 p-6">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
