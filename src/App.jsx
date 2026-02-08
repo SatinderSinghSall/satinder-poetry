@@ -14,6 +14,9 @@ import Users from "./pages/admin/Users";
 import Subscribers from "./pages/admin/Subscribers";
 import AddPoem from "./pages/admin/AddPoem";
 
+//! To run the backend for DEVELOPMENT -> npm run dev
+//! To run the backend for PRODUCTION -> npm start
+
 export default function App() {
   return (
     <>
