@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import API from "@/api/api";
@@ -7,79 +6,104 @@ import API from "@/api/api";
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | success | error
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
-    if (!email) {
-      setMessage("Please enter a valid email.");
+    if (!email || !email.includes("@")) {
+      setStatus("error");
+      setMessage("Please enter a valid email address.");
       return;
     }
 
     setLoading(true);
+    setStatus("idle");
+    setMessage("");
 
     try {
       const res = await API.post("/subscribe", { email });
-
-      setMessage(res.data.message);
+      setStatus("success");
+      setMessage(res.data.message || "You’re subscribed ✨");
       setEmail("");
     } catch {
-      setMessage("Subscription failed. Try again.");
+      setStatus("error");
+      setMessage("Subscription failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="relative py-40 bg-slate-50">
-      {/* subtle glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05),transparent_60%)]" />
+    <section className="relative py-40">
+      {/* soft paper background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-100" />
+
+      {/* gentle glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.04),transparent_60%)]" />
 
       <div className="relative max-w-2xl mx-auto px-6">
         <div
           className="
-          bg-white/80
-          backdrop-blur
-          rounded-3xl
-          shadow-xl
-          p-12
-          text-center
-        "
+            bg-white/85 backdrop-blur
+            rounded-3xl
+            shadow-xl
+            p-10 sm:p-12
+            text-center
+          "
         >
-          <h2 className="text-4xl font-serif text-slate-800 mb-4">
+          {/* Heading */}
+          <h2 className="text-3xl sm:text-4xl font-serif text-slate-800 mb-3">
             Stay Inspired
           </h2>
 
-          <p className="text-slate-500 mb-10">
-            Receive new poems directly in your inbox.
+          {/* Subtext */}
+          <p className="text-slate-500 mb-10 text-sm sm:text-base leading-relaxed">
+            Receive new poems, reflections, and quiet words — delivered gently
+            to your inbox.
           </p>
 
-          <div className="flex gap-3">
+          {/* Form */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <Input
               type="email"
-              placeholder="Enter your email"
+              placeholder="you@poetry.com"
               value={email}
               disabled={loading}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-12"
+              className="h-12 rounded-xl"
+              aria-label="Email address"
             />
 
             <Button
-              onClick={handleSubscribe}
               type="button"
+              onClick={handleSubscribe}
               disabled={loading}
               className="
-              bg-slate-900
-              text-white
-              hover:bg-slate-800
-              px-6
-              rounded-xl
-            "
+                h-12 px-6 rounded-xl
+                bg-slate-900 text-white
+                hover:bg-slate-800
+                transition
+              "
             >
-              {loading ? "Subscribing..." : "Subscribe"}
+              {loading ? "Subscribing…" : "Subscribe"}
             </Button>
           </div>
 
-          {message && <p className="mt-6 text-sm text-slate-500">{message}</p>}
+          {/* Feedback message */}
+          {message && (
+            <p
+              className={`mt-6 text-sm ${
+                status === "success" ? "text-emerald-600" : "text-rose-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
+
+          {/* Reassurance */}
+          <p className="mt-8 text-xs text-slate-400">
+            No spam • Unsubscribe anytime • Written with care
+          </p>
         </div>
       </div>
     </section>

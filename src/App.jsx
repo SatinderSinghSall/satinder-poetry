@@ -1,47 +1,68 @@
 import { Routes, Route } from "react-router-dom";
-
-import Navbar from "./components/Navbar";
 import { Toaster } from "sonner";
 
-// Pages:
+/* Layouts */
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import AdminLayout from "./components/admin/AdminLayout";
+
+/* Route protection */
+import ProtectedRoute from "./components/ProtectedRoute";
+
+/* Public Pages */
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Poems from "./pages/Poems";
 import PoemDetail from "./pages/PoemDetail";
+
+/* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
 import Users from "./pages/admin/Users";
 import Subscribers from "./pages/admin/Subscribers";
+import PoemsAdmin from "./pages/admin/Poems";
 import AddPoem from "./pages/admin/AddPoem";
-
-// Components:
-import AdminLayout from "./components/admin/AdminLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
-
-//! To run the frontend for DEVELOPMENT -> npm run dev
-//! To run the frontend for PRODUCTION -> npm run build & npm run preview
+import EditPoem from "./pages/admin/EditPoem";
 
 export default function App() {
   return (
     <>
       <Toaster richColors position="top-right" />
-      <Navbar />
 
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/poems" element={<Poems />} />
-        <Route path="/poems/:id" element={<PoemDetail />} />
+        {/* ================= PUBLIC ROUTES ================= */}
+        <Route
+          path="/*"
+          element={
+            <>
+              <Navbar />
 
-        {/* Admin protected routes */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/poems" element={<Poems />} />
+                <Route path="/poems/:id" element={<PoemDetail />} />
+              </Routes>
+
+              <Footer />
+            </>
+          }
+        />
+
+        {/* ================= ADMIN ROUTES ================= */}
         <Route element={<ProtectedRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+
+            {/* Poems */}
+            <Route path="poems" element={<PoemsAdmin />} />
+            <Route path="add-poem" element={<AddPoem />} />
+            <Route path="edit-poem/:id" element={<EditPoem />} />
+
+            {/* Users & Subscribers */}
             <Route path="users" element={<Users />} />
             <Route path="subscribers" element={<Subscribers />} />
-            <Route path="add-poem" element={<AddPoem />} />
           </Route>
         </Route>
       </Routes>

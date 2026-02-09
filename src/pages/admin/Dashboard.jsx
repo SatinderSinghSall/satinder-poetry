@@ -1,10 +1,37 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "@/api/api";
-import StatCard from "@/components/admin/StatCard";
+import { Loader2, Plus, Users, Mail, FileText } from "lucide-react";
 
+import API from "@/api/api";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, Users, Mail } from "lucide-react";
+
+/* ---------- Admin Stat Card ---------- */
+function AdminStat({ title, value, icon: Icon }) {
+  return (
+    <div className="rounded-xl border bg-white p-6 shadow-sm flex items-center gap-4">
+      <div className="h-12 w-12 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+        <Icon size={20} />
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground">{title}</p>
+        <p className="text-2xl font-semibold">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Quick Action ---------- */
+function QuickCard({ title, desc, action, onClick }) {
+  return (
+    <div className="rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition">
+      <h3 className="font-medium">{title}</h3>
+      <p className="text-sm text-muted-foreground mt-1">{desc}</p>
+      <Button onClick={onClick} className="mt-5 w-full" variant="secondary">
+        {action}
+      </Button>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,8 +50,6 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-
       const [p, u, s] = await Promise.all([
         API.get("/poems"),
         API.get("/users/count"),
@@ -46,38 +71,40 @@ export default function Dashboard() {
   /* ---------- Loading ---------- */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/40 to-background">
+    <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto p-8 space-y-10">
-        {/* 🔥 Header */}
-        <div className="flex items-center justify-between">
+        {/* 🔐 Admin Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-6">
           <div>
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
+            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
             <p className="text-sm text-muted-foreground">
               Overview of your poetry platform
             </p>
           </div>
 
-          {/* 🔥 CTAs */}
-          <div className="flex gap-3">
-            {/* 🔥 Primary */}
+          {/* Admin Actions */}
+          <div className="flex flex-wrap gap-3">
+            {/* Primary */}
             <Button
               onClick={() => navigate("/admin/add-poem")}
-              className="bg-black text-white hover:bg-black/80 shadow-sm"
+              className="bg-slate-900 text-white hover:bg-slate-800"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Poem
+              Add New Poem
             </Button>
+
             {/* Users */}
             <Button
               onClick={() => navigate("/admin/users")}
-              className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+              variant="outline"
+              className="border-slate-300"
             >
               <Users className="w-4 h-4 mr-2" />
               Users
@@ -86,7 +113,8 @@ export default function Dashboard() {
             {/* Subscribers */}
             <Button
               onClick={() => navigate("/admin/subscribers")}
-              className="bg-green-600 text-white hover:bg-green-700 shadow-sm"
+              variant="outline"
+              className="border-slate-300"
             >
               <Mail className="w-4 h-4 mr-2" />
               Subscribers
@@ -94,53 +122,47 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 🔥 Stats grid */}
+        {/* 📊 Stats */}
         <div className="grid md:grid-cols-3 gap-6">
-          <StatCard title="Total Poems" value={stats.poems} />
-          <StatCard title="Total Users" value={stats.users} />
-          <StatCard title="Subscribers" value={stats.subscribers} />
+          <AdminStat title="Total Poems" value={stats.poems} icon={FileText} />
+          <AdminStat
+            title="Registered Users"
+            value={stats.users}
+            icon={Users}
+          />
+          <AdminStat
+            title="Email Subscribers"
+            value={stats.subscribers}
+            icon={Mail}
+          />
         </div>
 
-        {/* 🔥 Quick actions section */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <QuickCard
-            title="Create new poem"
-            desc="Add fresh content to your library"
-            action="Add Poem"
-            onClick={() => navigate("/admin/add-poem")}
-          />
+        {/* ⚡ Admin Actions */}
+        <div>
+          <h2 className="text-lg font-medium mb-4">Quick Management</h2>
 
-          <QuickCard
-            title="Manage users"
-            desc="View and manage platform accounts"
-            action="View Users"
-            onClick={() => navigate("/admin/users")}
-          />
-
-          <QuickCard
-            title="Email subscribers"
-            desc="Grow and manage your audience"
-            action="Subscribers"
-            onClick={() => navigate("/admin/subscribers")}
-          />
+          <div className="grid md:grid-cols-3 gap-6">
+            <QuickCard
+              title="Create Poem"
+              desc="Add new poetry to the platform"
+              action="Add Poem"
+              onClick={() => navigate("/admin/add-poem")}
+            />
+            <QuickCard
+              title="Manage Users"
+              desc="View and manage user accounts"
+              action="View Users"
+              onClick={() => navigate("/admin/users")}
+            />
+            <QuickCard
+              title="Subscribers"
+              desc="View newsletter subscribers"
+              action="View Subscribers"
+              onClick={() => navigate("/admin/subscribers")}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ---------- Quick card component ---------- */
-function QuickCard({ title, desc, action, onClick }) {
-  return (
-    <div className="rounded-2xl border bg-background p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-      <div>
-        <h3 className="font-medium">{title}</h3>
-        <p className="text-sm text-muted-foreground mt-1">{desc}</p>
-      </div>
-
-      <Button variant="secondary" className="mt-5" onClick={onClick}>
-        {action}
-      </Button>
     </div>
   );
 }
