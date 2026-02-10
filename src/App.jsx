@@ -27,6 +27,9 @@ import PoemsAdmin from "./pages/admin/Poems";
 import AddPoem from "./pages/admin/AddPoem";
 import EditPoem from "./pages/admin/EditPoem";
 
+//! To run the frontend for DEVELOPMENT -> npm run dev
+//! To run the frontend for PRODUCTION -> npm run build & npm preview
+
 export default function App() {
   return (
     <>

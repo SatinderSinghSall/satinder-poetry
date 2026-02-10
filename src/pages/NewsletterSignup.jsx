@@ -10,6 +10,8 @@ export default function NewsletterSignup() {
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
+    if (loading) return;
+
     if (!email || !email.includes("@")) {
       setStatus("error");
       setMessage("Please enter a valid email address.");
@@ -25,9 +27,11 @@ export default function NewsletterSignup() {
       setStatus("success");
       setMessage(res.data.message || "You’re subscribed ✨");
       setEmail("");
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setMessage("Subscription failed. Please try again.");
+      setMessage(
+        err.response?.data?.message || "Subscription failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -83,9 +87,19 @@ export default function NewsletterSignup() {
                 bg-slate-900 text-white
                 hover:bg-slate-800
                 transition
+                flex items-center justify-center gap-2
+                disabled:opacity-60
+                disabled:cursor-not-allowed
               "
             >
-              {loading ? "Subscribing…" : "Subscribe"}
+              {loading ? (
+                <>
+                  <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span>Subscribing...</span>
+                </>
+              ) : (
+                "Subscribe"
+              )}
             </Button>
           </div>
 
