@@ -1,7 +1,23 @@
 import { Card } from "@/components/ui/card";
-import { Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export default function SubscribersTable({ subscribers }) {
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Copy, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import API from "@/api/api";
+
+export default function SubscribersTable({ subscribers, setSubscribers }) {
   if (!subscribers?.length) {
     return (
       <Card className="rounded-3xl border bg-background p-16 text-center">
@@ -12,6 +28,19 @@ export default function SubscribersTable({ subscribers }) {
 
   const copyEmail = (email) => {
     navigator.clipboard.writeText(email);
+    toast.success("Email copied");
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await API.delete(`/subscribe/${id}`);
+
+      setSubscribers((prev) => prev.filter((s) => (s._id || s.id) !== id));
+
+      toast.success("Subscriber removed");
+    } catch (err) {
+      toast.error("Failed to delete subscriber");
+    }
   };
 
   return (
@@ -22,45 +51,87 @@ export default function SubscribersTable({ subscribers }) {
             <tr className="text-muted-foreground">
               <th className="text-left px-6 py-3">User</th>
               <th className="text-left px-6 py-3">Subscribed</th>
-              <th className="w-20"></th>
+              <th className="text-right px-6 py-3">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {subscribers.map((s) => (
-              <tr
-                key={s._id || s.id}
-                className="border-b last:border-0 hover:bg-muted/40 transition"
-              >
-                {/* Email with avatar */}
-                <td className="px-6 py-4 flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                    {s.email[0].toUpperCase()}
-                  </div>
+            {subscribers.map((s) => {
+              const id = s._id || s.id;
 
-                  <span className="font-medium">{s.email}</span>
-                </td>
+              return (
+                <tr
+                  key={id}
+                  className="border-b last:border-0 hover:bg-muted/40 transition"
+                >
+                  {/* email */}
+                  <td className="px-6 py-4 flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                      {s.email[0].toUpperCase()}
+                    </div>
 
-                <td className="px-6 py-4 text-muted-foreground">
-                  {new Date(s.subscribedAt).toLocaleString()}
-                </td>
+                    <span className="font-medium">{s.email}</span>
+                  </td>
 
-                {/* copy action */}
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => copyEmail(s.email)}
-                    className="opacity-60 hover:opacity-100"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  {/* date */}
+                  <td className="px-6 py-4 text-muted-foreground">
+                    {new Date(s.subscribedAt || s.createdAt).toLocaleString()}
+                  </td>
+
+                  {/* actions */}
+                  <td className="px-6 py-4 text-right flex justify-end gap-2">
+                    {/* copy */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => copyEmail(s.email)}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+
+                    {/* delete */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete this subscriber?
+                          </AlertDialogTitle>
+
+                          <AlertDialogDescription>
+                            This email will no longer receive poem updates.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={() => handleDelete(id)}
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* footer */}
       <div className="border-t px-6 py-3 text-xs text-muted-foreground flex justify-between">
         <span>{subscribers.length} results</span>
         <span>Satinder Singh Sall - Admin Panel</span>

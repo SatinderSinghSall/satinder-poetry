@@ -18,6 +18,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
 
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [sendNotification, setSendNotification] = useState(true);
 
   /* ---------- Load draft (ADD mode only) ---------- */
   useEffect(() => {
@@ -72,7 +73,9 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
     setLoading(true);
 
     try {
-      await onSubmit(form);
+      await onSubmit(
+        mode === "add" ? { ...form, sendNotification } : { ...form },
+      );
 
       toast.success(
         mode === "edit"
@@ -82,6 +85,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
 
       if (mode === "add") {
         setForm({ title: "", author: "", content: "" });
+        setSendNotification(true);
         localStorage.removeItem(DRAFT_KEY);
       }
     } catch (err) {
@@ -191,6 +195,25 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                     }
                   />
                 </div>
+
+                {/* Email notification toggle */}
+                {mode === "add" && (
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="sendNotification"
+                      checked={sendNotification}
+                      onChange={(e) => setSendNotification(e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300"
+                    />
+                    <label
+                      htmlFor="sendNotification"
+                      className="text-sm text-muted-foreground cursor-pointer"
+                    >
+                      Send email notification to all users
+                    </label>
+                  </div>
+                )}
 
                 {/* CTA */}
                 <Button

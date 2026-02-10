@@ -124,7 +124,7 @@ export default function Users() {
 
         {/* 🧾 Table / Empty state */}
         {filtered.length > 0 ? (
-          <UsersTable users={filtered} />
+          <UsersTable users={filtered} setUsers={setUsers} />
         ) : (
           <div className="rounded-2xl border bg-white p-10 text-center text-muted-foreground">
             No users found.

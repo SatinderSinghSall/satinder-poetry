@@ -5,19 +5,34 @@ import {
   BookOpen,
   Mail,
   ScrollText,
+  Shield,
 } from "lucide-react";
 
 export default function AdminSidebar() {
   return (
-    <aside className="w-64 h-screen sticky top-0 flex flex-col bg-gradient-to-b from-slate-100 to-slate-50 border-r shadow-lg">
+    <aside
+      className="
+        w-72 h-screen sticky top-0
+        flex flex-col
+        bg-gradient-to-b from-slate-100 to-slate-50
+        border-r shadow-xl
+      "
+    >
       {/* ---------- Header ---------- */}
-      <div className="px-6 py-6 border-b">
-        <h2 className="text-lg font-semibold tracking-tight">Admin Panel</h2>
-        <p className="text-xs text-muted-foreground">Poetry Management</p>
+      <div className="px-6 py-5 border-b flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight">Admin Panel</h2>
+          <p className="text-xs text-muted-foreground">Poetry Management</p>
+        </div>
+
+        {/* ✅ Admin Icon */}
+        <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
+          <Shield size={18} />
+        </div>
       </div>
 
       {/* ---------- Navigation ---------- */}
-      <nav className="flex-1 px-3 py-4 space-y-4">
+      <nav className="flex-1 px-4 py-4 space-y-6">
         {/* ===== Core ===== */}
         <Section label="Overview">
           <SideItem to="/admin" icon={LayoutDashboard} label="Dashboard" end />
@@ -49,14 +64,14 @@ export default function AdminSidebar() {
   );
 }
 
-/* ---------- Section Wrapper ---------- */
+/* ---------- Section ---------- */
 function Section({ label, children }) {
   return (
     <div>
       <p className="px-3 mb-2 text-[10px] uppercase tracking-widest text-slate-400">
         {label}
       </p>
-      <div className="space-y-1">{children}</div>
+      <div className="space-y-1.5">{children}</div>
     </div>
   );
 }
@@ -69,36 +84,22 @@ function SideItem({ to, icon: Icon, label, end, color }) {
       end={end}
       className={({ isActive }) =>
         `
-        relative group flex items-center gap-3 px-3 py-2.5 rounded-xl
-        text-sm font-medium transition-all duration-200
+        group flex items-center gap-3
+        px-4 py-3 rounded-xl
+        text-sm font-medium
+        transition-all duration-200
         ${
           isActive
-            ? "bg-white shadow-sm text-black"
+            ? "bg-white shadow-md text-black"
             : "text-slate-600 hover:bg-white hover:shadow-sm hover:text-black"
         }
       `
       }
     >
-      {/* Active indicator (ONLY when active) */}
-      <span
-        className={`
-          absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r
-          transition-opacity
-          ${
-            color === "blue"
-              ? "bg-blue-500"
-              : color === "green"
-                ? "bg-emerald-500"
-                : "bg-slate-900"
-          }
-          opacity-0 group-[.active]:opacity-100
-        `}
-      />
-
       {/* Icon */}
       <div
         className={`
-          p-2 rounded-lg transition
+          p-2.5 rounded-lg transition
           ${
             color === "blue"
               ? "bg-blue-100 text-blue-600"
@@ -106,13 +107,15 @@ function SideItem({ to, icon: Icon, label, end, color }) {
                 ? "bg-emerald-100 text-emerald-600"
                 : "bg-muted text-muted-foreground"
           }
-          group-hover:scale-105
         `}
       >
-        <Icon size={16} />
+        <Icon size={18} />
       </div>
 
-      {label}
+      <span className="flex-1">{label}</span>
+
+      {/* Active dot indicator */}
+      <span className="h-2 w-2 rounded-full bg-slate-900 opacity-0 group-[.active]:opacity-100" />
     </NavLink>
   );
 }
