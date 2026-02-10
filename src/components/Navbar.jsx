@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
 import { Menu, X, Feather } from "lucide-react";
 
 import {
@@ -21,47 +20,62 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-slate-200">
-      <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header
+      className="sticky top-0 z-50
+                 bg-gradient-to-b from-white/90 to-white/75
+                 backdrop-blur-md border-b border-neutral-200"
+    >
+      <nav className="max-w-7xl mx-auto px-8 h-22 flex items-center justify-between">
         {/* Brand */}
         <Link
           to="/"
-          className="flex items-center gap-2 font-serif text-xl tracking-wide
-                     text-slate-900 hover:text-slate-700 transition"
+          className="group flex items-center gap-3 font-serif
+                     text-2xl md:text-3xl tracking-wide
+                     text-neutral-900 transition-all duration-500"
         >
-          <Feather size={18} className="text-slate-500" />
-          <span className="font-semibold">Satinder Poetry</span>
+          <Feather
+            size={22}
+            className="text-neutral-500
+                       group-hover:text-neutral-800
+                       group-hover:-rotate-6
+                       transition-all duration-500"
+          />
+          <span className="relative">
+            Satinder Poetry
+            <span
+              className="absolute -bottom-1 left-0 h-px w-0 bg-neutral-400
+                         group-hover:w-full transition-all duration-500"
+            />
+          </span>
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8 text-sm">
+        <div className="hidden md:flex items-center gap-12">
           <NavLink to="/poems" label="Poems" />
 
           {user ? (
             <>
               {user.role === "admin" && (
-                <Link to="/admin">
-                  <Button size="sm" variant="outline">
-                    Admin
-                  </Button>
-                </Link>
+                <NavLink to="/admin" label="Admin" subtle />
               )}
-
-              {/* Logout Modal */}
               <LogoutDialog onConfirm={logout} />
             </>
           ) : (
             <>
               <NavLink to="/login" label="Login" />
 
-              <Link to="/register">
-                <Button
-                  size="sm"
-                  className="rounded-full px-5 bg-slate-900 text-white 
-                             hover:bg-slate-800 shadow-sm"
-                >
-                  Join the Verse
-                </Button>
+              <Link
+                to="/register"
+                className="px-6 py-3 rounded-full
+                           text-base font-light
+                           bg-gradient-to-r from-neutral-900 to-neutral-700
+                           text-white
+                           shadow-md shadow-neutral-900/20
+                           hover:shadow-lg hover:shadow-neutral-900/30
+                           hover:scale-[1.03]
+                           transition-all duration-300"
+              >
+                Join the Verse
               </Link>
             </>
           )}
@@ -70,36 +84,39 @@ export default function Navbar() {
         {/* Mobile Toggle */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-slate-600"
+          className="md:hidden text-neutral-700"
         >
-          {open ? <X size={20} /> : <Menu size={20} />}
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </nav>
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden transition-all duration-300 overflow-hidden
-        ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+        className={`md:hidden overflow-hidden transition-all duration-700 ease-out
+        ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
       >
-        <div className="border-t bg-white px-6 py-6 flex flex-col gap-4 text-sm">
-          <MobileLink to="/poems" setOpen={setOpen} label="Poems" />
+        <div
+          className="border-t border-neutral-200
+                     bg-neutral-50/95
+                     px-8 py-8 flex flex-col gap-6
+                     text-lg font-light"
+        >
+          <MobileLink to="/poems" label="Poems" setOpen={setOpen} />
 
           {user ? (
             <>
               {user.role === "admin" && (
-                <MobileLink to="/admin" setOpen={setOpen} label="Admin" />
+                <MobileLink to="/admin" label="Admin" setOpen={setOpen} />
               )}
-
-              {/* Mobile Logout */}
               <LogoutDialog onConfirm={logout} mobile />
             </>
           ) : (
             <>
-              <MobileLink to="/login" setOpen={setOpen} label="Login" />
+              <MobileLink to="/login" label="Login" setOpen={setOpen} />
               <MobileLink
                 to="/register"
-                setOpen={setOpen}
                 label="Join the Verse"
+                setOpen={setOpen}
               />
             </>
           )}
@@ -111,9 +128,17 @@ export default function Navbar() {
 
 /* ---------------- Components ---------------- */
 
-function NavLink({ to, label }) {
+function NavLink({ to, label, subtle = false }) {
   return (
-    <Link to={to} className="text-slate-600 hover:text-slate-900 transition">
+    <Link
+      to={to}
+      className={`relative text-base md:text-lg font-light
+        ${subtle ? "text-neutral-500" : "text-neutral-700"}
+        hover:text-neutral-950 transition-all duration-300
+        after:absolute after:left-0 after:-bottom-2
+        after:h-px after:w-0 after:bg-neutral-500
+        hover:after:w-full after:transition-all after:duration-500`}
+    >
       {label}
     </Link>
   );
@@ -124,7 +149,7 @@ function MobileLink({ to, label, setOpen }) {
     <Link
       to={to}
       onClick={() => setOpen(false)}
-      className="text-slate-700 hover:text-slate-900 transition"
+      className="text-neutral-700 hover:text-neutral-950 transition"
     >
       {label}
     </Link>
@@ -132,22 +157,24 @@ function MobileLink({ to, label, setOpen }) {
 }
 
 /* 🔐 Logout Confirmation Dialog */
-function LogoutDialog({ onConfirm, mobile = false }) {
+function LogoutDialog({ onConfirm }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        {mobile ? (
-          <button className="text-left text-slate-600">Logout</button>
-        ) : (
-          <button className="text-slate-500 hover:text-slate-900 transition">
-            Logout
-          </button>
-        )}
+        <button
+          className="px-4 py-2 rounded-md
+                     border border-neutral-300
+                     text-sm font-light text-neutral-700
+                     hover:bg-neutral-100 hover:text-neutral-900
+                     transition"
+        >
+          Logout
+        </button>
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Log out of Satinder Poetry?</AlertDialogTitle>
+          <AlertDialogTitle>Log out?</AlertDialogTitle>
           <AlertDialogDescription>
             You’ll be signed out of your account. You can always return to
             continue reading and writing poems.
@@ -158,7 +185,7 @@ function LogoutDialog({ onConfirm, mobile = false }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-slate-900 hover:bg-slate-800"
+            className="bg-neutral-900 hover:bg-neutral-800"
           >
             Logout
           </AlertDialogAction>

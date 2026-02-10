@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
+import ScrollToTop from "./components/ScrollToTop";
+
 /* Layouts */
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,6 +17,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Poems from "./pages/Poems";
 import PoemDetail from "./pages/PoemDetail";
+import NotFound from "./pages/NotFound";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -28,6 +31,8 @@ export default function App() {
   return (
     <>
       <Toaster richColors position="top-right" />
+
+      <ScrollToTop />
 
       <Routes>
         {/* ================= PUBLIC ROUTES ================= */}
@@ -43,6 +48,7 @@ export default function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/poems" element={<Poems />} />
                 <Route path="/poems/:id" element={<PoemDetail />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
 
               <Footer />
