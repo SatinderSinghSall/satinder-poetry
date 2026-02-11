@@ -10,6 +10,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 
 /* Route protection */
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthRoute from "./components/AuthRoute";
 
 /* Public Pages */
 import Home from "./pages/Home";
@@ -18,6 +19,8 @@ import Register from "./pages/Register";
 import Poems from "./pages/Poems";
 import PoemDetail from "./pages/PoemDetail";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
+import NewsletterSignup from "./pages/NewsletterSignup";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -26,6 +29,7 @@ import Subscribers from "./pages/admin/Subscribers";
 import PoemsAdmin from "./pages/admin/Poems";
 import AddPoem from "./pages/admin/AddPoem";
 import EditPoem from "./pages/admin/EditPoem";
+import PublicLayout from "./layouts/PublicLayout";
 
 //! To run the frontend for DEVELOPMENT -> npm run dev
 //! To run the frontend for PRODUCTION -> npm run build & npm preview
@@ -38,38 +42,30 @@ export default function App() {
       <ScrollToTop />
 
       <Routes>
-        {/* ================= PUBLIC ROUTES ================= */}
-        <Route
-          path="/*"
-          element={
-            <>
-              <Navbar />
+        {/* ===== PUBLIC LAYOUT ===== */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/poems" element={<Poems />} />
+          <Route path="/poems/:id" element={<PoemDetail />} />
+          <Route path="/newsletter" element={<NewsletterSignup />} />
 
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/poems" element={<Poems />} />
-                <Route path="/poems/:id" element={<PoemDetail />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+          {/* protected profile */}
+          <Route element={<AuthRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
 
-              <Footer />
-            </>
-          }
-        />
+          <Route path="*" element={<NotFound />} />
+        </Route>
 
-        {/* ================= ADMIN ROUTES ================= */}
+        {/* ===== ADMIN ===== */}
         <Route element={<ProtectedRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-
-            {/* Poems */}
             <Route path="poems" element={<PoemsAdmin />} />
             <Route path="add-poem" element={<AddPoem />} />
             <Route path="edit-poem/:id" element={<EditPoem />} />
-
-            {/* Users & Subscribers */}
             <Route path="users" element={<Users />} />
             <Route path="subscribers" element={<Subscribers />} />
           </Route>

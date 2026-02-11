@@ -2,11 +2,27 @@ import { Twitter, Facebook, Instagram, Github, Linkedin } from "lucide-react";
 
 export default function SocialLinks() {
   const socials = [
-    { name: "Twitter", link: "#", Icon: Twitter },
-    { name: "Facebook", link: "#", Icon: Facebook },
-    { name: "Instagram", link: "#", Icon: Instagram },
-    { name: "GitHub", link: "#", Icon: Github },
-    { name: "LinkedIn", link: "#", Icon: Linkedin },
+    // { name: "Twitter", link: "/", Icon: Twitter },
+    {
+      name: "Facebook",
+      link: "https://www.facebook.com/satinder.singhsall",
+      Icon: Facebook,
+    },
+    {
+      name: "Instagram",
+      link: "https://www.instagram.com/satindersinghsall",
+      Icon: Instagram,
+    },
+    {
+      name: "GitHub",
+      link: "https://github.com/SatinderSinghSall",
+      Icon: Github,
+    },
+    {
+      name: "LinkedIn",
+      link: "https://www.linkedin.com/in/satinder-singh-sall-b62049204/",
+      Icon: Linkedin,
+    },
   ];
 
   return (

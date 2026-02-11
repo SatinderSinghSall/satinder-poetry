@@ -28,6 +28,19 @@ export default function Footer() {
               </p>
               <ul className="space-y-3 text-sm text-slate-600">
                 <li>
+                  <Link to="/" className="hover:text-slate-900 transition">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/newsletter"
+                    className="hover:text-slate-900 transition"
+                  >
+                    Newsletter
+                  </Link>
+                </li>
+                <li>
                   <Link to="/poems" className="hover:text-slate-900 transition">
                     Poems
                   </Link>
