@@ -6,13 +6,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { RefreshCw, Users as UsersIcon, Loader2, Search } from "lucide-react";
+import {
+  RefreshCw,
+  Users as UsersIcon,
+  Loader2,
+  Search,
+  Eye,
+} from "lucide-react";
+
+const Field = ({ label, value }) => (
+  <div className="grid grid-cols-3 gap-4 border-b pb-2">
+    <span className="font-medium text-slate-600">{label}</span>
+    <span className="col-span-2 text-muted-foreground break-words">
+      {value || "—"}
+    </span>
+  </div>
+);
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -124,10 +140,49 @@ export default function Users() {
 
         {/* 🧾 Table / Empty state */}
         {filtered.length > 0 ? (
-          <UsersTable users={filtered} setUsers={setUsers} />
+          <UsersTable
+            users={filtered}
+            setUsers={setUsers}
+            onView={setSelectedUser}
+          />
         ) : (
           <div className="rounded-2xl border bg-white p-10 text-center text-muted-foreground">
             No users found.
+          </div>
+        )}
+
+        {selectedUser && (
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">User Details</h2>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedUser(null)}
+                >
+                  Close
+                </Button>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-3 text-sm">
+                <Field label="Name" value={selectedUser.name} />
+                <Field label="Email" value={selectedUser.email} />
+                <Field label="Role" value={selectedUser.role} />
+                <Field
+                  label="Created At"
+                  value={new Date(selectedUser.createdAt).toLocaleString()}
+                />
+                <Field
+                  label="Updated At"
+                  value={new Date(selectedUser.updatedAt).toLocaleString()}
+                />
+                <Field label="User ID" value={selectedUser._id} />
+              </div>
+            </div>
           </div>
         )}
       </div>

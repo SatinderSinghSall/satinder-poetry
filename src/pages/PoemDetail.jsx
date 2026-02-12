@@ -35,14 +35,15 @@ export default function PoemDetail() {
     ? new Date(poem.createdAt).toLocaleDateString()
     : "";
 
+  /* ✅ NEW helpers (added only) */
+  const readingTime = poem?.readingTime ? `${poem.readingTime} min read` : "";
+  const views = poem?.views ? `${poem.views} views` : "";
+
   return (
     <div className="relative min-h-screen flex justify-center bg-gradient-to-br from-amber-50 via-stone-50 to-rose-50">
-      {/* ✨ soft background glow */}
       <div className="absolute inset-0 blur-3xl opacity-40 bg-[radial-gradient(circle_at_20%_20%,#fde68a,transparent_40%),radial-gradient(circle_at_80%_70%,#fbcfe8,transparent_40%)]" />
 
-      {/* ⭐ Fixed reading width */}
       <div className="relative w-full max-w-[820px] px-4 sm:px-6 md:px-8 py-10 space-y-8">
-        {/* Back button */}
         <Link
           to="/poems"
           className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm bg-white/70 backdrop-blur border border-stone-200 shadow-sm hover:shadow-md transition"
@@ -83,6 +84,15 @@ export default function PoemDetail() {
         {/* ---------- Poem ---------- */}
         {!loading && poem && !notFound && (
           <article className="animate-in fade-in duration-700 rounded-3xl bg-white/80 backdrop-blur-xl border border-stone-200/60 shadow-xl px-6 sm:px-10 py-10">
+            {/* ✅ NEW Cover Image */}
+            {poem.coverImage && (
+              <img
+                src={poem.coverImage}
+                alt="cover"
+                className="w-full h-64 object-cover rounded-2xl mb-8"
+              />
+            )}
+
             {/* Header */}
             <header className="text-center space-y-3">
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-stone-900">
@@ -98,7 +108,45 @@ export default function PoemDetail() {
 
             <div className="my-8 h-px bg-stone-200" />
 
-            {/* Poem text */}
+            {/* ✅ NEW Summary */}
+            {poem.summary && (
+              <p className="text-center italic text-stone-500 mb-8 max-w-2xl mx-auto">
+                {poem.summary}
+              </p>
+            )}
+
+            {/* ✅ NEW Metadata row */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8 text-xs">
+              {poem.featured && (
+                <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-medium">
+                  ⭐ Featured
+                </span>
+              )}
+
+              {poem.theme && (
+                <span className="px-3 py-1 rounded-full bg-stone-100 text-stone-600">
+                  {poem.theme}
+                </span>
+              )}
+
+              {poem.tags?.length > 0 &&
+                poem.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 rounded-full bg-stone-100 text-stone-500"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+
+              {readingTime && (
+                <span className="text-stone-400">{readingTime}</span>
+              )}
+
+              {views && <span className="text-stone-400">{views}</span>}
+            </div>
+
+            {/* Poem text (UNCHANGED) */}
             <div className="whitespace-pre-line font-serif text-base sm:text-lg leading-relaxed text-stone-700 tracking-wide">
               {poem.content}
             </div>

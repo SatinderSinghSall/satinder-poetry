@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Plus, Users, Mail, FileText } from "lucide-react";
+import { Loader2, Plus, Users, Mail, FileText, Eye, Heart } from "lucide-react";
 
 import API from "@/api/api";
 import { Button } from "@/components/ui/button";
 
-/* ---------- Admin Stat Card ---------- */
+/* ---------- Stat Card ---------- */
 function AdminStat({ title, value, icon: Icon }) {
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm flex items-center gap-4">
+    <div className="rounded-xl border bg-white p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition">
       <div className="h-12 w-12 rounded-lg bg-slate-900 text-white flex items-center justify-center">
         <Icon size={20} />
       </div>
+
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-2xl font-semibold">{value}</p>
@@ -36,13 +37,18 @@ function QuickCard({ title, desc, action, onClick }) {
 export default function Dashboard() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+
   const [stats, setStats] = useState({
     poems: 0,
     users: 0,
     subscribers: 0,
+    views: 0,
+    likes: 0,
   });
 
-  const [loading, setLoading] = useState(true);
+  const [recentPoems, setRecentPoems] = useState([]);
+  const [recentUsers, setRecentUsers] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -50,17 +56,31 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [p, u, s] = await Promise.all([
+      const [poemsRes, usersRes, subsRes] = await Promise.all([
         API.get("/poems"),
-        API.get("/users/count"),
-        API.get("/subscribe/count"),
+        API.get("/users"),
+        API.get("/subscribe"),
       ]);
 
+      const poems = poemsRes.data;
+      const users = usersRes.data;
+      const subs = subsRes.data;
+
+      /* totals */
+      const totalViews = poems.reduce((a, b) => a + (b.views || 0), 0);
+      const totalLikes = poems.reduce((a, b) => a + (b.likes || 0), 0);
+
       setStats({
-        poems: p.data.length,
-        users: u.data.count,
-        subscribers: s.data.count,
+        poems: poems.length,
+        users: users.length,
+        subscribers: subs.length,
+        views: totalViews,
+        likes: totalLikes,
       });
+
+      /* recent lists */
+      setRecentPoems(poems.slice(0, 5));
+      setRecentUsers(users.slice(0, 5));
     } catch (err) {
       console.error(err);
     } finally {
@@ -80,7 +100,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto p-8 space-y-10">
-        {/* 🔐 Admin Header */}
+        {/* 🔐 Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-6">
           <div>
             <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
@@ -89,9 +109,7 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Admin Actions */}
           <div className="flex flex-wrap gap-3">
-            {/* Primary */}
             <Button
               onClick={() => navigate("/admin/add-poem")}
               className="bg-slate-900 text-white hover:bg-slate-800"
@@ -100,21 +118,14 @@ export default function Dashboard() {
               Add New Poem
             </Button>
 
-            {/* Users */}
-            <Button
-              onClick={() => navigate("/admin/users")}
-              variant="outline"
-              className="border-slate-300"
-            >
+            <Button onClick={() => navigate("/admin/users")} variant="outline">
               <Users className="w-4 h-4 mr-2" />
               Users
             </Button>
 
-            {/* Subscribers */}
             <Button
               onClick={() => navigate("/admin/subscribers")}
               variant="outline"
-              className="border-slate-300"
             >
               <Mail className="w-4 h-4 mr-2" />
               Subscribers
@@ -122,7 +133,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 📊 Stats */}
+        {/* ================================= */}
+        {/* 📊 ORIGINAL STATS (UNCHANGED) */}
+        {/* ================================= */}
+
         <div className="grid md:grid-cols-3 gap-6">
           <AdminStat title="Total Poems" value={stats.poems} icon={FileText} />
           <AdminStat
@@ -137,7 +151,19 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* ⚡ Admin Actions */}
+        {/* ================================= */}
+        {/* ⭐ NEW MINI STATS (ADDED ONLY) */}
+        {/* ================================= */}
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <AdminStat title="Total Views" value={stats.views} icon={Eye} />
+          <AdminStat title="Total Likes" value={stats.likes} icon={Heart} />
+        </div>
+
+        {/* ================================= */}
+        {/* ⚡ ORIGINAL QUICK MANAGEMENT */}
+        {/* ================================= */}
+
         <div>
           <h2 className="text-lg font-medium mb-4">Quick Management</h2>
 
@@ -160,6 +186,52 @@ export default function Dashboard() {
               action="View Subscribers"
               onClick={() => navigate("/admin/subscribers")}
             />
+          </div>
+        </div>
+
+        {/* ================================= */}
+        {/* ✅ NEW SECTIONS (ADDED BELOW ONLY) */}
+        {/* ================================= */}
+
+        {/* Welcome Banner */}
+        <div className="rounded-xl bg-slate-900 text-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold">Welcome back 👋</h2>
+          <p className="text-sm opacity-80 mt-1">
+            You currently have {stats.poems} poems, {stats.users} users and{" "}
+            {stats.subscribers} subscribers.
+          </p>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Recent Poems */}
+          <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <h3 className="font-medium mb-4">Recent Poems</h3>
+
+            <div className="space-y-3 text-sm">
+              {recentPoems.map((p) => (
+                <div key={p._id} className="flex justify-between border-b pb-2">
+                  <span className="truncate">{p.title}</span>
+                  <span className="text-muted-foreground">
+                    {new Date(p.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent Users */}
+          <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <h3 className="font-medium mb-4">Recent Users</h3>
+
+            <div className="space-y-3 text-sm">
+              {recentUsers.map((u) => (
+                <div key={u._id} className="flex justify-between border-b pb-2">
+                  <span>{u.name}</span>
+                  <span className="text-muted-foreground">{u.email}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

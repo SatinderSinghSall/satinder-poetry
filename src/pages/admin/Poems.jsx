@@ -14,9 +14,19 @@ import {
   Mail,
   Loader2,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import DeleteDialog from "@/components/admin/DeleteDialog";
+
+const Field = ({ label, value }) => (
+  <div className="grid grid-cols-3 gap-4 border-b pb-2">
+    <span className="font-medium text-slate-600">{label}</span>
+    <span className="col-span-2 text-muted-foreground break-words">
+      {value || "—"}
+    </span>
+  </div>
+);
 
 export default function Poems() {
   const navigate = useNavigate();
@@ -24,6 +34,7 @@ export default function Poems() {
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedPoem, setSelectedPoem] = useState(null);
 
   useEffect(() => {
     fetchPoems();
@@ -164,6 +175,15 @@ export default function Poems() {
                   <td className="p-4 text-muted-foreground">{poem.author}</td>
 
                   <td className="p-4 text-right space-x-2">
+                    {/* View */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedPoem(poem)}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+
                     {/* Edit */}
                     <Button
                       size="sm"
@@ -173,7 +193,7 @@ export default function Poems() {
                       <Edit className="w-4 h-4" />
                     </Button>
 
-                    {/* Delete (Modal) */}
+                    {/* Delete */}
                     <DeleteDialog
                       onConfirm={() => handleDelete(poem._id)}
                       label="Delete Poem"
@@ -183,6 +203,83 @@ export default function Poems() {
               ))}
             </tbody>
           </table>
+
+          {/* ================================= */}
+          {/* 👁 VIEW POEM MODAL */}
+          {/* ================================= */}
+
+          {selectedPoem && (
+            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+              <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 space-y-6">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Poem Details</h2>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedPoem(null)}
+                  >
+                    Close
+                  </Button>
+                </div>
+
+                {/* Content */}
+                <div className="grid gap-4 text-sm">
+                  <Field label="Title" value={selectedPoem.title} />
+                  <Field label="Author" value={selectedPoem.author} />
+                  <Field label="Summary" value={selectedPoem.summary} />
+                  <Field label="Theme" value={selectedPoem.theme} />
+                  <Field
+                    label="Tags"
+                    value={(selectedPoem.tags || []).join(", ")}
+                  />
+                  <Field label="Status" value={selectedPoem.status} />
+                  <Field
+                    label="Featured"
+                    value={selectedPoem.featured ? "Yes" : "No"}
+                  />
+                  <Field
+                    label="Reading Time"
+                    value={`${selectedPoem.readingTime || 0} min`}
+                  />
+                  <Field label="Views" value={selectedPoem.views} />
+                  <Field label="Likes" value={selectedPoem.likes} />
+                  <Field
+                    label="Added By (User ID)"
+                    value={selectedPoem.addedBy}
+                  />
+                  <Field
+                    label="Created At"
+                    value={new Date(selectedPoem.createdAt).toLocaleString()}
+                  />
+                  <Field
+                    label="Updated At"
+                    value={new Date(selectedPoem.updatedAt).toLocaleString()}
+                  />
+
+                  {/* Cover image */}
+                  {selectedPoem.coverImage && (
+                    <div>
+                      <p className="font-medium mb-2">Cover Image</p>
+                      <img
+                        src={selectedPoem.coverImage}
+                        className="rounded-xl w-full max-h-60 object-cover border"
+                      />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div>
+                    <p className="font-medium mb-2">Content</p>
+                    <div className="whitespace-pre-line text-muted-foreground border rounded-xl p-4 bg-slate-50">
+                      {selectedPoem.content}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {filtered.length === 0 && (
             <div className="p-10 text-center text-muted-foreground">

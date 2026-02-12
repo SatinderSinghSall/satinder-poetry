@@ -24,17 +24,14 @@ export default function Register() {
   const validate = () => {
     const newErrors = {};
 
-    if (form.name.trim().length < 3) {
+    if (form.name.trim().length < 3)
       newErrors.name = "Name must be at least 3 characters.";
-    }
 
-    if (!form.email.includes("@")) {
-      newErrors.email = "Please enter a valid email address.";
-    }
+    if (!form.email.includes("@"))
+      newErrors.email = "Please enter a valid email.";
 
-    if (form.password.length < 6) {
+    if (form.password.length < 6)
       newErrors.password = "Password must be at least 6 characters.";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -52,9 +49,7 @@ export default function Register() {
       await API.post("/auth/register", form);
 
       navigate("/login", {
-        state: {
-          message: "Account created successfully. Please log in.",
-        },
+        state: { message: "Account created successfully. Please log in." },
       });
     } catch {
       setErrors({ general: "Registration failed. Please try again." });
@@ -64,8 +59,8 @@ export default function Register() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* YOUR background image */}
+    <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -73,31 +68,43 @@ export default function Register() {
         }}
       />
 
-      {/* professional overlay */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[3px]" />
+      {/* softer blur like login */}
+      <div className="absolute inset-0 bg-black/35 backdrop-blur-[2.5px]" />
 
-      {/* loading overlay */}
+      {/* loading */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-transparent" />
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white border-t-transparent" />
         </div>
       )}
 
       {/* card */}
-      <Card className="relative z-10 w-full max-w-md rounded-3xl bg-white/90 shadow-2xl backdrop-blur-sm">
-        <CardContent className="p-10">
+      <Card
+        className="
+          relative z-10
+          w-full max-w-md
+          rounded-3xl
+          bg-white/85
+          border border-white/40
+          shadow-[0_20px_60px_rgba(0,0,0,0.25)]
+          backdrop-blur-xl
+        "
+      >
+        <CardContent className="p-8 sm:p-10">
           {/* header */}
-          <h2 className="text-3xl font-serif text-center text-slate-800 mb-2">
-            Create an Account
-          </h2>
-          <p className="text-center text-sm text-slate-500 mb-8">
-            Begin your journey with words.
-          </p>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl sm:text-4xl font-serif text-slate-800">
+              Create Account
+            </h2>
+            <p className="text-sm text-slate-500 mt-2">
+              Begin your journey with words.
+            </p>
+          </div>
 
           {errors.general && (
-            <p className="text-red-500 text-sm text-center mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-xl mb-4 text-center">
               {errors.general}
-            </p>
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -105,6 +112,14 @@ export default function Register() {
             <div>
               <Input
                 placeholder="Full name"
+                className="
+                  rounded-xl
+                  bg-white
+                  border border-slate-300
+                  focus:border-slate-900
+                  focus:ring-2 focus:ring-slate-900/20
+                  shadow-sm
+                "
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
@@ -118,6 +133,14 @@ export default function Register() {
               <Input
                 type="email"
                 placeholder="Email address"
+                className="
+                  rounded-xl
+                  bg-white
+                  border border-slate-300
+                  focus:border-slate-900
+                  focus:ring-2 focus:ring-slate-900/20
+                  shadow-sm
+                "
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -131,16 +154,22 @@ export default function Register() {
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                className="
+                  rounded-xl
+                  bg-white
+                  border border-slate-300
+                  focus:border-slate-900
+                  focus:ring-2 focus:ring-slate-900/20
+                  shadow-sm
+                "
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
 
-              {/* toggle */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-800"
-                aria-label="Toggle password visibility"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -154,13 +183,13 @@ export default function Register() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-slate-900 text-white hover:bg-slate-800 transition"
+              className="w-full bg-slate-900 text-white hover:bg-slate-800 shadow-md"
             >
               {loading ? "Creating account…" : "Register"}
             </Button>
           </form>
 
-          {/* footer text */}
+          {/* footer */}
           <p className="mt-8 text-xs text-center text-slate-400">
             Your words belong here.
           </p>

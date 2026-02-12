@@ -13,14 +13,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { Copy, Trash2 } from "lucide-react";
+import { Copy, Trash2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import API from "@/api/api";
 
 export default function SubscribersTable({ subscribers, setSubscribers }) {
   if (!subscribers?.length) {
     return (
-      <Card className="rounded-3xl border bg-background p-16 text-center">
+      <Card className="rounded-2xl border bg-white p-16 text-center shadow-sm">
         <p className="text-sm text-muted-foreground">No subscribers found</p>
       </Card>
     );
@@ -34,24 +34,32 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
   const handleDelete = async (id) => {
     try {
       await API.delete(`/subscribe/${id}`);
-
       setSubscribers((prev) => prev.filter((s) => (s._id || s.id) !== id));
-
       toast.success("Subscriber removed");
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete subscriber");
     }
   };
 
   return (
-    <Card className="rounded-3xl border bg-background overflow-hidden shadow-sm">
+    <Card
+      className="
+        rounded-2xl
+        border
+        bg-white/90
+        backdrop-blur
+        shadow-md
+        overflow-hidden
+      "
+    >
       <div className="max-h-[600px] overflow-auto">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-background border-b">
-            <tr className="text-muted-foreground">
-              <th className="text-left px-6 py-3">User</th>
-              <th className="text-left px-6 py-3">Subscribed</th>
-              <th className="text-right px-6 py-3">Actions</th>
+          {/* Header */}
+          <thead className="sticky top-0 bg-slate-50 border-b text-xs uppercase tracking-wider text-slate-500">
+            <tr>
+              <th className="px-6 py-4 text-left">Subscriber</th>
+              <th className="px-6 py-4 text-left">Joined</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
 
@@ -62,68 +70,91 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
               return (
                 <tr
                   key={id}
-                  className="border-b last:border-0 hover:bg-muted/40 transition"
+                  className="
+                    border-b
+                    last:border-0
+                    hover:bg-slate-50/80
+                    transition
+                  "
                 >
-                  {/* email */}
-                  <td className="px-6 py-4 flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                      {s.email[0].toUpperCase()}
+                  {/* EMAIL */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      {/* avatar */}
+                      <div
+                        className="
+                          h-9 w-9
+                          rounded-full
+                          bg-gradient-to-br
+                          from-indigo-600 to-indigo-400
+                          text-white
+                          flex items-center justify-center
+                          shadow-sm
+                        "
+                      >
+                        <Mail className="w-4 h-4" />
+                      </div>
+
+                      <span className="font-medium text-slate-900">
+                        {s.email}
+                      </span>
                     </div>
-
-                    <span className="font-medium">{s.email}</span>
                   </td>
 
-                  {/* date */}
-                  <td className="px-6 py-4 text-muted-foreground">
-                    {new Date(s.subscribedAt || s.createdAt).toLocaleString()}
+                  {/* DATE */}
+                  <td className="px-6 py-4 text-slate-600">
+                    {new Date(s.createdAt).toLocaleString()}
                   </td>
 
-                  {/* actions */}
-                  <td className="px-6 py-4 text-right flex justify-end gap-2">
-                    {/* copy */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => copyEmail(s.email)}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
+                  {/* ACTIONS */}
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      {/* copy */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyEmail(s.email)}
+                        className="hover:bg-slate-100"
+                      >
+                        <Copy className="w-4 h-4 text-slate-600" />
+                      </Button>
 
-                    {/* delete */}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete this subscriber?
-                          </AlertDialogTitle>
-
-                          <AlertDialogDescription>
-                            This email will no longer receive poem updates.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                          <AlertDialogAction
-                            className="bg-red-600 hover:bg-red-700"
-                            onClick={() => handleDelete(id)}
+                      {/* delete */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-red-50"
                           >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Delete this subscriber?
+                            </AlertDialogTitle>
+
+                            <AlertDialogDescription>
+                              This email will no longer receive poem updates.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                            <AlertDialogAction
+                              className="bg-red-600 hover:bg-red-700"
+                              onClick={() => handleDelete(id)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </td>
                 </tr>
               );
@@ -132,9 +163,9 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
         </table>
       </div>
 
-      <div className="border-t px-6 py-3 text-xs text-muted-foreground flex justify-between">
-        <span>{subscribers.length} results</span>
-        <span>Satinder Singh Sall - Admin Panel</span>
+      {/* Footer */}
+      <div className="border-t px-6 py-3 text-xs text-slate-500 bg-slate-50">
+        {subscribers.length} results
       </div>
     </Card>
   );
