@@ -1,6 +1,65 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fontsource/playfair-display";
+
+/* body {
+  font-family: "Playfair Display", serif;
+} */
+
+/* 🐦 Bird float */
+@keyframes floatX {
+  0%,
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  50% {
+    transform: translateX(20px) translateY(-10px);
+    -webkit-transform: translateX(20px) translateY(-10px);
+    -moz-transform: translateX(20px) translateY(-10px);
+    -ms-transform: translateX(20px) translateY(-10px);
+    -o-transform: translateX(20px) translateY(-10px);
+  }
+}
+
+/* 🌿 Leaf float */
+@keyframes floatLeaf {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(6deg);
+  }
+}
+
+/* 🪑 Rocking chair */
+@keyframes rockChair {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* Utility classes */
+.animate-bird {
+  animation: floatX 2s ease-in-out infinite;
+  -webkit-animation: floatX 2s ease-in-out infinite;
+}
+
+.animate-leaf {
+  animation: floatLeaf 5s ease-in-out infinite;
+  -webkit-animation: floatLeaf 5s ease-in-out infinite;
+}
+
+.animate-chair {
+  animation: rockChair 2s ease-in-out infinite;
+  transform-origin: bottom center;
+  -webkit-animation: rockChair 2s ease-in-out infinite;
+}
 
 @custom-variant dark (&:is(.dark *));
 
