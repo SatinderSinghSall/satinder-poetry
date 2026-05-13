@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 
@@ -49,25 +50,131 @@ export default function CTA() {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md rounded-3xl">
-              <DialogHeader className="text-center">
-                <DialogTitle className="font-serif text-2xl text-slate-800">
+            <DialogContent
+              showCloseButton={false}
+              className="
+    overflow-hidden
+    border border-white/10
+    bg-[#111111]/95
+    backdrop-blur-2xl
+    text-white
+    sm:max-w-lg
+    rounded-[32px]
+    p-0
+    shadow-[0_20px_80px_rgba(0,0,0,0.6)]
+  "
+            >
+              {/* Background glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2b2118]/40 via-transparent to-[#1a1a1a]" />
+
+              {/* Decorative blur */}
+              <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#d6b98c]/10 blur-3xl" />
+
+              {/* Close Button */}
+              <DialogClose asChild>
+                <button
+                  className="
+      absolute right-5 top-5 z-20
+      flex h-10 w-10 items-center justify-center
+      rounded-full
+      border border-white/10
+      bg-white/5
+      text-white/70
+      backdrop-blur-md
+      transition-all duration-300
+      hover:bg-white/10
+      hover:text-white
+      hover:rotate-90
+    "
+                >
+                  ✕
+                </button>
+              </DialogClose>
+
+              {/* Content */}
+              <div className="relative z-10 px-8 py-12 text-center">
+                {/* Small label */}
+                <p
+                  className="
+        mb-4
+        text-[11px]
+        uppercase
+        tracking-[0.35em]
+        text-[#c7b299]
+      "
+                >
+                  Poetry Submission Portal
+                </p>
+
+                {/* Main heading */}
+                <DialogTitle
+                  className="
+        font-serif
+        text-4xl
+        md:text-5xl
+        text-[#f5efe6]
+        leading-tight
+      "
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                  }}
+                >
                   Coming Soon
                 </DialogTitle>
 
-                <DialogDescription className="mt-4 text-slate-600 leading-relaxed">
-                  We’re carefully crafting a gentle space for poets to share
-                  their work.
-                  <br />
-                  <br />
-                  The submission feature will be available very soon.
-                </DialogDescription>
-              </DialogHeader>
+                {/* Decorative line */}
+                <div className="mx-auto my-6 h-px w-24 bg-gradient-to-r from-transparent via-[#d6b98c] to-transparent" />
 
-              <div className="mt-6 text-center">
-                <Button variant="outline" className="rounded-xl">
-                  I’ll be back ✨
-                </Button>
+                {/* Description */}
+                <DialogDescription
+                  className="
+        mx-auto
+        max-w-md
+        text-base
+        leading-8
+        text-[#d8d1c7]
+      "
+                  style={{
+                    fontFamily: "'Crimson Text', serif",
+                  }}
+                >
+                  We’re quietly building a gentle corner where poets can share
+                  their verses, stories, and midnight thoughts.
+                  <br />
+                  <br />
+                  The submission experience will arrive very soon.
+                </DialogDescription>
+
+                {/* Bottom actions */}
+                <div className="mt-10 flex items-center justify-center gap-4">
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      className="
+      rounded-full
+      border border-[#d6b98c]/30
+      bg-white/5
+      px-8 py-6
+      text-sm
+      uppercase
+      tracking-[0.2em]
+      text-[#f5efe6]
+      backdrop-blur-md
+      transition-all duration-300
+      hover:bg-white/10
+      hover:border-[#d6b98c]/60
+      hover:scale-105
+    "
+                    >
+                      I’ll Be Back ✨
+                    </Button>
+                  </DialogClose>
+                </div>
+
+                {/* Footer text */}
+                <p className="mt-8 text-xs tracking-[0.25em] uppercase text-[#8f7d68]">
+                  Crafted slowly • Written softly
+                </p>
               </div>
             </DialogContent>
           </Dialog>
