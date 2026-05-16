@@ -1,14 +1,15 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "@/api/api";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+
 import {
   ChevronLeft,
   ChevronRight,
   Search,
   SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
 
 const POEMS_PER_PAGE = 6;
@@ -23,8 +24,6 @@ export default function Poems() {
   const [themeFilter, setThemeFilter] = useState("all");
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
-
-  /* ---------------- Fetch ---------------- */
 
   useEffect(() => {
     const fetchPoems = async () => {
@@ -42,10 +41,11 @@ export default function Poems() {
   }, []);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, [page]);
-
-  /* ---------------- Derived ---------------- */
 
   const themes = useMemo(() => {
     return [...new Set(poems.map((p) => p.theme).filter(Boolean))];
@@ -84,135 +84,562 @@ export default function Poems() {
   const start = (page - 1) * POEMS_PER_PAGE;
   const currentPoems = filteredPoems.slice(start, start + POEMS_PER_PAGE);
 
-  /* ================================================= */
-  /* UI */
-  /* ================================================= */
-
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-amber-50 via-rose-50 to-stone-100 px-4 sm:px-6 py-10">
-      {/* glow */}
-      <div className="absolute inset-0 blur-3xl opacity-40 bg-[radial-gradient(circle_at_30%_20%,#fde68a,transparent_40%),radial-gradient(circle_at_80%_60%,#fbcfe8,transparent_40%)]" />
+    <div
+      className="
+      relative
+      min-h-screen
+      overflow-hidden
 
-      <div className="relative max-w-6xl mx-auto space-y-14">
-        {/* ================= Header ================= */}
-        <header className="text-center space-y-3">
-          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-stone-800">
-            Timeless Poetry Collection
-          </h1>
-          <p className="text-stone-500 italic text-lg">
-            where words whisper and verses breathe
-          </p>
-        </header>
+      bg-[radial-gradient(circle_at_top,#fdf6ec,transparent_35%),radial-gradient(circle_at_bottom,#f8e7ec,transparent_35%),linear-gradient(to_bottom_right,#f8f5f2,#f5efe8,#f7f3f0)]
 
-        {/* ================= Search + Filters ================= */}
-        {!loading && (
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative w-full sm:max-w-sm">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
-              />
-              <input
-                placeholder="Search poems..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border bg-white/70 backdrop-blur text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
-              />
+      px-3
+      sm:px-6
+      lg:px-8
+
+      py-6
+      sm:py-10
+    "
+    >
+      <div
+        className="
+        absolute
+        inset-0
+        bg-[radial-gradient(circle_at_20%_20%,rgba(251,191,36,0.15),transparent_25%),radial-gradient(circle_at_80%_30%,rgba(244,114,182,0.12),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(120,113,108,0.08),transparent_25%)]
+        blur-3xl
+      "
+      />
+
+      <div
+        className="
+          absolute
+          inset-0
+          opacity-[0.025]
+          pointer-events-none
+        "
+        style={{
+          backgroundImage: `
+          radial-gradient(rgba(0,0,0,0.04) 0.6px, transparent 0.6px)
+        `,
+          backgroundSize: "6px 6px",
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto space-y-10 sm:space-y-14">
+        <header
+          className="
+          relative
+          overflow-hidden
+
+          min-h-[92vh]
+          sm:min-h-screen
+
+          flex
+          items-center
+          justify-center
+
+          rounded-[34px]
+
+          border
+          border-white/40
+
+          bg-white/40
+          backdrop-blur-2xl
+
+          px-6
+          py-14
+
+          sm:px-10
+          sm:py-20
+
+          text-center
+
+          shadow-[0_10px_60px_rgba(0,0,0,0.08)]
+        "
+        >
+          {/* ambient glow */}
+          <div className="absolute top-0 left-0 w-72 h-72 bg-amber-200/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-72 h-72 bg-rose-200/30 rounded-full blur-3xl" />
+
+          {/* soft gradient overlay */}
+          <div
+            className="
+            absolute
+            inset-0
+
+            bg-gradient-to-br
+            from-amber-50/40
+            via-transparent
+            to-rose-100/30
+          "
+          />
+
+          {/* content */}
+          <div
+            className="
+            relative
+            z-10
+
+            flex
+            flex-col
+            items-center
+            justify-center
+
+            w-full
+            max-w-5xl
+
+            mx-auto
+          "
+          >
+            {/* top badge */}
+            <div
+              className="
+              mb-8
+
+              inline-flex
+              items-center
+              gap-3
+
+              rounded-full
+
+              border
+              border-stone-200/70
+
+              bg-white/60
+              backdrop-blur-xl
+
+              px-5
+              py-3
+
+              text-[11px]
+              sm:text-xs
+
+              uppercase
+              tracking-[0.35em]
+
+              text-stone-600
+
+              shadow-sm
+            "
+            >
+              <Sparkles size={14} />
+              Poetry • Stories • Reflections
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-              <select
-                value={themeFilter}
-                onChange={(e) => {
-                  setThemeFilter(e.target.value);
-                  setPage(1);
-                }}
-                className="rounded-xl border bg-white/70 backdrop-blur px-3 py-2 text-sm"
+            {/* heading */}
+            <h1
+              className="
+              font-serif
+
+              text-[3.2rem]
+              leading-[0.95]
+
+              sm:text-7xl
+              lg:text-8xl
+              xl:text-[7rem]
+
+              tracking-tight
+
+              text-stone-900
+            "
+            >
+              Timeless Poetry
+              <span
+                className="
+                mt-2
+
+                block
+
+                italic
+                font-light
+
+                text-stone-500
+              "
               >
-                <option value="all">All themes</option>
-                {themes.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
+                & Quiet Reflections
+              </span>
+            </h1>
 
-              <div className="flex items-center gap-2 text-sm">
-                <SlidersHorizontal size={16} className="text-stone-400" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-xl border bg-white/70 backdrop-blur px-3 py-2 text-sm"
-                >
-                  <option value="newest">Newest</option>
-                  <option value="views">Most Viewed</option>
-                  <option value="reading">Shortest Read</option>
-                </select>
-              </div>
+            {/* subtitle */}
+            <p
+              className="
+              mt-10
 
-              <label className="flex items-center gap-2 text-sm text-stone-600">
+              max-w-3xl
+
+              text-stone-600
+
+              text-lg
+              sm:text-xl
+
+              leading-relaxed
+              sm:leading-loose
+            "
+            >
+              A curated sanctuary of verses, midnight thoughts, fleeting
+              emotions, and stories written softly for wandering souls.
+            </p>
+
+            {/* CTA buttons */}
+            <div
+              className="
+              mt-12
+
+              flex
+              flex-col
+              sm:flex-row
+
+              items-center
+              gap-4
+            "
+            >
+              <Link
+                to="/poems"
+                className="
+                inline-flex
+                items-center
+                justify-center
+
+                rounded-full
+
+                bg-stone-900
+                text-white
+
+                px-8
+                py-4
+
+                text-sm
+                uppercase
+                tracking-[0.18em]
+
+                transition-all
+                duration-300
+
+                hover:bg-black
+                hover:scale-[1.02]
+
+                shadow-xl
+              "
+              >
+                Explore Poems
+              </Link>
+
+              <button
+                className="
+                inline-flex
+                items-center
+                justify-center
+
+                rounded-full
+
+                border
+                border-stone-300/70
+
+                bg-white/60
+                backdrop-blur-xl
+
+                px-8
+                py-4
+
+                text-sm
+                uppercase
+                tracking-[0.18em]
+
+                text-stone-700
+
+                transition-all
+                duration-300
+
+                hover:bg-white
+                hover:border-stone-400
+              "
+              >
+                Read Manifesto
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {!loading && (
+          <div
+            className="
+            rounded-[28px]
+
+            border
+            border-white/40
+
+            bg-white/50
+            backdrop-blur-2xl
+
+            p-4
+            sm:p-6
+
+            shadow-[0_8px_40px_rgba(0,0,0,0.05)]
+          "
+          >
+            <div
+              className="
+              flex
+              flex-col
+              xl:flex-row
+
+              gap-4
+
+              xl:items-center
+              xl:justify-between
+            "
+            >
+              <div className="relative w-full xl:max-w-md">
+                <Search
+                  size={18}
+                  className="
+                    absolute
+                    left-4
+                    top-1/2
+                    -translate-y-1/2
+                    text-black
+                  "
+                />
+
                 <input
-                  type="checkbox"
-                  checked={featuredOnly}
+                  placeholder="Search poems, authors, emotions..."
+                  value={search}
                   onChange={(e) => {
-                    setFeaturedOnly(e.target.checked);
+                    setSearch(e.target.value);
                     setPage(1);
                   }}
+                  className="
+                    w-full
+                    h-12
+
+                    rounded-2xl
+
+                    border
+                    border-stone-200/70
+
+                    bg-white/70
+                    backdrop-blur-xl
+
+                    pl-11
+                    pr-4
+
+                    text-sm
+                    text-stone-700
+
+                    shadow-sm
+
+                    transition-all
+
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-amber-200
+                    focus:border-amber-300
+                  "
                 />
-                Featured
-              </label>
+              </div>
+
+              <div
+                className="
+                grid
+                grid-cols-1
+                sm:grid-cols-2
+                lg:flex
+
+                gap-3
+
+                items-stretch
+              "
+              >
+                <select
+                  value={themeFilter}
+                  onChange={(e) => {
+                    setThemeFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  className="
+                    h-12
+
+                    rounded-2xl
+
+                    border
+                    border-stone-200/70
+
+                    bg-white/70
+                    backdrop-blur-xl
+
+                    px-4
+
+                    text-sm
+                    text-stone-700
+
+                    shadow-sm
+
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-amber-200
+                  "
+                >
+                  <option value="all">All Themes</option>
+
+                  {themes.map((theme) => (
+                    <option key={theme} value={theme}>
+                      {theme}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="relative">
+                  <SlidersHorizontal
+                    size={16}
+                    className="
+                      absolute
+                      left-4
+                      top-1/2
+                      -translate-y-1/2
+                      text-black
+                    "
+                  />
+
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="
+                      h-12
+
+                      rounded-2xl
+
+                      border
+                      border-stone-200/70
+
+                      bg-white/70
+                      backdrop-blur-xl
+
+                      pl-10
+                      pr-4
+
+                      text-sm
+                      text-stone-700
+
+                      shadow-sm
+
+                      focus:outline-none
+                      focus:ring-2
+                      focus:ring-amber-200
+                    "
+                  >
+                    <option value="newest">Newest</option>
+                    <option value="views">Most Viewed</option>
+                    <option value="reading">Shortest Read</option>
+                  </select>
+                </div>
+
+                <label
+                  className="
+                  flex
+                  items-center
+                  justify-center
+                  gap-3
+
+                  rounded-2xl
+
+                  border
+                  border-stone-200/70
+
+                  bg-white/70
+                  backdrop-blur-xl
+
+                  px-4
+
+                  text-sm
+                  text-stone-700
+
+                  shadow-sm
+                "
+                >
+                  <input
+                    type="checkbox"
+                    checked={featuredOnly}
+                    onChange={(e) => {
+                      setFeaturedOnly(e.target.checked);
+                      setPage(1);
+                    }}
+                    className="accent-amber-500"
+                  />
+                  Featured
+                </label>
+              </div>
             </div>
           </div>
         )}
 
-        {/* ================= Better Loader ================= */}
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            className="
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            xl:grid-cols-3
+            gap-8
+          "
+          >
             {[...Array(6)].map((_, i) => (
-              <Card
+              <div
                 key={i}
                 className="
-                  overflow-hidden rounded-3xl
-                  border border-stone-300/60
-                  bg-white/80
-                  shadow-md
-                "
+                overflow-hidden
+
+                rounded-[30px]
+
+                border
+                border-white/50
+
+                bg-white/60
+
+                animate-pulse
+              "
               >
-                {/* FULL-BLEED image skeleton (no cut look) */}
-                <div className="h-40 w-full bg-stone-300/80 animate-pulse" />
+                <div className="h-56 bg-stone-200" />
 
                 <div className="p-6 space-y-4">
-                  {/* title */}
-                  <div className="h-5 w-3/4 bg-stone-300/80 rounded animate-pulse" />
+                  <div className="h-6 rounded bg-stone-200 w-3/4" />
 
-                  {/* author */}
-                  <div className="h-4 w-1/2 bg-stone-300/70 rounded animate-pulse" />
+                  <div className="h-4 rounded bg-stone-200 w-1/3" />
 
-                  {/* lines */}
-                  <div className="h-3 w-full bg-stone-300/60 rounded animate-pulse" />
-                  <div className="h-3 w-5/6 bg-stone-300/60 rounded animate-pulse" />
+                  <div className="space-y-2">
+                    <div className="h-3 rounded bg-stone-200" />
+                    <div className="h-3 rounded bg-stone-200 w-5/6" />
+                    <div className="h-3 rounded bg-stone-200 w-4/6" />
+                  </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         )}
 
-        {/* ================= EMPTY STATE ================= */}
         {!loading && filteredPoems.length === 0 && (
-          <div className="flex justify-center py-24">
-            <div className="text-center space-y-4 max-w-md animate-in fade-in duration-500">
-              <div className="text-5xl opacity-40">📭</div>
+          <div className="py-24 flex justify-center">
+            <div className="text-center max-w-md">
+              <div className="text-6xl mb-4">📜</div>
 
-              <h3 className="font-serif text-xl text-stone-800">
-                No poems found
+              <h3
+                className="
+                font-serif
+                text-3xl
+                text-stone-900
+              "
+              >
+                No Poems Found
               </h3>
 
-              <p className="text-sm text-stone-500">
+              <p
+                className="
+                mt-4
+                text-stone-500
+                leading-relaxed
+              "
+              >
                 Try adjusting your search or filters. Sometimes the quietest
-                words hide deeper.
+                verses hide the deepest meanings.
               </p>
 
               <button
@@ -223,147 +650,414 @@ export default function Poems() {
                   setPage(1);
                 }}
                 className="
-                mt-4 px-4 py-2 text-sm rounded-full
-                bg-white/70 backdrop-blur
-                border border-stone-200
-                hover:bg-white transition
-              "
+                  mt-6
+
+                  rounded-full
+
+                  bg-white/70
+                  backdrop-blur-xl
+
+                  border
+                  border-stone-200
+
+                  px-6
+                  py-3
+
+                  text-sm
+                  text-stone-700
+
+                  hover:bg-white
+
+                  transition
+                "
               >
-                Reset filters
+                Reset Filters
               </button>
             </div>
           </div>
         )}
 
-        {/* ================= Cards ================= */}
         {!loading && currentPoems.length > 0 && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+              className="
+              grid
+              grid-cols-1
+              md:grid-cols-2
+              xl:grid-cols-3
+              gap-8
+            "
+            >
               {currentPoems.map((poem) => (
                 <Card
                   key={poem._id}
                   className="
-                    group relative rounded-3xl
-                    bg-white/75 backdrop-blur-xl
-                    border border-stone-200/60
-                    shadow-sm hover:shadow-2xl
-                    hover:-translate-y-2
-                    transition-all duration-500
-                    overflow-hidden
-                  "
+                  group
+                  relative
+
+                  overflow-hidden
+
+                  rounded-[30px]
+
+                  border
+                  border-white/50
+
+                  bg-white/60
+                  backdrop-blur-2xl
+
+                  shadow-[0_10px_40px_rgba(0,0,0,0.06)]
+
+                  hover:shadow-[0_20px_70px_rgba(0,0,0,0.12)]
+
+                  transition-all
+                  duration-700
+
+                  hover:-translate-y-1
+                "
                 >
-                  {/* Featured badge */}
                   {poem.featured && (
-                    <span className="absolute top-4 right-4 bg-amber-100 text-amber-700 text-xs px-3 py-1 rounded-full z-10">
-                      ⭐ Featured
-                    </span>
+                    <div
+                      className="
+                      absolute
+                      top-4
+                      right-4
+                      z-20
+
+                      rounded-full
+
+                      bg-white/80
+                      backdrop-blur
+
+                      border
+                      border-white/70
+
+                      px-3
+                      py-1
+
+                      text-[11px]
+                      uppercase
+                      tracking-[0.15em]
+
+                      text-amber-700
+                    "
+                    >
+                      Featured
+                    </div>
                   )}
 
-                  {/* Full-bleed image / fallback */}
-                  <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-3xl relative">
+                  <div className="relative overflow-hidden">
                     {poem.coverImage ? (
                       <>
                         <img
                           src={poem.coverImage}
-                          alt=""
-                          className="h-40 w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          alt={poem.title}
+                          className="
+                          h-52
+                          sm:h-56
+                          w-full
+
+                          object-cover
+                          object-center
+
+                          transition-transform
+                          duration-1000
+
+                          group-hover:scale-105
+                        "
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+
+                        <div
+                          className="
+                          absolute
+                          inset-0
+
+                          bg-gradient-to-t
+                          from-black/50
+                          via-black/10
+                          to-transparent
+                        "
+                        />
                       </>
                     ) : (
-                      <div className="h-40 bg-gradient-to-br from-amber-100 via-rose-100 to-stone-100 flex items-center justify-center">
-                        <span className="text-stone-500 font-serif italic">
+                      <div
+                        className="
+                        h-52
+                        sm:h-56
+
+                        bg-gradient-to-br
+                        from-amber-100
+                        via-rose-100
+                        to-stone-100
+
+                        flex
+                        items-center
+                        justify-center
+                      "
+                      >
+                        <span
+                          className="
+                          font-serif
+                          italic
+                          text-stone-500
+                          text-xl
+                        "
+                        >
                           {poem.theme || "Poetry"}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  <CardHeader className="space-y-2 pb-2">
-                    <CardTitle className="font-serif text-xl text-stone-900">
-                      {poem.title}
-                    </CardTitle>
-                    <p className="italic text-sm text-stone-500">
-                      — {poem.author}
-                    </p>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-stone-600 leading-relaxed line-clamp-3">
-                      {poem.summary || poem.content}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 text-xs">
+                  <CardContent className="p-6 sm:p-7">
+                    <div className="flex flex-wrap gap-2 mb-5">
                       {poem.theme && (
-                        <span className="px-2 py-1 bg-stone-100 text-stone-600 rounded-full">
+                        <span
+                          className="
+                          rounded-full
+
+                          bg-stone-900/5
+                          backdrop-blur
+
+                          px-3
+                          py-1
+
+                          text-[11px]
+                          uppercase
+                          tracking-[0.18em]
+
+                          text-stone-600
+                        "
+                        >
                           {poem.theme}
                         </span>
                       )}
+
                       {poem.readingTime && (
-                        <span className="text-stone-400">
-                          {poem.readingTime}m read
-                        </span>
-                      )}
-                      {poem.views && (
-                        <span className="text-stone-400">
-                          {poem.views} views
+                        <span
+                          className="
+                          rounded-full
+
+                          bg-stone-900/5
+
+                          px-3
+                          py-1
+
+                          text-[11px]
+                          uppercase
+                          tracking-[0.18em]
+
+                          text-stone-500
+                        "
+                        >
+                          {poem.readingTime} min read
                         </span>
                       )}
                     </div>
 
-                    <Link
-                      to={`/poems/${poem._id}`}
-                      className="inline-block text-sm font-medium text-stone-700 hover:text-black transition"
+                    <h2
+                      className="
+                      font-serif
+
+                      text-2xl
+
+                      leading-snug
+                      tracking-tight
+
+                      text-stone-900
+                    "
                     >
-                      Read poem →
-                    </Link>
+                      {poem.title}
+                    </h2>
+
+                    <p
+                      className="
+                      mt-2
+
+                      text-sm
+                      italic
+                      tracking-wide
+
+                      text-stone-500
+                    "
+                    >
+                      — {poem.author}
+                    </p>
+
+                    <p
+                      className="
+                      mt-5
+
+                      text-[15px]
+                      leading-7
+
+                      text-stone-600
+
+                      line-clamp-4
+                    "
+                    >
+                      {poem.summary || poem.content}
+                    </p>
+
+                    <div
+                      className="
+                      mt-8
+
+                      flex
+                      items-center
+                      justify-between
+                    "
+                    >
+                      <span
+                        className="
+                        text-xs
+                        text-stone-400
+                      "
+                      >
+                        {poem.views || 0} views
+                      </span>
+
+                      <Link
+                        to={`/poems/${poem._id}`}
+                        className="
+                        inline-flex
+                        items-center
+                        gap-2
+
+                        text-sm
+                        font-medium
+
+                        text-stone-800
+
+                        transition-all
+
+                        hover:gap-3
+                      "
+                      >
+                        Read Poem
+                        <ChevronRight size={16} />
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-8 pt-14">
-                {/* Previous */}
+              <div
+                className="
+                flex
+                flex-wrap
+
+                items-center
+                justify-center
+
+                gap-4
+
+                pt-8
+                sm:pt-12
+              "
+              >
                 <button
                   onClick={() => setPage((p) => Math.max(p - 1, 1))}
                   disabled={page === 1}
                   className={`
-                  flex items-center gap-2 px-4 py-2 rounded-full text-sm
-                  transition
-                  ${
-                    page === 1
-                      ? "opacity-30 cursor-not-allowed text-stone-400"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-white/60"
-                  }
-                `}
+                    inline-flex
+                    items-center
+                    gap-2
+
+                    rounded-full
+
+                    px-5
+                    py-3
+
+                    text-sm
+
+                    transition-all
+
+                    ${
+                      page === 1
+                        ? `
+                          opacity-40
+                          cursor-not-allowed
+                          bg-white/40
+                        `
+                        : `
+                          bg-white/70
+                          backdrop-blur-xl
+
+                          border
+                          border-white/60
+
+                          hover:bg-white
+                          hover:shadow-lg
+                        `
+                    }
+                  `}
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={16} />
                   Previous
                 </button>
 
-                {/* Page indicator */}
-                <span className="text-sm italic text-stone-500">
-                  Page {page} of {totalPages}
-                </span>
+                <div
+                  className="
+                  rounded-full
 
-                {/* Next */}
+                  bg-white/70
+                  backdrop-blur-xl
+
+                  border
+                  border-white/60
+
+                  px-5
+                  py-3
+
+                  text-sm
+                  italic
+                  text-stone-600
+                "
+                >
+                  Page {page} of {totalPages}
+                </div>
+
                 <button
                   onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                   disabled={page === totalPages}
                   className={`
-                  flex items-center gap-2 px-4 py-2 rounded-full text-sm
-                  transition
-                  ${
-                    page === totalPages
-                      ? "opacity-30 cursor-not-allowed text-stone-400"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-white/60"
-                  }
-                `}
+                    inline-flex
+                    items-center
+                    gap-2
+
+                    rounded-full
+
+                    px-5
+                    py-3
+
+                    text-sm
+
+                    transition-all
+
+                    ${
+                      page === totalPages
+                        ? `
+                          opacity-40
+                          cursor-not-allowed
+                          bg-white/40
+                        `
+                        : `
+                          bg-white/70
+                          backdrop-blur-xl
+
+                          border
+                          border-white/60
+
+                          hover:bg-white
+                          hover:shadow-lg
+                        `
+                    }
+                  `}
                 >
                   Next
-                  <ChevronRight size={18} />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}
