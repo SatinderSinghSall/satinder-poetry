@@ -55,102 +55,151 @@ export default function NewsletterSignup() {
   };
 
   return (
-    <section id="newsletter" className="relative py-40 overflow-hidden">
-      {/* soft paper gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-100" />
+    <section
+      id="newsletter"
+      className="relative overflow-hidden bg-[#fafaf9] py-32"
+    >
+      {/* soft radial glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.04),transparent_55%)]" />
 
-      {/* poetic glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05),transparent_65%)]" />
-
-      <div className="relative max-w-2xl mx-auto px-6">
+      <div className="relative mx-auto max-w-3xl px-6">
         <div
           className="
-          bg-white/90 backdrop-blur-xl
-          rounded-3xl
-          shadow-2xl shadow-slate-200/60
-          border border-slate-100
-          p-10 sm:p-14
-          text-center
-          transition-all
+          rounded-[32px]
+          border border-black/5
+          bg-white
+          px-8 py-16 sm:px-16
+          shadow-[0_10px_60px_rgba(0,0,0,0.04)]
         "
         >
-          {/* Icon */}
-          <div className="flex justify-center mb-5">
-            <div className="p-3 rounded-full bg-slate-100">
-              <Mail className="w-6 h-6 text-slate-600" />
-            </div>
-          </div>
-
-          {/* Heading */}
-          <h2 className="text-3xl sm:text-4xl font-serif text-slate-900 mb-3">
-            Stay Inspired
-          </h2>
-
-          {/* Subtext */}
-          <p className="text-slate-500 mb-10 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
-            Receive new poems, reflections, and quiet words — delivered gently
-            to your inbox.
-          </p>
-
-          {/* Form */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Input
-              type="email"
-              placeholder="you@poetry.com"
-              value={email}
-              disabled={loading}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={handleKeyDown}
+          {/* top label */}
+          <div className="mb-8 flex justify-center">
+            <div
               className="
-                h-12 rounded-xl
-                focus:ring-2 focus:ring-slate-300
-                transition
-              "
-              aria-label="Email address"
-            />
-
-            <Button
-              type="button"
-              onClick={handleSubscribe}
-              disabled={loading}
-              className="
-                h-12 px-6 rounded-xl
-                bg-slate-900 text-white
-                hover:bg-slate-800
-                transition-all
-                flex items-center justify-center gap-2
-                disabled:opacity-60
-              "
+              inline-flex items-center gap-2
+              rounded-full
+              border border-slate-200
+              bg-slate-50
+              px-4 py-2
+              text-xs font-medium tracking-[0.2em]
+              text-slate-500
+            "
             >
-              {loading ? (
-                <>
-                  <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Subscribing...
-                </>
-              ) : (
-                "Subscribe"
-              )}
-            </Button>
+              <Mail className="h-4 w-4" />
+              NEWSLETTER
+            </div>
           </div>
 
-          {/* Feedback */}
-          {message && (
-            <div className="mt-6 flex justify-center">
-              {status === "success" ? (
-                <p className="flex items-center gap-2 text-emerald-600 text-sm animate-fade-in">
-                  <CheckCircle2 size={16} />
-                  {message}
-                </p>
-              ) : (
-                <p className="text-rose-600 text-sm">{message}</p>
-              )}
-            </div>
-          )}
+          {/* heading */}
+          <div className="text-center">
+            <h2
+              className="
+              font-serif
+              text-4xl
+              leading-tight
+              tracking-tight
+              text-slate-900
+              sm:text-5xl
+            "
+            >
+              Quiet words,
+              <br />
+              delivered gently.
+            </h2>
 
-          {/* Reassurance */}
-          <p className="mt-10 text-xs text-slate-400">
-            No spam • Unsubscribe anytime • Written with care
-          </p>
+            <p
+              className="
+              mx-auto mt-6 max-w-xl
+              text-[15px]
+              leading-8
+              text-slate-500
+              sm:text-base
+            "
+            >
+              Receive newly published poems, reflections, and thoughtful writing
+              — carefully sent to your inbox.
+            </p>
+          </div>
+
+          {/* form */}
+          <div className="mx-auto mt-14 max-w-xl">
+            <div
+              className="
+              flex flex-col gap-4
+              sm:flex-row
+            "
+            >
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                disabled={loading}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="
+                h-14
+                rounded-2xl
+                border-slate-200
+                bg-[#fcfcfb]
+                px-5
+                text-base
+                shadow-none
+                focus-visible:ring-1
+                focus-visible:ring-slate-300
+              "
+              />
+
+              <Button
+                type="button"
+                onClick={handleSubscribe}
+                disabled={loading}
+                className="
+                h-14
+                rounded-2xl
+                bg-slate-900
+                px-8
+                text-sm
+                font-medium
+                tracking-wide
+                text-white
+                transition-all
+                hover:bg-slate-800
+                hover:scale-[1.01]
+                active:scale-[0.99]
+              "
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Subscribing
+                  </div>
+                ) : (
+                  "Subscribe"
+                )}
+              </Button>
+            </div>
+
+            {/* message */}
+            {message && (
+              <div className="mt-5 text-center">
+                {status === "success" ? (
+                  <p className="inline-flex items-center gap-2 text-sm text-emerald-600">
+                    <CheckCircle2 size={16} />
+                    {message}
+                  </p>
+                ) : (
+                  <p className="text-sm text-rose-500">{message}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* footer note */}
+          <div className="mt-12 text-center">
+            <p className="text-xs tracking-wide text-slate-400">
+              No spam · Unsubscribe anytime · Written with care
+            </p>
+          </div>
         </div>
       </div>
     </section>
