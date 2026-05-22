@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import AuthToast from "@/components/AuthToast";
+
 import API from "@/api/api";
 
 export default function Login() {
@@ -43,9 +46,23 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data));
 
       login(data);
+      toast.custom(() => (
+        <AuthToast
+          type="success"
+          title="Welcome Back"
+          message="Successfully signed into your account."
+        />
+      ));
       navigate("/poems");
-    } catch {
-      setErrors({ general: "Invalid email or password" });
+    } catch (err) {
+      const message =
+        err.response?.data?.message || "Invalid email or password";
+
+      setErrors({ general: message });
+
+      toast.custom(() => (
+        <AuthToast type="error" title="Login Failed" message={message} />
+      ));
     } finally {
       setLoading(false);
     }
@@ -164,6 +181,25 @@ export default function Login() {
               {loading ? "Signing in…" : "Login"}
             </Button>
           </form>
+
+          {/* register link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-500">
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/register"
+                className="
+                  font-medium
+                  text-slate-900
+                  transition
+                  hover:text-slate-700
+                  hover:underline
+                "
+              >
+                Register
+              </Link>
+            </p>
+          </div>
 
           {/* Footer */}
           <p className="mt-8 text-xs text-center text-slate-400">

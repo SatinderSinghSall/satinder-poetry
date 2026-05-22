@@ -1,14 +1,22 @@
+import { CheckCircle2, Mail } from "lucide-react";
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import SubscriptionSuccessModal from "@/components/SubscriptionSuccessModal";
+import SubscriptionErrorModal from "@/components/SubscriptionErrorModal";
+
 import API from "@/api/api";
-import { CheckCircle2, Mail } from "lucide-react";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("idle"); // idle | success | error
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [subscribedEmail, setSubscribedEmail] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   /* ==============================
      Email validation (better)
@@ -23,7 +31,10 @@ export default function NewsletterSignup() {
 
     if (!isValidEmail(email)) {
       setStatus("error");
-      setMessage("Please enter a valid email address.");
+
+      setErrorMessage("Please enter a valid email address.");
+      setShowErrorModal(true);
+
       return;
     }
 
@@ -36,12 +47,20 @@ export default function NewsletterSignup() {
 
       setStatus("success");
       setMessage(res.data.message || "You’re subscribed ✨");
+
+      setSubscribedEmail(email);
+      setShowSuccessModal(true);
+
       setEmail("");
     } catch (err) {
+      const backendError =
+        err.response?.data?.message || "Subscription failed. Please try again.";
+
       setStatus("error");
-      setMessage(
-        err.response?.data?.message || "Subscription failed. Please try again.",
-      );
+      setMessage(backendError);
+
+      setErrorMessage(backendError);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -202,6 +221,18 @@ export default function NewsletterSignup() {
           </div>
         </div>
       </div>
+
+      <SubscriptionSuccessModal
+        open={showSuccessModal}
+        email={subscribedEmail}
+        onClose={() => setShowSuccessModal(false)}
+      />
+
+      <SubscriptionErrorModal
+        open={showErrorModal}
+        error={errorMessage}
+        onClose={() => setShowErrorModal(false)}
+      />
     </section>
   );
 }

@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import AuthToast from "@/components/AuthToast";
+
 import API from "@/api/api";
 
 export default function Register() {
@@ -48,11 +51,26 @@ export default function Register() {
     try {
       await API.post("/auth/register", form);
 
-      navigate("/login", {
-        state: { message: "Account created successfully. Please log in." },
-      });
-    } catch {
-      setErrors({ general: "Registration failed. Please try again." });
+      setErrors({});
+
+      toast.custom(() => (
+        <AuthToast
+          type="success"
+          title="Account Created"
+          message="Your account has been created successfully."
+        />
+      ));
+
+      navigate("/login");
+    } catch (err) {
+      const message =
+        err.response?.data?.message || "Registration failed. Please try again.";
+
+      setErrors({ general: message });
+
+      toast.custom(() => (
+        <AuthToast type="error" title="Registration Failed" message={message} />
+      ));
     } finally {
       setLoading(false);
     }
@@ -188,6 +206,25 @@ export default function Register() {
               {loading ? "Creating account…" : "Register"}
             </Button>
           </form>
+
+          {/* login link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-500">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="
+                  font-medium
+                  text-slate-900
+                  transition
+                  hover:text-slate-700
+                  hover:underline
+                "
+              >
+                Login
+              </Link>
+            </p>
+          </div>
 
           {/* footer */}
           <p className="mt-8 text-xs text-center text-slate-400">
