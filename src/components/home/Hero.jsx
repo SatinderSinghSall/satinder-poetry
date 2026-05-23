@@ -2,13 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+import Image2 from "@/assets/images/Image2.png";
+import Image3 from "@/assets/images/Image3.png";
+import Image4 from "@/assets/images/Image4.png";
+
 const images = [
+  Image2,
   "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
   "https://images.unsplash.com/photo-1455390582262-044cdead277a",
+  Image3,
   "https://images.unsplash.com/photo-1507842217343-583bb7270b66",
   // "https://images.unsplash.com/photo-1474932430470-67c8d9aef3e8",
   "https://images.unsplash.com/photo-1519681393784-d120267933ba",
   "https://images.unsplash.com/photo-1516979187457-637abb4f9353",
+  Image4,
   "https://images.unsplash.com/photo-1521587760476-6c12a4b040da",
 ];
 

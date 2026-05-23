@@ -31,6 +31,9 @@ import AddPoem from "./pages/admin/AddPoem";
 import EditPoem from "./pages/admin/EditPoem";
 import PublicLayout from "./layouts/PublicLayout";
 
+/* Components: */
+import ScrollToTopButton from "./components/ScrollToTopButton";
+
 //! To run the frontend for DEVELOPMENT -> npm run dev
 //! To run the frontend for PRODUCTION -> npm run build & npm preview
 
@@ -40,6 +43,7 @@ export default function App() {
       <Toaster richColors position="top-right" />
 
       <ScrollToTop />
+      <ScrollToTopButton />
 
       <Routes>
         {/* ===== PUBLIC LAYOUT ===== */}
