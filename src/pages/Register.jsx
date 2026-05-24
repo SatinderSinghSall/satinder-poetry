@@ -51,15 +51,39 @@ export default function Register() {
     try {
       await API.post("/auth/register", form);
 
+      localStorage.setItem("hasAccount", "true");
+
       setErrors({});
 
-      toast.custom(() => (
-        <AuthToast
-          type="success"
-          title="Account Created"
-          message="Your account has been created successfully."
-        />
-      ));
+      const successToast = toast.custom(
+        () => (
+          <AuthToast
+            type="success"
+            title="Account Created"
+            message="Your account has been created successfully."
+          />
+        ),
+        {
+          duration: 5000,
+        },
+      );
+
+      setTimeout(() => {
+        toast.dismiss(successToast);
+
+        toast.custom(
+          () => (
+            <AuthToast
+              type="info"
+              title="Check Your Inbox"
+              message="We've sent you a welcome email with onboarding details."
+            />
+          ),
+          {
+            duration: 5000,
+          },
+        );
+      }, 4000);
 
       navigate("/login");
     } catch (err) {

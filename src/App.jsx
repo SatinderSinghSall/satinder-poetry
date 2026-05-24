@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 
 import ScrollToTop from "./components/ScrollToTop";
@@ -33,17 +34,57 @@ import PublicLayout from "./layouts/PublicLayout";
 
 /* Components: */
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import EngagementModal from "./components/EngagementModal";
 
 //! To run the frontend for DEVELOPMENT -> npm run dev
 //! To run the frontend for PRODUCTION -> npm run build & npm preview
 
 export default function App() {
+  const location = useLocation();
+  const [showEngagementModal, setShowEngagementModal] = useState(false);
+  const [needsAccount, setNeedsAccount] = useState(false);
+  const [needsNewsletter, setNeedsNewsletter] = useState(false);
+
+  useEffect(() => {
+    const excludedRoutes = ["/login", "/register", "/newsletter"];
+
+    const isExcludedRoute = excludedRoutes.includes(location.pathname);
+
+    const isAdminRoute = location.pathname.startsWith("/admin");
+
+    if (isExcludedRoute || isAdminRoute) return;
+
+    const hasAccount = localStorage.getItem("hasAccount");
+
+    const hasNewsletter = localStorage.getItem("hasNewsletter");
+
+    const missingAccount = !hasAccount;
+    const missingNewsletter = !hasNewsletter;
+
+    setNeedsAccount(missingAccount);
+    setNeedsNewsletter(missingNewsletter);
+
+    if (missingAccount || missingNewsletter) {
+      const timer = setTimeout(() => {
+        setShowEngagementModal(true);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname]);
+
   return (
     <>
       <Toaster richColors position="top-right" />
 
       <ScrollToTop />
       <ScrollToTopButton />
+      <EngagementModal
+        open={showEngagementModal}
+        onClose={() => setShowEngagementModal(false)}
+        needsAccount={needsAccount}
+        needsNewsletter={needsNewsletter}
+      />
 
       <Routes>
         {/* ===== PUBLIC LAYOUT ===== */}

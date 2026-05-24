@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import SubscriptionSuccessModal from "@/components/SubscriptionSuccessModal";
 import SubscriptionErrorModal from "@/components/SubscriptionErrorModal";
 
@@ -44,6 +45,8 @@ export default function NewsletterSignup() {
 
     try {
       const res = await API.post("/subscribe", { email });
+
+      localStorage.setItem("hasNewsletter", "true");
 
       setStatus("success");
       setMessage(res.data.message || "You’re subscribed ✨");
