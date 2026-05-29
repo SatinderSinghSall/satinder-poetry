@@ -15,6 +15,21 @@ export default function WelcomeBackModal({ open, onClose }) {
   const [showClearModal, setShowClearModal] = useState(false);
 
   useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
 
     document.body.style.overflow = "hidden";
@@ -102,6 +117,8 @@ export default function WelcomeBackModal({ open, onClose }) {
 
             hover:bg-white/10
             hover:text-white
+
+            cursor-pointer
           "
             >
               <X size={20} />

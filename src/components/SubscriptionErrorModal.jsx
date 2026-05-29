@@ -1,6 +1,23 @@
 import { AlertTriangle, X } from "lucide-react";
 
+import { useEffect } from "react";
+
 export default function SubscriptionErrorModal({ open, onClose, error }) {
+  useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -37,6 +54,7 @@ export default function SubscriptionErrorModal({ open, onClose, error }) {
             transition
             hover:bg-slate-100
             hover:text-slate-700
+            cursor-pointer
           "
         >
           <X size={18} />
@@ -138,6 +156,7 @@ export default function SubscriptionErrorModal({ open, onClose, error }) {
               hover:bg-slate-800
               hover:scale-[1.02]
               active:scale-[0.98]
+              cursor-pointer
             "
           >
             Try Again

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function EngagementModal({
   open,
@@ -16,6 +17,18 @@ export default function EngagementModal({
   needsAccount,
   needsNewsletter,
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -82,6 +95,8 @@ export default function EngagementModal({
 
               hover:bg-slate-100
               hover:text-slate-700
+
+              cursor-pointer
             "
           >
             <X size={20} />

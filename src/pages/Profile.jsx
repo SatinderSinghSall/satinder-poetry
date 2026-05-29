@@ -1026,78 +1026,283 @@ overflow-hidden
 function ComingSoonDialog() {
   return (
     <AlertDialog>
-      {" "}
       <AlertDialogTrigger asChild>
         <button
           className="
-rounded-2xl
+            rounded-2xl
 
-        border border-red-400/10
-        bg-red-500/10
+            border border-red-400/10
+            bg-red-500/10
 
-        px-5 py-4
+            px-4 py-3
+            sm:px-5 sm:py-4
 
-        text-sm
-        font-medium
+            text-sm
+            font-medium
 
-        text-red-200
+            text-red-100
 
-        transition-all
+            transition-all
+            duration-300
 
-        hover:bg-red-500/20
+            hover:bg-red-500/20
+            hover:border-red-400/20
+            hover:scale-[1.02]
 
-        cursor-pointer
-      "
+            active:scale-[0.98]
+
+            cursor-pointer
+          "
         >
           Unsubscribe
         </button>
       </AlertDialogTrigger>
+
       <AlertDialogContent
         className="
-      border border-white/10
+          overflow-hidden
 
-      bg-[#0f172a]
-
-      text-white
-    "
-      >
-        <AlertDialogHeader>
-          <AlertDialogTitle
-            className="
-          text-2xl
-        "
-          >
-            Subscription management coming soon
-          </AlertDialogTitle>
-
-          <AlertDialogDescription
-            className="
-          pt-3
-
-          text-slate-400
-          leading-7
-        "
-          >
-            We’re currently crafting a quieter and more flexible subscription
-            management experience. Future updates will allow you to fully manage
-            your poetry preferences and newsletter settings.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <AlertDialogFooter className="pt-5">
-          <AlertDialogCancel
-            className="
           border border-white/10
-          bg-white/5
+
+          bg-[linear-gradient(180deg,#0f172a_0%,#0b1120_100%)]
 
           text-white
 
-          hover:bg-white/10
+          shadow-[0_40px_120px_rgba(0,0,0,0.55)]
+
+          rounded-[28px]
+          sm:rounded-[32px]
+
+          p-0
+
+          w-[calc(100%-24px)]
+          max-w-[720px]
+
+          overflow-y-auto
+
+          max-h-[90vh]
+
+          md:max-h-none
         "
+      >
+        {/* ambient glow */}
+        <div
+          className="
+            absolute inset-0
+
+            bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.16),transparent_42%)]
+
+            pointer-events-none
+          "
+        />
+
+        {/* subtle border */}
+        <div
+          className="
+            absolute inset-[1px]
+
+            rounded-[27px]
+            sm:rounded-[31px]
+
+            border border-white/5
+
+            pointer-events-none
+          "
+        />
+
+        {/* content */}
+        <div
+          className="
+            relative
+
+            px-5 py-6
+
+            sm:px-8 sm:py-8
+
+            md:px-10 md:py-10
+          "
+        >
+          {/* badge */}
+          <div
+            className="
+              inline-flex items-center gap-2
+
+              rounded-full
+
+              border border-indigo-400/15
+              bg-indigo-500/10
+
+              px-3 py-1.5
+              sm:px-4 sm:py-2
+
+              text-[10px]
+              sm:text-[11px]
+
+              font-medium
+              tracking-[0.22em]
+
+              text-indigo-200
+            "
           >
-            Close
-          </AlertDialogCancel>
-        </AlertDialogFooter>
+            ✦ SATINDER POETRY
+          </div>
+
+          {/* title */}
+          <AlertDialogTitle
+            className="
+              mt-6
+
+              max-w-2xl
+
+              font-serif
+
+              text-[32px]
+              leading-[1.08]
+
+              sm:text-[42px]
+
+              tracking-tight
+
+              text-white
+            "
+          >
+            Subscription management
+            <br />
+            crafted with intention.
+          </AlertDialogTitle>
+
+          {/* description */}
+          <AlertDialogDescription
+            className="
+              mt-5
+
+              max-w-2xl
+
+              text-[14px]
+              leading-7
+
+              sm:text-[15px]
+              sm:leading-8
+
+              text-slate-300
+            "
+          >
+            We’re designing a calmer and more thoughtful subscription experience
+            — one that gives you complete control over your poetry journey,
+            reading preferences, and newsletter rituals.
+          </AlertDialogDescription>
+
+          {/* feature card */}
+          <div
+            className="
+              mt-7
+
+              rounded-3xl
+
+              border border-white/5
+              bg-white/[0.03]
+
+              p-4
+              sm:p-5
+
+              backdrop-blur-xl
+            "
+          >
+            <div className="flex items-start gap-4">
+              {/* icon */}
+              <div
+                className="
+                  flex h-11 w-11
+                  sm:h-12 sm:w-12
+
+                  shrink-0
+
+                  items-center justify-center
+
+                  rounded-2xl
+
+                  bg-indigo-500/10
+
+                  text-lg
+                  sm:text-xl
+                "
+              >
+                ✨
+              </div>
+
+              {/* content */}
+              <div className="min-w-0">
+                <p
+                  className="
+                    text-sm
+                    font-medium
+
+                    text-white
+                  "
+                >
+                  Future member controls
+                </p>
+
+                <p
+                  className="
+                    mt-2
+
+                    text-sm
+                    leading-6
+                    sm:leading-7
+
+                    text-slate-400
+                  "
+                >
+                  Pause newsletters, customize reflections, manage reading
+                  moods, and curate a more personal literary experience.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* footer */}
+          <AlertDialogFooter
+            className="
+              mt-8
+              sm:mt-10
+            "
+          >
+            <AlertDialogCancel
+              className="
+                h-11
+                sm:h-12
+
+                w-full
+                sm:w-auto
+
+                rounded-2xl
+
+                border border-white/10
+                bg-white/[0.04]
+
+                px-6 sm:px-7
+
+                text-sm
+                font-medium
+
+                text-white
+
+                transition-all
+                duration-300
+
+                hover:bg-white/[0.08]
+                hover:border-white/20
+
+                active:scale-[0.98]
+
+                cursor-pointer
+              "
+            >
+              Close
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   );

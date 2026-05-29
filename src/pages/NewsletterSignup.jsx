@@ -188,6 +188,7 @@ export default function NewsletterSignup() {
                 hover:bg-slate-800
                 hover:scale-[1.01]
                 active:scale-[0.99]
+                cursor-pointer
               "
               >
                 {loading ? (

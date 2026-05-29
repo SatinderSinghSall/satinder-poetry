@@ -1,21 +1,48 @@
 import { CheckCircle2, Sparkles, X, Mail } from "lucide-react";
 
+import { useEffect } from "react";
+
 export default function SubscriptionSuccessModal({ open, onClose, email }) {
+  useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
     <div
       className="
-        fixed inset-0 z-[100]
-        flex items-center justify-center
-        bg-black/50
-        backdrop-blur-sm
-        p-4
-      "
+      fixed inset-0 z-[100]
+
+      bg-black/50
+      backdrop-blur-sm
+
+      overflow-y-auto
+
+      p-3 sm:p-4
+    "
     >
-      {/* modal */}
+      {/* wrapper */}
       <div
         className="
+          min-h-full
+          flex items-center justify-center
+      "
+      >
+        {/* modal */}
+        <div
+          className="
           relative
 
           w-full
@@ -30,22 +57,28 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
           shadow-[0_25px_80px_rgba(0,0,0,0.18)]
 
           animate-in fade-in zoom-in-95 duration-300
+
+          max-h-[90vh]
+          overflow-y-auto
+
+          sm:max-h-none
+          sm:overflow-visible
         "
-      >
-        {/* top glow */}
-        <div
-          className="
+        >
+          {/* top glow */}
+          <div
+            className="
             absolute inset-0
             rounded-[28px]
             bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.10),transparent_45%)]
             pointer-events-none
           "
-        />
+          />
 
-        {/* close */}
-        <button
-          onClick={onClose}
-          className="
+          {/* close */}
+          <button
+            onClick={onClose}
+            className="
             absolute right-4 top-4
             rounded-full
             p-2
@@ -53,16 +86,17 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
             transition
             hover:bg-slate-100
             hover:text-slate-700
+            cursor-pointer
           "
-        >
-          <X size={18} />
-        </button>
+          >
+            <X size={18} />
+          </button>
 
-        {/* content */}
-        <div className="relative text-center">
-          {/* icon */}
-          <div
-            className="
+          {/* content */}
+          <div className="relative text-center">
+            {/* icon */}
+            <div
+              className="
               mx-auto
               flex h-16 w-16
               sm:h-20 sm:w-20
@@ -73,16 +107,16 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
               shadow-inner
             "
-          >
-            <CheckCircle2
-              size={38}
-              className="text-emerald-500 sm:h-11 sm:w-11"
-            />
-          </div>
+            >
+              <CheckCircle2
+                size={38}
+                className="text-emerald-500 sm:h-11 sm:w-11"
+              />
+            </div>
 
-          {/* badge */}
-          <div
-            className="
+            {/* badge */}
+            <div
+              className="
               mt-5
               inline-flex items-center gap-2
 
@@ -100,14 +134,14 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
               text-emerald-700
             "
-          >
-            <Sparkles size={13} />
-            SUCCESSFULLY SUBSCRIBED
-          </div>
+            >
+              <Sparkles size={13} />
+              SUCCESSFULLY SUBSCRIBED
+            </div>
 
-          {/* title */}
-          <h2
-            className="
+            {/* title */}
+            <h2
+              className="
               mt-6
 
               font-serif
@@ -119,15 +153,15 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
               text-slate-900
             "
-          >
-            Welcome to the
-            <br />
-            poetry circle ✨
-          </h2>
+            >
+              Welcome to the
+              <br />
+              poetry circle ✨
+            </h2>
 
-          {/* description */}
-          <p
-            className="
+            {/* description */}
+            <p
+              className="
               mx-auto
               mt-5
 
@@ -139,14 +173,14 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
               leading-7
               text-slate-500
             "
-          >
-            You’ll now receive new poems, reflections, thoughtful letters, and
-            beautifully written stories directly in your inbox.
-          </p>
+            >
+              You’ll now receive new poems, reflections, thoughtful letters, and
+              beautifully written stories directly in your inbox.
+            </p>
 
-          {/* onboarding card */}
-          <div
-            className="
+            {/* onboarding card */}
+            <div
+              className="
               mt-6
 
               rounded-2xl
@@ -159,11 +193,11 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
               text-left
             "
-          >
-            <div className="flex items-start gap-3">
-              {/* icon */}
-              <div
-                className="
+            >
+              <div className="flex items-start gap-3">
+                {/* icon */}
+                <div
+                  className="
                   flex h-10 w-10 shrink-0
                   items-center justify-center
 
@@ -172,18 +206,18 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
                   shadow-sm
                 "
-              >
-                <Mail size={18} className="text-blue-600" />
-              </div>
+                >
+                  <Mail size={18} className="text-blue-600" />
+                </div>
 
-              {/* text */}
-              <div>
-                <p className="text-sm font-semibold text-blue-950">
-                  Check your inbox
-                </p>
+                {/* text */}
+                <div>
+                  <p className="text-sm font-semibold text-blue-950">
+                    Check your inbox
+                  </p>
 
-                <p
-                  className="
+                  <p
+                    className="
                     mt-1
 
                     text-sm
@@ -191,17 +225,17 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
                     text-blue-700
                   "
-                >
-                  We’ve sent you a welcome email with your newsletter onboarding
-                  and future poetry updates.
-                </p>
+                  >
+                    We’ve sent you a welcome email with your newsletter
+                    onboarding and future poetry updates.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* email */}
-          <div
-            className="
+            {/* email */}
+            <div
+              className="
               mt-5
 
               rounded-2xl
@@ -216,14 +250,14 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
 
               break-all
             "
-          >
-            {email}
-          </div>
+            >
+              {email}
+            </div>
 
-          {/* button */}
-          <button
-            onClick={onClose}
-            className="
+            {/* button */}
+            <button
+              onClick={onClose}
+              className="
               mt-7
 
               inline-flex
@@ -248,10 +282,13 @@ export default function SubscriptionSuccessModal({ open, onClose, email }) {
               hover:bg-slate-800
 
               active:scale-[0.98]
+
+              cursor-pointer
             "
-          >
-            Continue Reading
-          </button>
+            >
+              Continue Reading
+            </button>
+          </div>
         </div>
       </div>
     </div>

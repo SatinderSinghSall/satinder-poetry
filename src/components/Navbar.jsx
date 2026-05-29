@@ -459,6 +459,8 @@ function ProfileDropdown({ user, logout }) {
                 hover:border-[#efc4c4]
 
                 transition-all duration-300
+
+                cursor-pointer
               "
               >
                 <LogOut size={18} />
@@ -481,10 +483,12 @@ function ProfileDropdown({ user, logout }) {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="cursor-pointer">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={logout}
-              className="bg-neutral-900 hover:bg-neutral-800"
+              className="bg-neutral-900 hover:bg-neutral-800 cursor-pointer"
             >
               Logout
             </AlertDialogAction>

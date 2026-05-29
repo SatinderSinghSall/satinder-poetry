@@ -113,6 +113,8 @@ fixed inset-0 z-[400]
 
           sm:right-4
           sm:top-4
+
+          cursor-pointer
         "
           >
             <X size={18} />
