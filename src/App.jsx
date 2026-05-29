@@ -35,13 +35,17 @@ import PublicLayout from "./layouts/PublicLayout";
 /* Components: */
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import EngagementModal from "./components/EngagementModal";
+import WelcomeBackModal from "./components/WelcomeBackModal";
 
 //! To run the frontend for DEVELOPMENT -> npm run dev
 //! To run the frontend for PRODUCTION -> npm run build & npm preview
 
 export default function App() {
   const location = useLocation();
+
   const [showEngagementModal, setShowEngagementModal] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+
   const [needsAccount, setNeedsAccount] = useState(false);
   const [needsNewsletter, setNeedsNewsletter] = useState(false);
 
@@ -59,18 +63,26 @@ export default function App() {
     const hasNewsletter = localStorage.getItem("hasNewsletter");
 
     const missingAccount = !hasAccount;
+
     const missingNewsletter = !hasNewsletter;
 
     setNeedsAccount(missingAccount);
+
     setNeedsNewsletter(missingNewsletter);
 
-    if (missingAccount || missingNewsletter) {
-      const timer = setTimeout(() => {
-        setShowEngagementModal(true);
-      }, 2500);
+    const timer = setTimeout(() => {
+      // USER COMPLETED EVERYTHING
+      if (hasAccount && hasNewsletter) {
+        setShowWelcomeModal(true);
+      }
 
-      return () => clearTimeout(timer);
-    }
+      // USER STILL MISSING SOMETHING
+      else if (missingAccount || missingNewsletter) {
+        setShowEngagementModal(true);
+      }
+    }, 2200);
+
+    return () => clearTimeout(timer);
   }, [location.pathname]);
 
   return (
@@ -84,6 +96,10 @@ export default function App() {
         onClose={() => setShowEngagementModal(false)}
         needsAccount={needsAccount}
         needsNewsletter={needsNewsletter}
+      />
+      <WelcomeBackModal
+        open={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
       />
 
       <Routes>
