@@ -303,6 +303,8 @@ function ProfileDropdown({ user, logout }) {
           hover:shadow-[0_14px_35px_rgba(0,0,0,0.18)]
 
           transition-all duration-500
+
+          cursor-pointer
         "
         >
           <span className="text-sm font-medium">
@@ -536,6 +538,21 @@ function DropdownItem({ to, icon, label, onClick }) {
 function MobileDrawer({ open, setOpen, user, logout }) {
   const [showLogout, setShowLogout] = useState(false);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <>
       {/* PREMIUM OVERLAY */}
@@ -557,6 +574,8 @@ function MobileDrawer({ open, setOpen, user, logout }) {
       <div
         className={`
         fixed top-0 right-0 z-[100]
+
+        overscroll-contain
 
         h-screen
         w-[90%]
@@ -673,7 +692,7 @@ function MobileDrawer({ open, setOpen, user, logout }) {
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto px-5 py-7">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-7">
           {/* USER CARD */}
           {user && (
             <div
@@ -862,6 +881,87 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                 </button>
               </>
             )}
+          </div>
+        </div>
+
+        {/* PREMIUM FOOTER */}
+        <div
+          className="
+          relative
+
+          shrink-0
+
+          px-6 py-5
+
+          border-t border-[#ece1d4]
+
+          bg-gradient-to-b
+          from-[#faf6f1]
+          to-[#f6f1ea]
+        "
+        >
+          {/* Soft glow */}
+          <div
+            className="
+            absolute inset-x-0 top-0
+
+            h-px
+
+            bg-gradient-to-r
+            from-transparent
+            via-[#d9cbbb]
+            to-transparent
+          "
+          />
+
+          {/* Content */}
+          <div className="flex flex-col items-center text-center">
+            {/* Small poetic line */}
+            <p
+              className="
+              text-[10px]
+
+              uppercase
+
+              tracking-[0.28em]
+
+              text-[#9a8f84]
+            "
+            >
+              Crafted with Elegance
+            </p>
+
+            {/* Developer */}
+            <p
+              className="
+              mt-2
+
+              text-[14px]
+
+              text-[#2a241f]
+            "
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 600,
+              }}
+            >
+              Developed by Satinder Singh Sall
+            </p>
+
+            {/* Version */}
+            <p
+              className="
+              mt-1
+
+              text-[11px]
+
+              tracking-wide
+
+              text-[#9a9085]
+            "
+            >
+              Satinder Poetry • v7.5.0
+            </p>
           </div>
         </div>
       </div>
