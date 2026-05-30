@@ -22,6 +22,7 @@ import PoemDetail from "./pages/PoemDetail";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import NewsletterSignup from "./pages/NewsletterSignup";
+import About from "./pages/About";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -111,6 +112,7 @@ export default function App() {
           <Route path="/poems" element={<Poems />} />
           <Route path="/poems/:id" element={<PoemDetail />} />
           <Route path="/newsletter" element={<NewsletterSignup />} />
+          <Route path="/about-me" element={<About />} />
 
           {/* protected profile */}
           <Route element={<AuthRoute />}>

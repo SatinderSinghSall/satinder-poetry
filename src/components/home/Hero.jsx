@@ -160,6 +160,7 @@ export default function Hero() {
                 tracking-[0.18em]
                 uppercase
                 text-xs
+                cursor-pointer
               "
             >
               Explore Poems
@@ -181,6 +182,7 @@ export default function Hero() {
                 uppercase
                 text-xs
                 transition-all duration-500
+                cursor-pointer
               "
             >
               Join the Verse

@@ -54,7 +54,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
-                      to="/about"
+                      to="/about-me"
                       className="hover:text-slate-900 transition"
                     >
                       About

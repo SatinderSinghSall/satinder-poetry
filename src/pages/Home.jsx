@@ -6,11 +6,13 @@ import CTA from "../components/home/CTA";
 import SocialLinks from "../components/home/SocialLinks";
 import NewsletterSignup from "./NewsletterSignup";
 import StoriesSection from "../components/home/StoriesSection";
+import AboutMeCTA from "@/components/AboutMeCTA";
 
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
       <Hero />
+      <AboutMeCTA />
       <StoriesSection />
       <FeaturedPoems />
       <About />

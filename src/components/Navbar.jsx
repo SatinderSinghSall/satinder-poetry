@@ -59,6 +59,101 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-10">
             <NavLink to="/poems" label="Poems" />
 
+            <Link
+              to="/about-me"
+              className="
+              group
+              relative
+
+              flex
+              items-center
+              gap-4
+
+              px-5
+              py-3
+
+              border-2
+              border-stone-900
+
+              bg-[#efe6d6]
+
+              transition-all
+              duration-300
+
+              hover:bg-[#e8dcc8]
+
+              shadow-[4px_4px_0px_0px_rgba(28,24,20,0.22)]
+
+              hover:translate-x-[2px]
+              hover:translate-y-[2px]
+
+              hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.18)]
+
+              active:translate-x-[4px]
+              active:translate-y-[4px]
+
+              active:shadow-none
+            "
+            >
+              {/* Left Label */}
+              <div className="flex flex-col leading-none">
+                <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-amber-800">
+                  Editorial
+                </span>
+
+                <span
+                  className="
+                    mt-1
+
+                    text-[24px]
+
+                    leading-none
+
+                    text-stone-900
+                  "
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontStyle: "italic",
+                    fontWeight: 700,
+                  }}
+                >
+                  The Long Story
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="w-px self-stretch bg-stone-900/20" />
+
+              {/* Arrow */}
+              <div
+                className="
+                text-stone-700
+
+                text-[20px]
+
+                transition-transform
+                duration-300
+
+                group-hover:translate-x-1
+                group-hover:-translate-y-[1px]
+              "
+              >
+                ↗
+              </div>
+
+              {/* Vintage texture */}
+              <div
+                className="
+                absolute inset-0 opacity-[0.05]
+
+                bg-[radial-gradient(circle,#000_1px,transparent_1px)]
+                bg-[size:10px_10px]
+
+                pointer-events-none
+              "
+              />
+            </Link>
+
             {user ? (
               <ProfileDropdown user={user} logout={logout} />
             ) : (
@@ -803,6 +898,125 @@ function MobileDrawer({ open, setOpen, user, logout }) {
             >
               Poems
             </MobileItem>
+
+            <Link
+              to="/about-me"
+              onClick={() => setOpen(false)}
+              className="
+              group
+              relative
+              overflow-hidden
+
+              flex flex-col
+
+              p-6
+
+              border-2
+              border-stone-900
+
+              bg-[#efe6d6]
+
+              shadow-[5px_5px_0px_0px_rgba(28,24,20,0.18)]
+
+              transition-all
+              duration-300
+
+              hover:translate-x-[2px]
+              hover:translate-y-[2px]
+
+              hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.14)]
+            "
+            >
+              {/* Vintage texture */}
+              <div
+                className="
+                absolute inset-0 opacity-[0.05]
+
+                bg-[radial-gradient(circle,#000_1px,transparent_1px)]
+                bg-[size:10px_10px]
+
+                pointer-events-none
+              "
+              />
+
+              {/* Small Label */}
+              <span className="relative z-10 font-mono text-[10px] tracking-[0.3em] uppercase text-amber-800">
+                Editorial Feature
+              </span>
+
+              {/* Main Heading */}
+              <h3
+                className="
+                relative z-10
+
+                mt-3
+
+                text-[2.4rem]
+
+                leading-[0.9]
+
+                text-stone-900
+              "
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                }}
+              >
+                The Long Story
+              </h3>
+
+              {/* Description */}
+              <p className="relative z-10 mt-4 text-[14px] leading-relaxed text-stone-700">
+                Poetry, airports, rain, memories, stories, and the person behind
+                this space.
+              </p>
+
+              {/* Footer */}
+              <div className="relative z-10 mt-6 flex items-center justify-between">
+                <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-stone-500">
+                  Enter Chapter 01
+                </span>
+
+                <span
+                  className="
+                  text-[22px]
+
+                  text-stone-700
+
+                  transition-transform
+                  duration-300
+
+                  group-hover:translate-x-1
+                  group-hover:-translate-y-[1px]
+                "
+                >
+                  ↗
+                </span>
+              </div>
+
+              {/* Corner stamp */}
+              <div
+                className="
+                  absolute top-3 right-3
+
+                  border border-stone-900/20
+
+                  px-2 py-1
+
+                  font-mono text-[8px]
+
+                  tracking-[0.2em]
+                  uppercase
+
+                  text-stone-500
+
+                  bg-[#f7f0e3]
+                "
+              >
+                Vol. 01
+              </div>
+            </Link>
 
             {!user && (
               <>

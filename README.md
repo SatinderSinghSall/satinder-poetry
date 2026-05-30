@@ -1,5 +1,13 @@
 # Full-Stack Satinder Poetry Management System
 
+---
+
+Full-Stack Poetry Publishing & Content Management Platform
+
+MERN-Based Poetry Publishing Platform with Admin Dashboard & Subscriber System
+
+---
+
 ## Satinder Poetry
 
 Comprehensive Poetry Management System with admin features for poem addition and a modern dashboard for data analytics with a modern graphical user interface.
