@@ -5,7 +5,13 @@ import {
   Linkedin,
   BookOpen,
   Feather,
+  Twitter,
+  Youtube,
+  ArrowUpRight,
+  ArrowRight,
 } from "lucide-react";
+
+import { Link } from "react-router-dom";
 
 export default function SocialLinks() {
   const socials = [
@@ -18,6 +24,16 @@ export default function SocialLinks() {
       name: "GitHub",
       link: "https://github.com/SatinderSinghSall",
       Icon: Github,
+    },
+    {
+      name: "X",
+      link: "https://x.com/SallSatinder",
+      Icon: Twitter,
+    },
+    {
+      name: "YouTube",
+      link: "https://www.youtube.com/@satindersinghsall.3841/featured",
+      Icon: Youtube,
     },
     {
       name: "Facebook",
@@ -123,8 +139,8 @@ export default function SocialLinks() {
               }}
             >
               Currently pursuing an MCA at KIIT University while exploring
-              modern mobile / web engineering, game development, and immersive digital
-              storytelling.
+              modern mobile / web engineering, game development, and immersive
+              digital storytelling.
             </p>
 
             {/* Literary Quote Card */}
@@ -175,14 +191,14 @@ export default function SocialLinks() {
           {/* Right Side */}
           <div
             className="
-              relative
-              rounded-[36px]
-              border border-[#ddcfbc]
-              bg-white/60
-              backdrop-blur-xl
-              p-10
-              shadow-[0_20px_80px_rgba(0,0,0,0.08)]
-            "
+            relative
+            rounded-[36px]
+            border border-[#ddcfbc]
+            bg-white/60
+            backdrop-blur-xl
+            p-10
+            shadow-[0_20px_80px_rgba(0,0,0,0.08)]
+          "
           >
             {/* Floating feather */}
             <div className="absolute -top-5 -right-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#d7c2a8] bg-[#fffaf5] shadow-lg">
@@ -193,7 +209,8 @@ export default function SocialLinks() {
               Find Me Elsewhere
             </p>
 
-            <div className="space-y-5">
+            {/* Social Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {socials.map(({ name, link, Icon }) => (
                 <a
                   key={name}
@@ -201,25 +218,44 @@ export default function SocialLinks() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
-                    group
-                    flex
-                    items-center
-                    justify-between
-                    rounded-2xl
-                    border border-[#e5d9ca]
-                    bg-white/70
-                    px-6
-                    py-5
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:border-[#b79874]
-                    hover:shadow-xl
-                  "
+                  group
+                  relative
+                  overflow-hidden
+                  rounded-2xl
+                  border border-[#e5d9ca]
+                  bg-white/70
+                  px-5
+                  py-5
+                  transition-all
+                  duration-500
+                  hover:-translate-y-1.5
+                  hover:border-[#b79874]
+                  hover:shadow-[0_12px_35px_rgba(0,0,0,0.08)]
+                "
                 >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="
+                  {/* Hover shine */}
+                  <div
+                    className="
+                    absolute
+                    inset-0
+                    opacity-0
+                    bg-gradient-to-r
+                    from-transparent
+                    via-white/40
+                    to-transparent
+                    -translate-x-full
+                    transition-all
+                    duration-700
+                    group-hover:opacity-100
+                    group-hover:translate-x-full
+                  "
+                  />
+
+                  <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {/* Social Icon */}
+                      <div
+                        className="
                         flex
                         h-12
                         w-12
@@ -228,28 +264,41 @@ export default function SocialLinks() {
                         rounded-full
                         bg-[#f5ede4]
                         text-[#7b6247]
-                        transition
+                        transition-all
+                        duration-500
                         group-hover:bg-[#b79874]
                         group-hover:text-white
+                        group-hover:scale-110
+                        group-hover:rotate-6
                       "
-                    >
-                      <Icon size={20} />
+                      >
+                        <Icon size={20} />
+                      </div>
+
+                      <div>
+                        <p className="text-lg font-medium text-[#2d2620]">
+                          {name}
+                        </p>
+
+                        <p className="text-sm text-[#8f7b67]">
+                          Connect & explore
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="text-left">
-                      <p className="text-lg text-[#2d2620] font-medium">
-                        {name}
-                      </p>
-
-                      <p className="text-sm text-[#8f7b67]">
-                        Connect & explore
-                      </p>
-                    </div>
+                    {/* Animated Arrow */}
+                    <ArrowUpRight
+                      size={18}
+                      className="
+                      text-[#a58c73]
+                      transition-all
+                      duration-300
+                      group-hover:text-[#7b6247]
+                      group-hover:translate-x-1
+                      group-hover:-translate-y-1
+                    "
+                    />
                   </div>
-
-                  <span className="text-[#a58c73] transition group-hover:translate-x-1">
-                    →
-                  </span>
                 </a>
               ))}
             </div>
@@ -271,6 +320,79 @@ export default function SocialLinks() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* BUTTON */}
+        <div className="mt-26 flex justify-center">
+          <Link
+            to="/about-me"
+            className="
+            group
+            relative
+            inline-flex
+            items-center
+            justify-center
+
+            w-[340px]
+            md:w-[420px]
+
+            gap-4
+            overflow-hidden
+
+            border-2
+            border-stone-900
+
+            bg-[#f6efe2]
+
+            px-10
+            py-5
+
+            font-mono
+            text-[13px]
+            tracking-[0.25em]
+            uppercase
+
+            text-stone-900
+
+            transition-all
+            duration-300
+
+            shadow-[5px_5px_0px_0px_rgba(28,24,20,0.18)]
+
+            hover:translate-x-[2px]
+            hover:translate-y-[2px]
+
+            hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.12)]
+          "
+          >
+            {/* Texture */}
+            <div
+              className="
+                    absolute inset-0 opacity-[0.05]
+
+                    bg-[radial-gradient(circle,#000_1px,transparent_1px)]
+                    bg-[size:10px_10px]
+
+                    pointer-events-none
+                  "
+            />
+
+            <span className="relative z-10">Enter the Story</span>
+
+            <ArrowRight
+              className="
+                    relative z-10
+
+                    w-4 h-4
+
+                    transition-transform
+                    duration-300
+
+                    group-hover:translate-x-1
+                    group-hover:-translate-y-[1px]
+                  "
+            />
+          </Link>
         </div>
       </div>
     </section>

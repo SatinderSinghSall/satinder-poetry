@@ -34,7 +34,7 @@ export default function ScrollToTopButton() {
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10 pointer-events-none"
         }
-        bg-black text-white hover:scale-110`}
+        bg-black text-white hover:scale-110 cursor-pointer`}
     >
       <ChevronUp size={24} />
     </button>
