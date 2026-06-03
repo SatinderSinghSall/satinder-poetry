@@ -2,12 +2,33 @@
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- Home -->
   <url>
     <loc>https://satinderpoetry.com/</loc>
   </url>
 
+  <!-- Poems Listing -->
   <url>
     <loc>https://satinderpoetry.com/poems</loc>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://satinderpoetry.com/about-me</loc>
+  </url>
+
+  <!-- Newsletter -->
+  <url>
+    <loc>https://satinderpoetry.com/newsletter</loc>
+  </url>
+
+  <!-- Auth Pages -->
+  <url>
+    <loc>https://satinderpoetry.com/login</loc>
+  </url>
+
+  <url>
+    <loc>https://satinderpoetry.com/register</loc>
   </url>
 
 </urlset>
