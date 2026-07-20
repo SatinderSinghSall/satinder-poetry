@@ -54,6 +54,14 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
+                      to="/books"
+                      className="hover:text-slate-900 transition"
+                    >
+                      Books
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       to="/about-me"
                       className="hover:text-slate-900 transition"
                     >

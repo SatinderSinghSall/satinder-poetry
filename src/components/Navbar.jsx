@@ -10,6 +10,7 @@ import {
   LogOut,
   LayoutDashboard,
   BookOpen,
+  Library,
 } from "lucide-react";
 
 import {
@@ -58,6 +59,7 @@ export default function Navbar() {
           {/* Desktop */}
           <div className="hidden md:flex items-center gap-10">
             <NavLink to="/poems" label="Poems" />
+            <NavLink to="/books" label="Books" />
 
             <Link
               to="/about-me"
@@ -897,6 +899,14 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               setOpen={setOpen}
             >
               Poems
+            </MobileItem>
+
+            <MobileItem
+              to="/books"
+              icon={<Library size={20} />}
+              setOpen={setOpen}
+            >
+              Books
             </MobileItem>
 
             <Link

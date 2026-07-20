@@ -91,7 +91,11 @@ export default function Subscribers() {
               />
             </div>
 
-            <Button variant="outline" onClick={fetchSubscribers}>
+            <Button
+              variant="outline"
+              onClick={fetchSubscribers}
+              className="cursor-pointer"
+            >
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
             </Button>

@@ -4,7 +4,7 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-// attach token to EVERY request automatically
+// Attach token to EVERY request automatically
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -26,5 +26,47 @@ export const fetchPoemById = (id) => API.get(`/poems/${id}`);
 // ---------- PROFILE ----------
 export const getProfile = () => API.get("/users/me");
 export const getSubscriptionStatus = () => API.get("/subscribe/status");
+
+// ---------- BOOKS ----------
+export const fetchBooks = async (params = {}) => {
+  const res = await API.get("/books", { params });
+  return res.data;
+};
+
+export const fetchBookById = async (id) => {
+  const res = await API.get(`/books/${id}`);
+  return res.data;
+};
+
+export const createBook = async (bookData) => {
+  const res = await API.post("/books", bookData);
+  return res.data;
+};
+
+export const updateBook = async (id, bookData) => {
+  const res = await API.put(`/books/${id}`, bookData);
+  return res.data;
+};
+
+export const deleteBook = async (id) => {
+  const res = await API.delete(`/books/${id}`);
+  return res.data;
+};
+
+// ---------- BOOK SUGGESTIONS ----------
+export const fetchBookSuggestions = async () => {
+  const res = await API.get("/book-suggestions");
+  return res.data;
+};
+
+export const updateBookSuggestionStatus = async (id, status) => {
+  const res = await API.patch(`/book-suggestions/${id}`, { status });
+  return res.data;
+};
+
+export const deleteBookSuggestion = async (id) => {
+  const res = await API.delete(`/book-suggestions/${id}`);
+  return res.data;
+};
 
 export default API;

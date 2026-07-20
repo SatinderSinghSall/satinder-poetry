@@ -6,16 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import {
-  FileText,
-  Edit,
-  Trash2,
-  Search,
-  Mail,
-  Loader2,
-  RefreshCw,
-  Eye,
-} from "lucide-react";
+import { Library, Edit, Search, Loader2, RefreshCw, Eye } from "lucide-react";
 import { toast } from "sonner";
 import DeleteDialog from "@/components/admin/DeleteDialog";
 
@@ -28,53 +19,51 @@ const Field = ({ label, value }) => (
   </div>
 );
 
-export default function Poems() {
+export default function Books() {
   const navigate = useNavigate();
-  const [poems, setPoems] = useState([]);
+  const [books, setBooks] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedPoem, setSelectedPoem] = useState(null);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   useEffect(() => {
-    fetchPoems();
+    fetchBooks();
   }, []);
 
   useEffect(() => {
     const q = search.toLowerCase();
     setFiltered(
-      poems.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.author.toLowerCase().includes(q),
+      books.filter(
+        (b) =>
+          b.title?.toLowerCase().includes(q) ||
+          b.author?.toLowerCase().includes(q),
       ),
     );
-  }, [search, poems]);
+  }, [search, books]);
 
-  const fetchPoems = async () => {
+  const fetchBooks = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/poems");
-      setPoems(res.data);
+      const res = await API.get("/books");
+      setBooks(res.data);
       setFiltered(res.data);
     } catch {
-      toast.error("Failed to load poems");
+      toast.error("Failed to load books");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    // if (!confirm("Delete this poem?")) return;
-
     try {
-      await API.delete(`/poems/${id}`, {
+      await API.delete(`/books/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      toast.success("Poem deleted");
-      fetchPoems();
+      toast.success("Book deleted");
+      fetchBooks();
     } catch {
       toast.error("Delete failed");
     }
@@ -87,7 +76,7 @@ export default function Poems() {
           {/* Header loader */}
           <div className="flex items-center gap-3 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm">Loading poems…</span>
+            <span className="text-sm">Loading books…</span>
           </div>
 
           {/* Stats skeleton */}
@@ -107,38 +96,37 @@ export default function Poems() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto p-8 space-y-8">
-        {/* Header */}
         {/* 🔐 Admin Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-6">
           <div>
             <p className="text-xs uppercase tracking-wider text-slate-500">
               Admin Panel
             </p>
-            <h1 className="text-2xl font-semibold tracking-tight">Poems</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Books</h1>
             <p className="text-sm text-muted-foreground">
-              Manage and monitor published poems
+              Manage and monitor published books
             </p>
           </div>
 
-          {/* Search + refresh */}
+          {/* Search + Refresh + Add */}
           <div className="flex flex-wrap gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search poems..."
+                placeholder="Search books..."
                 className="pl-9 w-64"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
 
-            <Button variant="outline" onClick={fetchPoems} className="cursor-pointer">
+            <Button variant="outline" onClick={fetchBooks} className="cursor-pointer">
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
             </Button>
 
-            <Button onClick={() => navigate("/admin/add-poem")} className="cursor-pointer">
-              Add Poem
+            <Button onClick={() => navigate("/admin/add-book")} className="cursor-pointer">
+              Add Book
             </Button>
           </div>
         </div>
@@ -147,12 +135,12 @@ export default function Poems() {
         <div className="grid md:grid-cols-3 gap-6">
           <div className="rounded-2xl border bg-white p-6 flex items-center gap-4 shadow-sm">
             <div className="p-3 rounded-xl bg-slate-900 text-white">
-              <FileText className="w-5 h-5" />
+              <Library className="w-5 h-5" />
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">Total Poems</p>
-              <p className="text-2xl font-semibold">{poems.length}</p>
+              <p className="text-sm text-muted-foreground">Total Books</p>
+              <p className="text-2xl font-semibold">{books.length}</p>
             </div>
           </div>
         </div>
@@ -169,17 +157,17 @@ export default function Poems() {
             </thead>
 
             <tbody>
-              {filtered.map((poem) => (
-                <tr key={poem._id} className="border-t">
-                  <td className="p-4 font-medium">{poem.title}</td>
-                  <td className="p-4 text-muted-foreground">{poem.author}</td>
+              {filtered.map((book) => (
+                <tr key={book._id} className="border-t">
+                  <td className="p-4 font-medium">{book.title}</td>
+                  <td className="p-4 text-muted-foreground">{book.author}</td>
 
                   <td className="p-4 text-right space-x-2">
                     {/* View */}
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setSelectedPoem(poem)}
+                      onClick={() => setSelectedBook(book)}
                     >
                       <Eye className="w-4 h-4" />
                     </Button>
@@ -188,15 +176,15 @@ export default function Poems() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => navigate(`/admin/edit-poem/${poem._id}`)}
+                      onClick={() => navigate(`/admin/edit-book/${book._id}`)}
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
 
                     {/* Delete */}
                     <DeleteDialog
-                      onConfirm={() => handleDelete(poem._id)}
-                      label="Delete Poem"
+                      onConfirm={() => handleDelete(book._id)}
+                      label="Delete Book"
                     />
                   </td>
                 </tr>
@@ -205,20 +193,20 @@ export default function Poems() {
           </table>
 
           {/* ================================= */}
-          {/* 👁 VIEW POEM MODAL */}
+          {/* 👁 VIEW BOOK MODAL */}
           {/* ================================= */}
 
-          {selectedPoem && (
+          {selectedBook && (
             <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
               <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Poem Details</h2>
+                  <h2 className="text-lg font-semibold">Book Details</h2>
 
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setSelectedPoem(null)}
+                    onClick={() => setSelectedBook(null)}
                   >
                     Close
                   </Button>
@@ -226,56 +214,58 @@ export default function Poems() {
 
                 {/* Content */}
                 <div className="grid gap-4 text-sm">
-                  <Field label="Title" value={selectedPoem.title} />
-                  <Field label="Author" value={selectedPoem.author} />
-                  <Field label="Summary" value={selectedPoem.summary} />
-                  <Field label="Theme" value={selectedPoem.theme} />
+                  <Field label="Title" value={selectedBook.title} />
+                  <Field label="Author" value={selectedBook.author} />
+                  <Field label="Description" value={selectedBook.description} />
                   <Field
-                    label="Tags"
-                    value={(selectedPoem.tags || []).join(", ")}
-                  />
-                  <Field label="Status" value={selectedPoem.status} />
-                  <Field
-                    label="Featured"
-                    value={selectedPoem.featured ? "Yes" : "No"}
+                    label="Price"
+                    value={
+                      selectedBook.price ? `$${selectedBook.price}` : "Free"
+                    }
                   />
                   <Field
-                    label="Reading Time"
-                    value={`${selectedPoem.readingTime || 0} min`}
-                  />
-                  <Field label="Views" value={selectedPoem.views} />
-                  <Field label="Likes" value={selectedPoem.likes} />
-                  <Field
-                    label="Added By (User ID)"
-                    value={selectedPoem.addedBy}
+                    label="Purchase Link"
+                    value={
+                      selectedBook.purchaseLink ? (
+                        <a
+                          href={selectedBook.purchaseLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          {selectedBook.purchaseLink}
+                        </a>
+                      ) : null
+                    }
                   />
                   <Field
                     label="Created At"
-                    value={new Date(selectedPoem.createdAt).toLocaleString()}
+                    value={
+                      selectedBook.createdAt
+                        ? new Date(selectedBook.createdAt).toLocaleString()
+                        : "—"
+                    }
                   />
                   <Field
                     label="Updated At"
-                    value={new Date(selectedPoem.updatedAt).toLocaleString()}
+                    value={
+                      selectedBook.updatedAt
+                        ? new Date(selectedBook.updatedAt).toLocaleString()
+                        : "—"
+                    }
                   />
 
                   {/* Cover image */}
-                  {selectedPoem.coverImage && (
+                  {selectedBook.coverImage && (
                     <div>
                       <p className="font-medium mb-2">Cover Image</p>
                       <img
-                        src={selectedPoem.coverImage}
+                        src={selectedBook.coverImage}
+                        alt={selectedBook.title}
                         className="rounded-xl w-full max-h-60 object-cover border"
                       />
                     </div>
                   )}
-
-                  {/* Content */}
-                  <div>
-                    <p className="font-medium mb-2">Content</p>
-                    <div className="whitespace-pre-line text-muted-foreground border rounded-xl p-4 bg-slate-50">
-                      {selectedPoem.content}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -283,7 +273,7 @@ export default function Poems() {
 
           {filtered.length === 0 && (
             <div className="p-10 text-center text-muted-foreground">
-              No poems found
+              No books found
             </div>
           )}
         </div>

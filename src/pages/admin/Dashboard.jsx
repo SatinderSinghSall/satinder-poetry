@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Plus, Users, Mail, FileText, Eye, Heart } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  Users,
+  Mail,
+  FileText,
+  Eye,
+  Heart,
+  Library,
+  Sparkles,
+} from "lucide-react";
 
 import API from "@/api/api";
 import { Button } from "@/components/ui/button";
@@ -27,7 +37,7 @@ function QuickCard({ title, desc, action, onClick }) {
     <div className="rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition">
       <h3 className="font-medium">{title}</h3>
       <p className="text-sm text-muted-foreground mt-1">{desc}</p>
-      <Button onClick={onClick} className="mt-5 w-full" variant="secondary">
+      <Button onClick={onClick} className="mt-5 w-full cursor-pointer" variant="secondary">
         {action}
       </Button>
     </div>
@@ -41,6 +51,8 @@ export default function Dashboard() {
 
   const [stats, setStats] = useState({
     poems: 0,
+    books: 0,
+    suggestions: 0,
     users: 0,
     subscribers: 0,
     views: 0,
@@ -56,17 +68,26 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [poemsRes, usersRes, subsRes] = await Promise.all([
-        API.get("/poems"),
-        API.get("/users"),
-        API.get("/subscribe"),
-      ]);
+      const [poemsRes, usersRes, booksRes, subsRes, suggestionsRes] =
+        await Promise.all([
+          API.get("/poems").catch(() => ({ data: [] })),
+          API.get("/users").catch(() => ({ data: [] })),
+          API.get("/books").catch(() => ({ data: [] })),
+          API.get("/subscribe").catch(() => ({ data: [] })),
+          API.get("/book-suggestions").catch(() => ({ data: [] })),
+        ]);
 
-      const poems = poemsRes.data;
-      const users = usersRes.data;
-      const subs = subsRes.data;
+      const poems = Array.isArray(poemsRes.data) ? poemsRes.data : [];
+      const users = Array.isArray(usersRes.data) ? usersRes.data : [];
+      const subs = Array.isArray(subsRes.data) ? subsRes.data : [];
+      const books = Array.isArray(booksRes.data) ? booksRes.data : [];
 
-      /* totals */
+      // Safely parse suggestions response regardless of shape
+      const suggData = suggestionsRes.data;
+      const suggestionsList = Array.isArray(suggData)
+        ? suggData
+        : suggData?.suggestions || suggData?.data || [];
+
       const totalViews = poems.reduce((a, b) => a + (b.views || 0), 0);
       const totalLikes = poems.reduce((a, b) => a + (b.likes || 0), 0);
 
@@ -76,13 +97,14 @@ export default function Dashboard() {
         subscribers: subs.length,
         views: totalViews,
         likes: totalLikes,
+        books: books.length,
+        suggestions: suggestionsList.length,
       });
 
-      /* recent lists */
       setRecentPoems(poems.slice(0, 5));
       setRecentUsers(users.slice(0, 5));
     } catch (err) {
-      console.error(err);
+      console.error("Dashboard fetch error:", err);
     } finally {
       setLoading(false);
     }
@@ -112,13 +134,35 @@ export default function Dashboard() {
           <div className="flex flex-wrap gap-3">
             <Button
               onClick={() => navigate("/admin/add-poem")}
-              className="bg-slate-900 text-white hover:bg-slate-800"
+              className="bg-slate-900 text-white hover:bg-slate-800 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add New Poem
             </Button>
 
-            <Button onClick={() => navigate("/admin/users")} variant="outline">
+            <Button
+              onClick={() => navigate("/admin/add-book")}
+              className="cursor-pointer"
+              variant="outline"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Book
+            </Button>
+
+            <Button
+              onClick={() => navigate("/admin/suggestions")}
+              className="cursor-pointer"
+              variant="outline"
+            >
+              <Sparkles className="w-4 h-4 mr-2 text-amber-500" />
+              Suggestions
+            </Button>
+
+            <Button
+              onClick={() => navigate("/admin/users")}
+              variant="outline"
+              className="cursor-pointer"
+            >
               <Users className="w-4 h-4 mr-2" />
               Users
             </Button>
@@ -126,6 +170,7 @@ export default function Dashboard() {
             <Button
               onClick={() => navigate("/admin/subscribers")}
               variant="outline"
+              className="cursor-pointer"
             >
               <Mail className="w-4 h-4 mr-2" />
               Subscribers
@@ -134,7 +179,7 @@ export default function Dashboard() {
         </div>
 
         {/* ================================= */}
-        {/* 📊 ORIGINAL STATS (UNCHANGED) */}
+        {/* 📊 STATS CARDS */}
         {/* ================================= */}
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -149,10 +194,16 @@ export default function Dashboard() {
             value={stats.subscribers}
             icon={Mail}
           />
+          <AdminStat title="Total Books" value={stats.books} icon={Library} />
+          <AdminStat
+            title="Book Suggestions"
+            value={stats.suggestions}
+            icon={Sparkles}
+          />
         </div>
 
         {/* ================================= */}
-        {/* ⭐ NEW MINI STATS (ADDED ONLY) */}
+        {/* ⭐ VIEWS & LIKES STATS */}
         {/* ================================= */}
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -161,7 +212,7 @@ export default function Dashboard() {
         </div>
 
         {/* ================================= */}
-        {/* ⚡ ORIGINAL QUICK MANAGEMENT */}
+        {/* ⚡ QUICK MANAGEMENT */}
         {/* ================================= */}
 
         <div>
@@ -186,19 +237,32 @@ export default function Dashboard() {
               action="View Subscribers"
               onClick={() => navigate("/admin/subscribers")}
             />
+            <QuickCard
+              title="Create Book"
+              desc="Add a new poetry book or collection"
+              action="Add Book"
+              onClick={() => navigate("/admin/add-book")}
+            />
+            <QuickCard
+              title="Book Suggestions"
+              desc="Review recommendations submitted by readers"
+              action="View Suggestions"
+              onClick={() => navigate("/admin/suggestions")}
+            />
           </div>
         </div>
 
         {/* ================================= */}
-        {/* ✅ NEW SECTIONS (ADDED BELOW ONLY) */}
+        {/* ✅ ADDITIONAL DETAILS */}
         {/* ================================= */}
 
         {/* Welcome Banner */}
         <div className="rounded-xl bg-slate-900 text-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold">Welcome back 👋</h2>
           <p className="text-sm opacity-80 mt-1">
-            You currently have {stats.poems} poems, {stats.users} users and{" "}
-            {stats.subscribers} subscribers.
+            You currently have {stats.poems} poems, {stats.books} books,{" "}
+            {stats.suggestions} book suggestions, and {stats.subscribers}{" "}
+            subscribers.
           </p>
         </div>
 

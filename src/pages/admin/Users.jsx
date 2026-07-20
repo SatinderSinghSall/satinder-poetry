@@ -117,7 +117,11 @@ export default function Users() {
               />
             </div>
 
-            <Button variant="outline" onClick={fetchUsers}>
+            <Button
+              variant="outline"
+              onClick={fetchUsers}
+              className="cursor-pointer"
+            >
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
             </Button>

@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import NewsletterSignup from "./pages/NewsletterSignup";
 import About from "./pages/About";
+import Books from "./pages/Books";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -32,6 +33,10 @@ import PoemsAdmin from "./pages/admin/Poems";
 import AddPoem from "./pages/admin/AddPoem";
 import EditPoem from "./pages/admin/EditPoem";
 import PublicLayout from "./layouts/PublicLayout";
+import BooksAdmin from "./pages/admin/Books";
+import AddBook from "./pages/admin/AddBook";
+import EditBook from "./pages/admin/EditBook";
+import { AdminBookSuggestions } from "./components/admin/AdminBookSuggestions";
 
 /* Components: */
 import ScrollToTopButton from "./components/ScrollToTopButton";
@@ -113,6 +118,7 @@ export default function App() {
           <Route path="/poems/:id" element={<PoemDetail />} />
           <Route path="/newsletter" element={<NewsletterSignup />} />
           <Route path="/about-me" element={<About />} />
+          <Route path="/books" element={<Books />} />
 
           {/* protected profile */}
           <Route element={<AuthRoute />}>
@@ -131,6 +137,15 @@ export default function App() {
             <Route path="edit-poem/:id" element={<EditPoem />} />
             <Route path="users" element={<Users />} />
             <Route path="subscribers" element={<Subscribers />} />
+            <Route
+              path="/admin/suggestions"
+              element={<AdminBookSuggestions />}
+            />
+
+            {/* ===== BOOK ADMIN ROUTES ===== */}
+            <Route path="books" element={<BooksAdmin />} />
+            <Route path="add-book" element={<AddBook />} />
+            <Route path="edit-book/:id" element={<EditBook />} />
           </Route>
         </Route>
       </Routes>
