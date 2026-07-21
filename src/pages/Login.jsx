@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/context/AuthContext";
@@ -23,7 +23,8 @@ export default function Login() {
   /* ---------- validation ---------- */
   const validate = () => {
     const newErrors = {};
-    if (!form.email.includes("@")) newErrors.email = "Enter a valid email";
+    if (!form.email.includes("@"))
+      newErrors.email = "Enter a valid email address";
     if (form.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
 
@@ -69,131 +70,169 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden">
-      {/* Background */}
+    <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 select-none">
+      {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center scale-100"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('/assets/images/main-background.jpg')",
         }}
       />
 
-      {/* Premium Gradient Overlay */}
-      <div className="absolute inset-0 bg-black/35 backdrop-blur-[2.5px]" />
+      {/* Subtle Backdrop Darkener */}
+      <div className="absolute inset-0 bg-black/15 backdrop-blur-[2px]" />
 
-      {/* Loading Overlay */}
+      {/* Loading Spinner Overlay */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white border-t-transparent" />
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm transition-all">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-amber-900 border-t-transparent" />
         </div>
       )}
 
-      {/* Card */}
+      {/* Main Elevated Card - Increased Max Width & Height */}
       <Card
         className="
-        relative z-10 
-        w-full max-w-md
-        rounded-3xl 
-        bg-white/80 
-        shadow-[0_20px_60px_rgba(0,0,0,0.25)]
-        backdrop-blur-xl
-        border border-white/30
-        animate-fadeIn
-      "
+          relative z-10 
+          w-full max-w-[480px] sm:max-w-[510px]
+          rounded-[36px] 
+          bg-[#fcfaf7]/95
+          shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)]
+          backdrop-blur-md
+          border border-white/80
+          transition-all duration-300
+        "
       >
-        <CardContent className="p-8 sm:p-10">
+        <CardContent className="p-9 sm:p-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-serif text-slate-800">
+            <h2 className="text-4xl sm:text-[2.65rem] font-serif tracking-tight text-amber-950 font-normal">
               Welcome Back
             </h2>
-            <p className="text-sm text-slate-500 mt-2">
+            <p className="text-sm sm:text-base text-stone-600 mt-2 font-sans font-medium">
               Return to your quiet creative space.
             </p>
           </div>
 
+          {/* Premium General Error Banner */}
           {errors.general && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-xl mb-4 text-center">
-              {errors.general}
+            <div className="relative flex items-center justify-between gap-3 bg-red-50/90 border border-red-200/80 text-red-900 text-xs sm:text-sm p-4 rounded-2xl mb-6 shadow-sm backdrop-blur-sm animate-fadeIn">
+              <div className="flex items-center gap-3 pr-2">
+                <AlertCircle className="size-5 text-red-600 shrink-0" />
+                <span className="font-medium leading-tight">
+                  {errors.general}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setErrors((prev) => ({ ...prev, general: null }))
+                }
+                className="text-red-400 hover:text-red-700 hover:bg-red-100/60 p-1 rounded-full transition-colors shrink-0 cursor-pointer"
+                aria-label="Dismiss error"
+              >
+                <X className="size-4" />
+              </button>
             </div>
           )}
 
+          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+            {/* Email Field */}
             <div>
-              <Input
-                type="email"
-                placeholder="Email address"
-                className="
-                rounded-xl
-                bg-white
-                border border-slate-300
-                focus:border-slate-900
-                focus:ring-2 focus:ring-slate-900/20
-                shadow-sm
-                transition
-              "
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
+              <div className="relative">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-stone-400 size-5 pointer-events-none" />
+                <Input
+                  type="email"
+                  placeholder="Email address"
+                  className="
+                    h-13 sm:h-14 rounded-full
+                    bg-white
+                    border-stone-300/80
+                    text-stone-900 text-base placeholder:text-stone-400
+                    focus-visible:border-amber-900 focus-visible:ring-1 focus-visible:ring-amber-900/30
+                    shadow-inner transition-all duration-200
+                    pl-12 pr-5
+                  "
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
               {errors.email && (
-                <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                <p className="text-xs text-red-600 mt-1.5 ml-5 font-medium">
+                  {errors.email}
+                </p>
               )}
             </div>
 
-            {/* Password */}
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="
-                rounded-xl
-                bg-white
-                border border-slate-300
-                focus:border-slate-900
-                focus:ring-2 focus:ring-slate-900/20
-                shadow-sm
-                transition
-              "
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-              />
+            {/* Password Field */}
+            <div>
+              <div className="relative">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-stone-400 size-5 pointer-events-none" />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="
+                    h-13 sm:h-14 rounded-full
+                    bg-white
+                    border-stone-300/80
+                    text-stone-900 text-base placeholder:text-stone-400
+                    focus-visible:border-amber-900 focus-visible:ring-1 focus-visible:ring-amber-900/30
+                    shadow-inner transition-all duration-200
+                    pl-12 pr-12
+                  "
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-800 transition"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors p-1"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="cursor-pointer" size={18} /> : <Eye className="cursor-pointer" size={18} />}
+                </button>
+              </div>
 
               {errors.password && (
-                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                <p className="text-xs text-red-600 mt-1.5 ml-5 font-medium">
+                  {errors.password}
+                </p>
               )}
             </div>
 
-            {/* Button */}
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-slate-900 text-white hover:bg-slate-800 shadow-md"
+              className="
+                w-full h-13 sm:h-14 mt-2
+                rounded-full
+                bg-[#121824] hover:bg-stone-900 
+                text-white text-sm font-semibold tracking-wider uppercase
+                shadow-lg hover:shadow-xl
+                transition-all duration-200 active:scale-[0.98]
+                disabled:opacity-70 cursor-pointer
+              "
             >
               {loading ? "Signing in…" : "Login"}
             </Button>
           </form>
 
-          {/* register link */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-500">
+          {/* Register Link */}
+          <div className="mt-7 text-center">
+            <p className="text-sm text-stone-600">
               Don&apos;t have an account?{" "}
               <Link
                 to="/register"
                 className="
-                  font-medium
-                  text-slate-900
-                  transition
-                  hover:text-slate-700
-                  hover:underline
+                  font-bold
+                  text-amber-950
+                  hover:text-black
+                  transition-colors
+                  underline underline-offset-2
                 "
               >
                 Register
@@ -201,8 +240,8 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Footer */}
-          <p className="mt-8 text-xs text-center text-slate-400">
+          {/* Footer Note */}
+          <p className="mt-7 text-xs text-center text-stone-500 tracking-tight font-medium">
             Your words are safe here.
           </p>
         </CardContent>
