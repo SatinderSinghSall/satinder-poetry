@@ -43,7 +43,7 @@ export default function CTA() {
                   bg-slate-900 text-white
                   shadow-md
                   hover:shadow-xl hover:-translate-y-0.5
-                  transition
+                  transition cursor-pointer
                 "
               >
                 Submit Your Poem
@@ -52,6 +52,8 @@ export default function CTA() {
 
             <DialogContent
               showCloseButton={false}
+              onPointerDownOutside={(e) => e.preventDefault()}
+              onInteractOutside={(e) => e.preventDefault()}
               className="
     overflow-hidden
     border border-white/10
@@ -84,7 +86,7 @@ export default function CTA() {
       transition-all duration-300
       hover:bg-white/10
       hover:text-white
-      hover:rotate-90
+      hover:rotate-90 cursor-pointer
     "
                 >
                   ✕
@@ -151,22 +153,21 @@ export default function CTA() {
                     <Button
                       variant="outline"
                       className="
-      rounded-full
-      border border-[#d6b98c]/30
-      bg-white/5
-      px-8 py-6
-      text-sm
-      uppercase
-      tracking-[0.2em]
-      text-[#f5efe6]
-      backdrop-blur-md
-      transition-all duration-300
-      hover:bg-white/10
-      hover:border-[#d6b98c]/60
-      hover:scale-105
-    "
+    group relative overflow-hidden rounded-full
+    border border-[#d6b98c]/30 bg-white/5 px-8 py-6
+    text-sm font-medium uppercase tracking-[0.2em] text-[#f5efe6]
+    backdrop-blur-md transition-all duration-300
+    hover:border-[#d6b98c]/80 hover:bg-white/10 hover:text-white
+    hover:shadow-[0_0_20px_rgba(214,185,140,0.25)]
+    active:scale-95 cursor-pointer
+  "
                     >
-                      I’ll Be Back ✨
+                      <span className="relative z-10 flex items-center gap-2">
+                        I’ll Be Back
+                        <span className="transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125">
+                          ✨
+                        </span>
+                      </span>
                     </Button>
                   </DialogClose>
                 </div>
@@ -188,7 +189,7 @@ export default function CTA() {
                 px-12 py-7 text-lg rounded-3xl
                 border-slate-400 text-slate-700
                 hover:bg-slate-900 hover:text-white
-                transition
+                transition cursor-pointer
               "
             >
               Read Poems

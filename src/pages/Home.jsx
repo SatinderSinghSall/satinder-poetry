@@ -7,6 +7,7 @@ import SocialLinks from "../components/home/SocialLinks";
 import NewsletterSignup from "./NewsletterSignup";
 import StoriesSection from "../components/home/StoriesSection";
 import AboutMeCTA from "@/components/AboutMeCTA";
+import { SuggestBookCallout } from "@/components/home/SuggestBookCallout";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <AboutMeCTA />
       <StoriesSection />
+      <SuggestBookCallout />
       <FeaturedPoems />
       <About />
       <Testimonial />
