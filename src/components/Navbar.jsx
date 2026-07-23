@@ -13,20 +13,7 @@ import {
   Library,
 } from "lucide-react";
 
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-
-/* ======================================================
-   PREMIUM EDITORIAL NAVBAR
-====================================================== */
+import { LogoutModal } from "./LogoutModal";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -572,28 +559,11 @@ function ProfileDropdown({ user, logout }) {
       </div>
 
       {/* LOGOUT DIALOG */}
-      <AlertDialog open={showLogout} onOpenChange={setShowLogout}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Log out?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You’ll be signed out of your account.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel className="cursor-pointer">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={logout}
-              className="bg-neutral-900 hover:bg-neutral-800 cursor-pointer"
-            >
-              Logout
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LogoutModal
+        logout={logout}
+        onOpenChange={setShowLogout}
+        open={showLogout}
+      />
     </>
   );
 }
@@ -1190,34 +1160,11 @@ function MobileDrawer({ open, setOpen, user, logout }) {
         </div>
       </div>
 
-      {/* LOGOUT DIALOG */}
-      <AlertDialog open={showLogout} onOpenChange={setShowLogout}>
-        <AlertDialogContent className="rounded-[28px]">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Log out?</AlertDialogTitle>
-
-            <AlertDialogDescription>
-              You’ll be signed out of your poetic space.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-            <AlertDialogAction
-              onClick={logout}
-              className="
-              bg-[#a94444]
-              hover:bg-[#913b3b]
-
-              text-white
-            "
-            >
-              Logout
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LogoutModal
+        logout={logout}
+        onOpenChange={setShowLogout}
+        open={showLogout}
+      />
     </>
   );
 }
