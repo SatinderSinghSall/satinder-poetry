@@ -42,6 +42,7 @@ import { AdminBookSuggestions } from "./components/admin/AdminBookSuggestions";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import EngagementModal from "./components/EngagementModal";
 import WelcomeBackModal from "./components/WelcomeBackModal";
+import QuickNavModal from "./components/QuickNavModal";
 
 //! To run the frontend for DEVELOPMENT -> npm run dev
 //! To run the frontend for PRODUCTION -> npm run build & npm preview
@@ -91,6 +92,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  const [showQuickNavModal, setShowQuickNavModal] = useState(false);
+  // Keyboard shortcut (Ctrl + K or Cmd + K) to open QuickNav
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setShowQuickNavModal((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <>
       <Toaster richColors position="top-right" />
@@ -106,6 +121,10 @@ export default function App() {
       <WelcomeBackModal
         open={showWelcomeModal}
         onClose={() => setShowWelcomeModal(false)}
+      />
+      <QuickNavModal
+        isOpen={showQuickNavModal}
+        onClose={() => setShowQuickNavModal(false)}
       />
 
       <Routes>

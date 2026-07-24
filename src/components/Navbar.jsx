@@ -11,14 +11,17 @@ import {
   LayoutDashboard,
   BookOpen,
   Library,
+  Compass,
 } from "lucide-react";
 
 import { LogoutModal } from "./LogoutModal";
+import QuickNavModal from "./QuickNavModal";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [navModalOpen, setNavModalOpen] = useState(false);
 
   return (
     <>
@@ -27,14 +30,14 @@ export default function Navbar() {
           className="
           w-full
 
-          h-[82px] md:h-[86px]
+          h-[82px] xl:h-[86px]
 
           bg-[#faf7f2]/88
           backdrop-blur-2xl
 
           border-b border-[#e7dfd2]
 
-          px-3 sm:px-4 md:px-10
+          px-3 sm:px-6 xl:px-10
 
           flex items-center justify-between
 
@@ -43,10 +46,31 @@ export default function Navbar() {
         >
           <Brand />
 
-          {/* Desktop */}
-          <div className="hidden md:flex items-center gap-10">
+          {/* Desktop Navigation (Shown on XL screens 1280px and above) */}
+          <div className="hidden xl:flex items-center gap-6 2xl:gap-8">
             <NavLink to="/poems" label="Poems" />
             <NavLink to="/books" label="Books" />
+
+            {/* Quick Navigation Trigger Button */}
+            <button
+              onClick={() => setNavModalOpen(true)}
+              className="
+                flex items-center gap-2
+                px-4 py-2.5
+                rounded-full
+                bg-amber-950/5 hover:bg-amber-950/10
+                border border-amber-900/15
+                text-stone-800
+                text-[13px] font-medium tracking-wide
+                transition-all duration-300
+                hover:scale-[1.03] active:scale-[0.98]
+                cursor-pointer
+              "
+              title="Open Sanctuary Navigator"
+            >
+              <Compass className="w-4 h-4 text-amber-800 animate-spin-slow" />
+              <span>Navigator</span>
+            </button>
 
             <Link
               to="/about-me"
@@ -58,8 +82,8 @@ export default function Navbar() {
               items-center
               gap-4
 
-              px-5
-              py-3
+              px-4 2xl:px-5
+              py-2.5 2xl:py-3
 
               border-2
               border-stone-900
@@ -94,7 +118,7 @@ export default function Navbar() {
                   className="
                     mt-1
 
-                    text-[24px]
+                    text-[22px] 2xl:text-[24px]
 
                     leading-none
 
@@ -152,14 +176,14 @@ export default function Navbar() {
                 <Link
                   to="/register"
                   className="
-                  px-6 py-3
+                  px-5 2xl:px-6 py-3
 
                   rounded-full
 
                   bg-[#1f1a17]
                   text-[#f8f4ef]
 
-                  text-sm tracking-[0.14em]
+                  text-xs 2xl:text-sm tracking-[0.14em]
                   uppercase
 
                   shadow-[0_6px_20px_rgba(0,0,0,0.12)]
@@ -168,6 +192,7 @@ export default function Navbar() {
                   hover:bg-[#2b2420]
 
                   transition-all duration-500
+                  whitespace-nowrap
                 "
                 >
                   Join the Verse
@@ -176,35 +201,61 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="
-            md:hidden
+          {/* Mobile / Tablet Actions (Shown below XL screens < 1280px) */}
+          <div className="flex xl:hidden items-center gap-2">
+            {/* Quick Navigation Button */}
+            <button
+              onClick={() => setNavModalOpen(true)}
+              className="
+                w-11 h-11 rounded-full
+                bg-[#efe6d6] border border-amber-900/20
+                flex items-center justify-center
+                text-amber-900
+                shadow-sm
+                active:scale-95 transition-transform
+                cursor-pointer
+              "
+              aria-label="Open Navigation Modal"
+            >
+              <Compass size={20} />
+            </button>
 
-            w-11 h-11 rounded-full
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="
+              w-11 h-11 rounded-full
 
-            bg-white/60
-            border border-[#e8ddd0]
+              bg-white/60
+              border border-[#e8ddd0]
 
-            flex items-center justify-center
+              flex items-center justify-center
 
-            text-[#2d2722]
+              text-[#2d2722]
 
-            shadow-sm
-          "
-          >
-            <Menu size={22} />
-          </button>
+              shadow-sm
+              cursor-pointer
+            "
+            >
+              <Menu size={22} />
+            </button>
+          </div>
         </nav>
       </header>
 
-      {/* Premium Mobile Drawer */}
+      {/* Mobile / Tablet Drawer */}
       <MobileDrawer
         open={mobileOpen}
         setOpen={setMobileOpen}
         user={user}
         logout={logout}
+        onOpenNavModal={() => setNavModalOpen(true)}
+      />
+
+      {/* Quick Navigation Modal */}
+      <QuickNavModal
+        isOpen={navModalOpen}
+        onClose={() => setNavModalOpen(false)}
       />
     </>
   );
@@ -221,8 +272,7 @@ function Brand() {
       className="
       flex items-center gap-3
 
-      min-w-0
-      overflow-hidden
+      shrink-0
     "
     >
       {/* Feather circle */}
@@ -232,7 +282,6 @@ function Brand() {
 
         w-10 h-10
         sm:w-11 sm:h-11
-        md:w-12 md:h-12
 
         rounded-full
 
@@ -248,28 +297,20 @@ function Brand() {
       </div>
 
       {/* Text */}
-      <div
-        className="
-        flex flex-col
-
-        min-w-0
-        overflow-visible
-      "
-      >
+      <div className="flex flex-col">
         {/* Main logo */}
         <span
           className="
           text-[1.55rem]
-          sm:text-[1.7rem]
-          md:text-[2.65rem]
+          sm:text-[1.75rem]
+          2xl:text-[2.25rem]
 
           leading-[1.02]
 
           pb-[2px]
 
           text-[#201b18]
-
-          truncate
+          whitespace-nowrap
         "
           style={{
             fontFamily: "'Cormorant Garamond', serif",
@@ -285,18 +326,15 @@ function Brand() {
           mt-[2px]
 
           text-[7px]
-          sm:text-[8px]
-          md:text-[10px]
+          sm:text-[8.5px]
 
           uppercase
 
           tracking-[0.24em]
           sm:tracking-[0.3em]
-          md:tracking-[0.38em]
 
           text-[#8b8178]
-
-          truncate
+          whitespace-nowrap
         "
         >
           Poetry • Stories • Reflections
@@ -321,7 +359,7 @@ function NavLink({ to, label }) {
       className={`
       relative
 
-      text-[14px]
+      text-[13px] 2xl:text-[14px]
 
       uppercase
       tracking-[0.16em]
@@ -365,13 +403,12 @@ function ProfileDropdown({ user, logout }) {
   return (
     <>
       <div ref={ref} className="relative">
-        {/* Avatar Trigger */}
         <button
           onClick={() => setOpen(!open)}
           className="
           relative
 
-          w-12 h-12 rounded-full
+          w-11 h-11 2xl:w-12 2xl:h-12 rounded-full
 
           bg-gradient-to-br
           from-[#473d37]
@@ -396,13 +433,12 @@ function ProfileDropdown({ user, logout }) {
           </span>
         </button>
 
-        {/* Dropdown */}
         {open && (
           <div
             className="
             absolute right-0 mt-5
 
-            min-w-[430px] w-fit
+            min-w-[360px] 2xl:min-w-[430px] w-fit
 
             rounded-[34px]
 
@@ -418,7 +454,6 @@ function ProfileDropdown({ user, logout }) {
             animate-in fade-in zoom-in-95 duration-300
           "
           >
-            {/* TOP SECTION */}
             <div
               className="
               px-7 py-7
@@ -431,9 +466,7 @@ function ProfileDropdown({ user, logout }) {
               border-b border-[#ece1d4]
             "
             >
-              {/* USER ROW */}
               <div className="flex items-center gap-4">
-                {/* Avatar */}
                 <div
                   className="
                   shrink-0
@@ -456,9 +489,7 @@ function ProfileDropdown({ user, logout }) {
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
 
-                {/* User info */}
                 <div className="flex flex-col">
-                  {/* Name */}
                   <p
                     className="
                       text-[1.95rem]
@@ -477,7 +508,6 @@ function ProfileDropdown({ user, logout }) {
                     {user.name}
                   </p>
 
-                  {/* Email */}
                   <p
                     className="
                       mt-2
@@ -495,7 +525,6 @@ function ProfileDropdown({ user, logout }) {
               </div>
             </div>
 
-            {/* MENU ITEMS */}
             <div className="p-4">
               <DropdownItem
                 to="/profile"
@@ -513,10 +542,8 @@ function ProfileDropdown({ user, logout }) {
                 />
               )}
 
-              {/* Divider */}
               <div className="h-px bg-[#eee3d7] my-3" />
 
-              {/* Logout */}
               <button
                 onClick={() => {
                   setOpen(false);
@@ -558,7 +585,6 @@ function ProfileDropdown({ user, logout }) {
         )}
       </div>
 
-      {/* LOGOUT DIALOG */}
       <LogoutModal
         logout={logout}
         onOpenChange={setShowLogout}
@@ -567,10 +593,6 @@ function ProfileDropdown({ user, logout }) {
     </>
   );
 }
-
-/* ======================================================
-   DROPDOWN ITEM
-====================================================== */
 
 function DropdownItem({ to, icon, label, onClick }) {
   return (
@@ -602,7 +624,7 @@ function DropdownItem({ to, icon, label, onClick }) {
    PREMIUM MOBILE DRAWER
 ====================================================== */
 
-function MobileDrawer({ open, setOpen, user, logout }) {
+function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
   const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
@@ -622,7 +644,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
 
   return (
     <>
-      {/* PREMIUM OVERLAY */}
       <div
         onClick={() => setOpen(false)}
         className={`
@@ -637,7 +658,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
       `}
       />
 
-      {/* PREMIUM DRAWER */}
       <div
         className={`
         fixed top-0 right-0 z-[100]
@@ -662,7 +682,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
         ${open ? "translate-x-0" : "translate-x-full"}
       `}
       >
-        {/* TOP HEADER */}
         <div
           className="
           relative
@@ -676,9 +695,7 @@ function MobileDrawer({ open, setOpen, user, logout }) {
           to-[#f8f4ee]
         "
         >
-          {/* Brand */}
           <div className="flex items-center gap-4">
-            {/* Logo */}
             <div
               className="
               w-12 h-12 rounded-full
@@ -695,7 +712,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               <Feather size={20} className="text-[#665e57]" />
             </div>
 
-            {/* Brand Text */}
             <div>
               <p
                 className="
@@ -710,7 +726,7 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                   fontWeight: 700,
                 }}
               >
-                Satinder
+                Satinder Poetry
               </p>
 
               <p
@@ -731,7 +747,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
             </div>
           </div>
 
-          {/* Close */}
           <button
             onClick={() => setOpen(false)}
             className="
@@ -752,15 +767,14 @@ function MobileDrawer({ open, setOpen, user, logout }) {
             hover:scale-105
 
             transition-all duration-300
+            cursor-pointer
           "
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* CONTENT */}
         <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-7">
-          {/* USER CARD */}
           {user && (
             <div
               className="
@@ -784,7 +798,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               shadow-[0_10px_35px_rgba(0,0,0,0.04)]
             "
             >
-              {/* Glow */}
               <div
                 className="
                 absolute -top-10 -right-10
@@ -800,7 +813,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               />
 
               <div className="relative flex items-center gap-4">
-                {/* Avatar */}
                 <div
                   className="
                   shrink-0
@@ -823,7 +835,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
 
-                {/* Info */}
                 <div className="min-w-0">
                   <p
                     className="
@@ -861,8 +872,31 @@ function MobileDrawer({ open, setOpen, user, logout }) {
             </div>
           )}
 
-          {/* NAV ITEMS */}
           <div className="flex flex-col gap-4">
+            <button
+              onClick={() => {
+                setOpen(false);
+                onOpenNavModal();
+              }}
+              className="
+                flex items-center gap-4
+                px-5 py-5
+                rounded-[24px]
+                bg-[#efe6d6]
+                border border-amber-900/20
+                text-stone-900
+                shadow-sm
+                hover:bg-[#e6dac4]
+                transition-all duration-300
+                cursor-pointer
+              "
+            >
+              <Compass size={20} className="text-amber-800" />
+              <span className="text-[15px] font-medium tracking-wide">
+                Sanctuary Navigator
+              </span>
+            </button>
+
             <MobileItem
               to="/poems"
               icon={<BookOpen size={20} />}
@@ -907,7 +941,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.14)]
             "
             >
-              {/* Vintage texture */}
               <div
                 className="
                 absolute inset-0 opacity-[0.05]
@@ -919,12 +952,10 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               "
               />
 
-              {/* Small Label */}
               <span className="relative z-10 font-mono text-[10px] tracking-[0.3em] uppercase text-amber-800">
                 Editorial Feature
               </span>
 
-              {/* Main Heading */}
               <h3
                 className="
                 relative z-10
@@ -946,13 +977,11 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                 The Long Story
               </h3>
 
-              {/* Description */}
               <p className="relative z-10 mt-4 text-[14px] leading-relaxed text-stone-700">
                 Poetry, airports, rain, memories, stories, and the person behind
                 this space.
               </p>
 
-              {/* Footer */}
               <div className="relative z-10 mt-6 flex items-center justify-between">
                 <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-stone-500">
                   Enter Chapter 01
@@ -975,7 +1004,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                 </span>
               </div>
 
-              {/* Corner stamp */}
               <div
                 className="
                   absolute top-3 right-3
@@ -1038,7 +1066,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                   </MobileItem>
                 )}
 
-                {/* PREMIUM LOGOUT */}
                 <button
                   onClick={() => {
                     setOpen(false);
@@ -1067,6 +1094,7 @@ function MobileDrawer({ open, setOpen, user, logout }) {
                   hover:border-[#e8bcbc]
 
                   transition-all duration-300
+                  cursor-pointer
                 "
                 >
                   <LogOut size={20} />
@@ -1078,7 +1106,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
           </div>
         </div>
 
-        {/* PREMIUM FOOTER */}
         <div
           className="
           relative
@@ -1094,7 +1121,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
           to-[#f6f1ea]
         "
         >
-          {/* Soft glow */}
           <div
             className="
             absolute inset-x-0 top-0
@@ -1108,9 +1134,7 @@ function MobileDrawer({ open, setOpen, user, logout }) {
           "
           />
 
-          {/* Content */}
           <div className="flex flex-col items-center text-center">
-            {/* Small poetic line */}
             <p
               className="
               text-[10px]
@@ -1125,7 +1149,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               Crafted with Elegance
             </p>
 
-            {/* Developer */}
             <p
               className="
               mt-2
@@ -1142,7 +1165,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
               Developed by Satinder Singh Sall
             </p>
 
-            {/* Version */}
             <p
               className="
               mt-1
@@ -1168,10 +1190,6 @@ function MobileDrawer({ open, setOpen, user, logout }) {
     </>
   );
 }
-
-/* ======================================================
-   MOBILE ITEM
-====================================================== */
 
 function MobileItem({ to, children, icon, setOpen }) {
   return (
@@ -1202,10 +1220,6 @@ function MobileItem({ to, children, icon, setOpen }) {
     </Link>
   );
 }
-
-/* ======================================================
-   CLICK OUTSIDE
-====================================================== */
 
 function useClickOutside(ref, handler) {
   useEffect(() => {
