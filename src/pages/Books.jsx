@@ -92,7 +92,7 @@ export default function Books() {
         <div className="flex justify-center gap-3 mb-14">
           <button
             onClick={() => setActiveTab("recommended")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
               activeTab === "recommended"
                 ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-105"
                 : "bg-white text-slate-600 hover:bg-stone-100 border border-stone-200"
@@ -103,7 +103,7 @@ export default function Books() {
           </button>
           <button
             onClick={() => setActiveTab("reading-list")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
               activeTab === "reading-list"
                 ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-105"
                 : "bg-white text-slate-600 hover:bg-stone-100 border border-stone-200"

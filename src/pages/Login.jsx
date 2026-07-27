@@ -24,9 +24,9 @@ export default function Login() {
   const validate = () => {
     const newErrors = {};
     if (!form.email.includes("@"))
-      newErrors.email = "Enter a valid email address";
+      newErrors.email = "Enter a valid email address.";
     if (form.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Password must be at least 6 characters.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -57,7 +57,7 @@ export default function Login() {
       navigate("/poems");
     } catch (err) {
       const message =
-        err.response?.data?.message || "Invalid email or password";
+        err.response?.data?.message || "Invalid email or password.";
 
       setErrors({ general: message });
 
@@ -192,7 +192,11 @@ export default function Login() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors p-1"
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff className="cursor-pointer" size={18} /> : <Eye className="cursor-pointer" size={18} />}
+                  {showPassword ? (
+                    <EyeOff className="cursor-pointer" size={18} />
+                  ) : (
+                    <Eye className="cursor-pointer" size={18} />
+                  )}
                 </button>
               </div>
 
