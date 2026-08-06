@@ -55,12 +55,14 @@ export default function Login() {
         />
       ));
 
+      navigate("/poems");
+
       // Redirect to Admin if user is admin, otherwise to /poems
-      if (data.role === "admin" || data.user?.role === "admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/poems");
-      }
+      // if (data.role === "admin" || data.user?.role === "admin") {
+      //   navigate("/admin/dashboard");
+      // } else {
+      //   navigate("/poems");
+      // }
     } catch (err) {
       const message =
         err.response?.data?.message || "Invalid email or password.";
