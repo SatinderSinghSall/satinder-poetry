@@ -70,6 +70,17 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link
+                      to="/add-poem-portal"
+                      className="inline-flex items-center gap-1.5 hover:text-amber-800 transition text-amber-900 font-medium"
+                    >
+                      Poet's Portal
+                      <span className="text-[10px] font-sans font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide">
+                        Writer
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       to="/login"
                       className="hover:text-slate-900 transition"
                     >

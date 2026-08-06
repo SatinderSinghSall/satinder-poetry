@@ -14,6 +14,7 @@ import {
   Home,
   BookMarked,
   Command,
+  PenTool,
 } from "lucide-react";
 
 export default function QuickNavModal({ isOpen, onClose, onOpen }) {
@@ -32,7 +33,6 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
   // Global Keyboard Shortcuts: 'Ctrl + K' (or Cmd + K) to toggle, 'Escape' to close
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Toggle modal with Ctrl + K or Cmd + K
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (isOpen) {
@@ -42,7 +42,6 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
         }
       }
 
-      // Close on Escape key press
       if (e.key === "Escape" && isOpen) {
         onClose();
       }
@@ -56,7 +55,7 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 md:p-8 animate-fade-in">
-      {/* Backdrop (Static backdrop: onClick removed so clicking outside won't close modal) */}
+      {/* Backdrop */}
       <div className="fixed inset-0 bg-stone-950/80 backdrop-blur-md transition-opacity duration-300" />
 
       {/* Modal Container */}
@@ -86,11 +85,11 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
           </button>
         </div>
 
-        {/* Navigation Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 scrollbar-thin scrollbar-thumb-amber-900/30">
-          {/* Highlighted Section (Books & About) */}
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5 scrollbar-thin scrollbar-thumb-amber-900/30">
+          {/* Top Row: 2 Primary Featured Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-            {/* Highlighted Card 1: Books */}
+            {/* Library Card */}
             <Link
               to="/books"
               onClick={onClose}
@@ -115,7 +114,7 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
 
                 <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed mt-2">
                   Curated literature, poetry collections, and reflections on
-                  art, films, and storytelling that inspire Satinder Poetry.
+                  art, films, and storytelling.
                 </p>
               </div>
 
@@ -127,7 +126,7 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
               </div>
             </Link>
 
-            {/* Highlighted Card 2: About Me */}
+            {/* Author Card */}
             <Link
               to="/about-me"
               onClick={onClose}
@@ -151,9 +150,8 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
                 </div>
 
                 <p className="text-xs sm:text-sm text-stone-300 font-light italic leading-relaxed mt-2">
-                  “Somewhere between airport windows, unfinished thoughts,
-                  rain-soaked evenings, and the quiet need to turn emotions into
-                  words.”
+                  “Somewhere between airport windows, unfinished thoughts, and
+                  rain-soaked evenings.”
                 </p>
               </div>
 
@@ -166,7 +164,39 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
             </Link>
           </div>
 
-          {/* Secondary Pages Grid */}
+          {/* NEW FULL-WIDTH HIGHLIGHTED SECTION: Poet's Access Portal */}
+          <Link
+            to="/add-poem-portal"
+            onClick={onClose}
+            className="group relative p-5 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500/15 via-[#1e1b18] to-amber-950/20 border border-amber-500/40 hover:border-amber-400 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 overflow-hidden"
+          >
+            {/* Background Glow */}
+            <div className="absolute top-1/2 -right-10 -translate-y-1/2 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-500 pointer-events-none" />
+
+            <div className="space-y-1.5 relative z-10 max-w-xl">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-widest uppercase bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                  <PenTool className="w-2.5 h-2.5" /> Writers Corner
+                </span>
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-serif text-amber-200 group-hover:text-white transition-colors flex items-center gap-2">
+                Poet's Access Portal
+              </h3>
+
+              <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
+                Submit original verses directly for editorial consideration or
+                apply for author posting credentials.
+              </p>
+            </div>
+
+            <div className="relative z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs transition-all duration-300 group-hover:bg-amber-400 shadow-md shrink-0 self-end sm:self-center">
+              <span>Submit Draft</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
+          </Link>
+
+          {/* Secondary Links Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* Home Page */}
             <Link
@@ -249,7 +279,7 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
               </div>
             </Link>
 
-            {/* Auth Pages (Login & Register combined) */}
+            {/* Auth Pages (Login & Register) */}
             <div className="sm:col-span-2 lg:col-span-2 p-4 rounded-xl bg-stone-900/40 border border-stone-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">

@@ -13,6 +13,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  FileText,
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -160,6 +161,14 @@ export default function AdminSidebar() {
               icon={Sparkles}
               label="Suggestions"
               color="amber"
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+
+            <SideItem
+              to="/admin/poem-submissions"
+              icon={FileText}
+              label="Submissions"
               collapsed={collapsed && !mobileOpen}
               onNavigate={() => setMobileOpen(false)}
             />

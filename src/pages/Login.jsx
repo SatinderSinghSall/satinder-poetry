@@ -33,6 +33,7 @@ export default function Login() {
   };
 
   /* ---------- submit ---------- */
+  /* ---------- submit ---------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -43,10 +44,9 @@ export default function Login() {
     try {
       const { data } = await API.post("/auth/login", form);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-
+      // Pass response payload to login context function
       login(data);
+
       toast.custom(() => (
         <AuthToast
           type="success"
@@ -54,7 +54,13 @@ export default function Login() {
           message="Successfully signed into your account."
         />
       ));
-      navigate("/poems");
+
+      // Redirect to Admin if user is admin, otherwise to /poems
+      if (data.role === "admin" || data.user?.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/poems");
+      }
     } catch (err) {
       const message =
         err.response?.data?.message || "Invalid email or password.";

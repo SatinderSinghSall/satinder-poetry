@@ -8,13 +8,17 @@ import NewsletterSignup from "./NewsletterSignup";
 import StoriesSection from "../components/home/StoriesSection";
 import AboutMeCTA from "@/components/AboutMeCTA";
 import { SuggestBookCallout } from "@/components/home/SuggestBookCallout";
+import AddPoemCTA from "@/components/home/AddPoemCTA";
+import UniversalNavigationCTA from "@/components/UniversalNavigationCTA";
 
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
       <Hero />
       <AboutMeCTA />
+      <UniversalNavigationCTA />
       <StoriesSection />
+      <AddPoemCTA />
       <SuggestBookCallout />
       <FeaturedPoems />
       <About />

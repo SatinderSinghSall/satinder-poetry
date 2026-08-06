@@ -69,4 +69,42 @@ export const deleteBookSuggestion = async (id) => {
   return res.data;
 };
 
+// ---------- POEM SUBMISSIONS ----------
+
+// Submit draft (User)
+export const submitPoemDraftApi = async (formData) => {
+  const res = await API.post("/poems/submit-draft", formData);
+  return res.data;
+};
+
+// Get pending submissions (Admin)
+export const getSubmissionsApi = async () => {
+  const res = await API.get("/poems/submissions");
+  return res.data;
+};
+
+// Approve submission (Admin)
+export const approveSubmissionApi = async (id, extraData = {}) => {
+  const res = await API.put(`/poems/submissions/${id}/approve`, extraData);
+  return res.data;
+};
+
+// Reject submission (Admin)
+export const rejectSubmissionApi = async (id) => {
+  const res = await API.put(`/poems/submissions/${id}/reject`);
+  return res.data;
+};
+
+// Delete submission (Admin)
+export const deletePoemSubmissionApi = async (id) => {
+  const response = await API.delete(`/poems/submissions/${id}`);
+  return response.data;
+};
+
+// Reset to Pending (Admin)
+export const resetSubmissionToPendingApi = async (id) => {
+  const res = await API.put(`/poems/submissions/${id}/pending`);
+  return res.data;
+};
+
 export default API;

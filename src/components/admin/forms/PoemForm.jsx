@@ -380,7 +380,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   type="submit"
                   size="lg"
                   disabled={loading || !form.content}
-                  className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md"
+                  className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md cursor-pointer"
                 >
                   {loading ? (
                     <>

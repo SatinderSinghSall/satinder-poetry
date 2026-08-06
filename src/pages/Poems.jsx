@@ -11,6 +11,7 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
+import AddPoemCTA_Main from "@/components/AddPoemCTA_Main";
 
 const POEMS_PER_PAGE = 6;
 
@@ -1064,6 +1065,8 @@ export default function Poems() {
           </>
         )}
       </div>
+
+      <AddPoemCTA_Main />
     </div>
   );
 }

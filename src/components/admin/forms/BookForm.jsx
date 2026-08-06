@@ -13,6 +13,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
     author: "",
     description: "",
     price: "",
+    type: "recommended", // Added type to match public tab filtering
     purchaseUrl: "",
     coverImage: "",
     genre: "",
@@ -42,6 +43,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
         author: initialData.author || "",
         description: initialData.description || "",
         price: initialData.price ?? "",
+        type: initialData.type || "recommended",
         purchaseUrl: initialData.buyUrl || initialData.purchaseUrl || "",
         coverImage: initialData.coverImage || "",
         genre: initialData.genre || "",
@@ -76,6 +78,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
         author: form.author,
         description: form.description,
         price: form.price !== "" ? Number(form.price) : 0,
+        type: form.type, // Explicitly pass type to database
         genre: form.genre,
         buyUrl: form.purchaseUrl,
         coverImage: form.coverImage,
@@ -98,6 +101,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
           author: "",
           description: "",
           price: "",
+          type: "recommended",
           purchaseUrl: "",
           coverImage: "",
           genre: "",
@@ -178,7 +182,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
 
                 {form.price && (
                   <p className="text-lg font-semibold text-slate-900">
-                    Price: ${form.price}
+                    Price: ₹{form.price}
                   </p>
                 )}
 
@@ -251,31 +255,46 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
                   />
                 </div>
 
-                {/* Price & Genre Row */}
+                {/* Library Tab Section & Price */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Price ($)</label>
+                    <label className="text-sm font-medium">Display Tab</label>
+                    <select
+                      value={form.type}
+                      onChange={(e) =>
+                        setForm({ ...form, type: e.target.value })
+                      }
+                      className="w-full rounded-2xl border bg-muted/30 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    >
+                      <option value="recommended">Top Recommendations</option>
+                      <option value="reading-list">Reading Wishlist</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Price (₹)</label>
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="e.g. 14.99"
+                      placeholder="e.g. 499"
                       value={form.price}
                       onChange={(e) =>
                         setForm({ ...form, price: e.target.value })
                       }
                     />
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Genre</label>
-                    <Input
-                      placeholder="Poetry, Anthology, Romance..."
-                      value={form.genre}
-                      onChange={(e) =>
-                        setForm({ ...form, genre: e.target.value })
-                      }
-                    />
-                  </div>
+                {/* Genre */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Genre</label>
+                  <Input
+                    placeholder="Poetry, Anthology, Romance..."
+                    value={form.genre}
+                    onChange={(e) =>
+                      setForm({ ...form, genre: e.target.value })
+                    }
+                  />
                 </div>
 
                 {/* Purchase URL */}
@@ -358,7 +377,7 @@ export default function BookForm({ initialData, mode = "add", onSubmit }) {
                   type="submit"
                   size="lg"
                   disabled={loading || !form.description || !form.title}
-                  className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md"
+                  className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md cursor-pointer"
                 >
                   {loading ? (
                     <>

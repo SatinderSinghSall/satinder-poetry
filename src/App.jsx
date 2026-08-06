@@ -24,6 +24,7 @@ import Profile from "./pages/Profile";
 import NewsletterSignup from "./pages/NewsletterSignup";
 import About from "./pages/About";
 import Books from "./pages/Books";
+import AddPoemPortal from "./pages/AddPoemPortal";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -37,6 +38,7 @@ import BooksAdmin from "./pages/admin/Books";
 import AddBook from "./pages/admin/AddBook";
 import EditBook from "./pages/admin/EditBook";
 import { AdminBookSuggestions } from "./components/admin/AdminBookSuggestions";
+import { AdminPoemSubmissions } from "./components/admin/AdminPoemSubmissions";
 
 /* Components: */
 import ScrollToTopButton from "./components/ScrollToTopButton";
@@ -138,6 +140,7 @@ export default function App() {
           <Route path="/newsletter" element={<NewsletterSignup />} />
           <Route path="/about-me" element={<About />} />
           <Route path="/books" element={<Books />} />
+          <Route path="/add-poem-portal" element={<AddPoemPortal />} />
 
           {/* protected profile */}
           <Route element={<AuthRoute />}>
@@ -159,6 +162,10 @@ export default function App() {
             <Route
               path="/admin/suggestions"
               element={<AdminBookSuggestions />}
+            />
+            <Route
+              path="/admin/poem-submissions"
+              element={<AdminPoemSubmissions />}
             />
 
             {/* ===== BOOK ADMIN ROUTES ===== */}

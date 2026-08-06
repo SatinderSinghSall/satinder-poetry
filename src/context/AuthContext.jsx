@@ -10,22 +10,36 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-    if (storedUser) {
+    if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
+    } else {
+      // If either token or user is missing, clear both to avoid invalid state
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      setUser(null);
     }
 
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
+  const login = (data) => {
+    // Extract token and user details from backend response payload
+    const token = data.token;
+    const userData = data.user || data;
+
+    if (token) {
+      localStorage.setItem("token", token);
+    }
     localStorage.setItem("user", JSON.stringify(userData));
+
     setUser(userData);
-    navigate("/poems");
   };
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     navigate("/login");
   };

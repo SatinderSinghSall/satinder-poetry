@@ -1,7 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-
 import {
   Menu,
   X,
@@ -17,113 +16,85 @@ import {
 import { LogoutModal } from "./LogoutModal";
 import QuickNavModal from "./QuickNavModal";
 
+/* ======================================================
+   HOOKS
+====================================================== */
+
+function useClickOutside(ref, handler) {
+  useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) return;
+      handler();
+    };
+
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]);
+}
+
+function useLockBodyScroll(locked) {
+  useEffect(() => {
+    if (locked) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [locked]);
+}
+
+/* ======================================================
+   MAIN NAVBAR COMPONENT
+====================================================== */
+
 export default function Navbar() {
   const { user, logout } = useAuth();
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navModalOpen, setNavModalOpen] = useState(false);
 
   return (
     <>
       <header className="sticky top-0 z-50">
-        <nav
-          className="
-          w-full
-
-          h-[82px] xl:h-[86px]
-
-          bg-[#faf7f2]/88
-          backdrop-blur-2xl
-
-          border-b border-[#e7dfd2]
-
-          px-3 sm:px-6 xl:px-10
-
-          flex items-center justify-between
-
-          transition-all duration-500
-        "
-        >
+        <nav className="flex h-[82px] w-full items-center justify-between border-b border-[#e7dfd2] bg-[#faf7f2]/88 px-3 backdrop-blur-2xl transition-all duration-500 sm:px-6 xl:h-[86px] xl:px-10">
           <Brand />
 
-          {/* Desktop Navigation (Shown on XL screens 1280px and above) */}
-          <div className="hidden xl:flex items-center gap-6 2xl:gap-8">
+          {/* Desktop Navigation (XL screens and above) */}
+          <div className="hidden items-center gap-6 xl:flex 2xl:gap-8">
             <NavLink to="/poems" label="Poems" />
             <NavLink to="/books" label="Books" />
 
-            {/* Quick Navigation Trigger Button */}
+            {/* Quick Navigation Trigger */}
             <button
               onClick={() => setNavModalOpen(true)}
-              className="
-                flex items-center gap-2
-                px-4 py-2.5
-                rounded-full
-                bg-amber-950/5 hover:bg-amber-950/10
-                border border-amber-900/15
-                text-stone-800
-                text-[13px] font-medium tracking-wide
-                transition-all duration-300
-                hover:scale-[1.03] active:scale-[0.98]
-                cursor-pointer
-              "
+              className="flex cursor-pointer items-center gap-2 rounded-full border border-amber-900/15 bg-amber-950/5 px-4 py-2.5 text-[13px] font-medium tracking-wide text-stone-800 transition-all duration-300 hover:scale-[1.03] hover:bg-amber-950/10 active:scale-[0.98]"
               title="Open Sanctuary Navigator"
             >
-              <Compass className="w-4 h-4 text-amber-800 animate-spin-slow" />
+              <Compass className="animate-spin-slow h-4 w-4 text-amber-800" />
               <span>Navigator</span>
             </button>
 
+            {/* Editorial Feature Button */}
             <Link
               to="/about-me"
-              className="
-              group
-              relative
-
-              flex
-              items-center
-              gap-4
-
-              px-4 2xl:px-5
-              py-2.5 2xl:py-3
-
-              border-2
-              border-stone-900
-
-              bg-[#efe6d6]
-
-              transition-all
-              duration-300
-
-              hover:bg-[#e8dcc8]
-
-              shadow-[4px_4px_0px_0px_rgba(28,24,20,0.22)]
-
-              hover:translate-x-[2px]
-              hover:translate-y-[2px]
-
-              hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.18)]
-
-              active:translate-x-[4px]
-              active:translate-y-[4px]
-
-              active:shadow-none
-            "
+              className="group relative flex items-center gap-4 border-2 border-stone-900 bg-[#efe6d6] px-4 py-2.5 shadow-[4px_4px_0px_0px_rgba(28,24,20,0.22)] transition-all duration-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e8dcc8] hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.18)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none 2xl:px-5 2xl:py-3"
             >
-              {/* Left Label */}
               <div className="flex flex-col leading-none">
-                <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-amber-800">
+                <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-amber-800">
                   Editorial
                 </span>
-
                 <span
-                  className="
-                    mt-1
-
-                    text-[22px] 2xl:text-[24px]
-
-                    leading-none
-
-                    text-stone-900
-                  "
+                  className="mt-1 text-[22px] leading-none text-stone-900 2xl:text-[24px]"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
                     fontStyle: "italic",
@@ -134,37 +105,14 @@ export default function Navbar() {
                 </span>
               </div>
 
-              {/* Divider */}
               <div className="w-px self-stretch bg-stone-900/20" />
 
-              {/* Arrow */}
-              <div
-                className="
-                text-stone-700
-
-                text-[20px]
-
-                transition-transform
-                duration-300
-
-                group-hover:translate-x-1
-                group-hover:-translate-y-[1px]
-              "
-              >
+              <div className="text-[20px] text-stone-700 transition-transform duration-300 group-hover:-translate-y-[1px] group-hover:translate-x-1">
                 ↗
               </div>
 
-              {/* Vintage texture */}
-              <div
-                className="
-                absolute inset-0 opacity-[0.05]
-
-                bg-[radial-gradient(circle,#000_1px,transparent_1px)]
-                bg-[size:10px_10px]
-
-                pointer-events-none
-              "
-              />
+              {/* Vintage texture overlay */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,#000_1px,transparent_1px)] bg-[size:10px_10px] opacity-[0.05]" />
             </Link>
 
             {user ? (
@@ -172,28 +120,9 @@ export default function Navbar() {
             ) : (
               <>
                 <NavLink to="/login" label="Login" />
-
                 <Link
                   to="/register"
-                  className="
-                  px-5 2xl:px-6 py-3
-
-                  rounded-full
-
-                  bg-[#1f1a17]
-                  text-[#f8f4ef]
-
-                  text-xs 2xl:text-sm tracking-[0.14em]
-                  uppercase
-
-                  shadow-[0_6px_20px_rgba(0,0,0,0.12)]
-
-                  hover:scale-[1.03]
-                  hover:bg-[#2b2420]
-
-                  transition-all duration-500
-                  whitespace-nowrap
-                "
+                  className="whitespace-nowrap rounded-full bg-[#1f1a17] px-5 py-3 text-xs uppercase tracking-[0.14em] text-[#f8f4ef] shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-500 hover:scale-[1.03] hover:bg-[#2b2420] 2xl:px-6 2xl:text-sm"
                 >
                   Join the Verse
                 </Link>
@@ -201,41 +130,20 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile / Tablet Actions (Shown below XL screens < 1280px) */}
-          <div className="flex xl:hidden items-center gap-2">
-            {/* Quick Navigation Button */}
+          {/* Mobile / Tablet Controls (< 1280px) */}
+          <div className="flex items-center gap-2 xl:hidden">
             <button
               onClick={() => setNavModalOpen(true)}
-              className="
-                w-11 h-11 rounded-full
-                bg-[#efe6d6] border border-amber-900/20
-                flex items-center justify-center
-                text-amber-900
-                shadow-sm
-                active:scale-95 transition-transform
-                cursor-pointer
-              "
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-amber-900/20 bg-[#efe6d6] text-amber-900 shadow-sm transition-transform active:scale-95"
               aria-label="Open Navigation Modal"
             >
               <Compass size={20} />
             </button>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="
-              w-11 h-11 rounded-full
-
-              bg-white/60
-              border border-[#e8ddd0]
-
-              flex items-center justify-center
-
-              text-[#2d2722]
-
-              shadow-sm
-              cursor-pointer
-            "
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[#e8ddd0] bg-white/60 text-[#2d2722] shadow-sm"
+              aria-label="Open Mobile Menu"
             >
               <Menu size={22} />
             </button>
@@ -243,7 +151,7 @@ export default function Navbar() {
         </nav>
       </header>
 
-      {/* Mobile / Tablet Drawer */}
+      {/* Mobile Drawer Overlay */}
       <MobileDrawer
         open={mobileOpen}
         setOpen={setMobileOpen}
@@ -252,7 +160,7 @@ export default function Navbar() {
         onOpenNavModal={() => setNavModalOpen(true)}
       />
 
-      {/* Quick Navigation Modal */}
+      {/* Quick Nav Modal */}
       <QuickNavModal
         isOpen={navModalOpen}
         onClose={() => setNavModalOpen(false)}
@@ -262,56 +170,19 @@ export default function Navbar() {
 }
 
 /* ======================================================
-   BRAND
+   SUB-COMPONENTS
 ====================================================== */
 
 function Brand() {
   return (
-    <Link
-      to="/"
-      className="
-      flex items-center gap-3
-
-      shrink-0
-    "
-    >
-      {/* Feather circle */}
-      <div
-        className="
-        shrink-0
-
-        w-10 h-10
-        sm:w-11 sm:h-11
-
-        rounded-full
-
-        bg-white/65
-        border border-[#e6dbcf]
-
-        flex items-center justify-center
-
-        shadow-sm
-      "
-      >
+    <Link to="/" className="flex shrink-0 items-center gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#e6dbcf] bg-white/65 shadow-sm sm:h-11 sm:w-11">
         <Feather size={18} className="text-[#665e57]" />
       </div>
 
-      {/* Text */}
       <div className="flex flex-col">
-        {/* Main logo */}
         <span
-          className="
-          text-[1.55rem]
-          sm:text-[1.75rem]
-          2xl:text-[2.25rem]
-
-          leading-[1.02]
-
-          pb-[2px]
-
-          text-[#201b18]
-          whitespace-nowrap
-        "
+          className="whitespace-nowrap text-[1.55rem] leading-[1.02] pb-[2px] text-[#201b18] sm:text-[1.75rem] 2xl:text-[2.25rem]"
           style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 700,
@@ -319,24 +190,7 @@ function Brand() {
         >
           Satinder Poetry
         </span>
-
-        {/* Subtitle */}
-        <span
-          className="
-          mt-[2px]
-
-          text-[7px]
-          sm:text-[8.5px]
-
-          uppercase
-
-          tracking-[0.24em]
-          sm:tracking-[0.3em]
-
-          text-[#8b8178]
-          whitespace-nowrap
-        "
-        >
+        <span className="mt-[2px] whitespace-nowrap text-[7px] uppercase tracking-[0.24em] text-[#8b8178] sm:text-[8.5px] sm:tracking-[0.3em]">
           Poetry • Stories • Reflections
         </span>
       </div>
@@ -344,59 +198,31 @@ function Brand() {
   );
 }
 
-/* ======================================================
-   NAV LINK
-====================================================== */
-
 function NavLink({ to, label }) {
   const location = useLocation();
-
   const active = location.pathname === to;
 
   return (
     <Link
       to={to}
-      className={`
-      relative
-
-      text-[13px] 2xl:text-[14px]
-
-      uppercase
-      tracking-[0.16em]
-
-      transition-all duration-500
-
-      ${active ? "text-[#1f1a17]" : "text-[#756b63] hover:text-[#1f1a17]"}
-    `}
+      className={`relative text-[13px] uppercase tracking-[0.16em] transition-all duration-500 2xl:text-[14px] ${
+        active ? "text-[#1f1a17]" : "text-[#756b63] hover:text-[#1f1a17]"
+      }`}
     >
       {label}
-
       <span
-        className={`
-        absolute left-0 -bottom-2
-
-        h-px
-
-        bg-[#5d534c]
-
-        transition-all duration-500
-
-        ${active ? "w-full" : "w-0 hover:w-full"}
-      `}
+        className={`absolute left-0 -bottom-2 h-px bg-[#5d534c] transition-all duration-500 ${
+          active ? "w-full" : "w-0 hover:w-full"
+        }`}
       />
     </Link>
   );
 }
 
-/* ======================================================
-   PREMIUM DROPDOWN
-====================================================== */
-
 function ProfileDropdown({ user, logout }) {
   const [open, setOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
-
-  const ref = useRef();
+  const ref = useRef(null);
 
   useClickOutside(ref, () => setOpen(false));
 
@@ -405,28 +231,7 @@ function ProfileDropdown({ user, logout }) {
       <div ref={ref} className="relative">
         <button
           onClick={() => setOpen(!open)}
-          className="
-          relative
-
-          w-11 h-11 2xl:w-12 2xl:h-12 rounded-full
-
-          bg-gradient-to-br
-          from-[#473d37]
-          to-[#221d1a]
-
-          text-white
-
-          flex items-center justify-center
-
-          shadow-[0_10px_25px_rgba(0,0,0,0.16)]
-
-          hover:scale-[1.04]
-          hover:shadow-[0_14px_35px_rgba(0,0,0,0.18)]
-
-          transition-all duration-500
-
-          cursor-pointer
-        "
+          className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#473d37] to-[#221d1a] text-white shadow-[0_10px_25px_rgba(0,0,0,0.16)] transition-all duration-500 hover:scale-[1.04] hover:shadow-[0_14px_35px_rgba(0,0,0,0.18)] 2xl:h-12 2xl:w-12"
         >
           <span className="text-sm font-medium">
             {user.name?.charAt(0).toUpperCase()}
@@ -434,72 +239,17 @@ function ProfileDropdown({ user, logout }) {
         </button>
 
         {open && (
-          <div
-            className="
-            absolute right-0 mt-5
-
-            min-w-[360px] 2xl:min-w-[430px] w-fit
-
-            rounded-[34px]
-
-            overflow-hidden
-
-            bg-[#faf7f2]/96
-            backdrop-blur-3xl
-
-            border border-[#eadfce]
-
-            shadow-[0_25px_70px_rgba(0,0,0,0.14)]
-
-            animate-in fade-in zoom-in-95 duration-300
-          "
-          >
-            <div
-              className="
-              px-7 py-7
-
-              bg-gradient-to-br
-              from-[#f8f1e8]
-              via-[#fdfaf6]
-              to-[#f8f1e8]
-
-              border-b border-[#ece1d4]
-            "
-            >
+          <div className="absolute right-0 mt-5 w-fit min-w-[360px] animate-in fade-in zoom-in-95 duration-300 overflow-hidden rounded-[34px] border border-[#eadfce] bg-[#faf7f2]/96 backdrop-blur-3xl shadow-[0_25px_70px_rgba(0,0,0,0.14)] 2xl:min-w-[430px]">
+            {/* User Profile Banner */}
+            <div className="border-b border-[#ece1d4] bg-gradient-to-br from-[#f8f1e8] via-[#fdfaf6] to-[#f8f1e8] px-7 py-7">
               <div className="flex items-center gap-4">
-                <div
-                  className="
-                  shrink-0
-
-                  w-16 h-16 rounded-full
-
-                  bg-gradient-to-br
-                  from-[#473d37]
-                  to-[#221d1a]
-
-                  text-white
-
-                  flex items-center justify-center
-
-                  text-xl
-
-                  shadow-[0_10px_25px_rgba(0,0,0,0.12)]
-                "
-                >
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#473d37] to-[#221d1a] text-xl text-white shadow-[0_10px_25px_rgba(0,0,0,0.12)]">
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
 
                 <div className="flex flex-col">
                   <p
-                    className="
-                      text-[1.95rem]
-
-                      leading-[1.05]
-
-                      text-[#241f1b]
-
-                      whitespace-nowrap
-                    "
+                    className="whitespace-nowrap text-[1.95rem] leading-[1.05] text-[#241f1b]"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       fontWeight: 600,
@@ -507,24 +257,14 @@ function ProfileDropdown({ user, logout }) {
                   >
                     {user.name}
                   </p>
-
-                  <p
-                    className="
-                      mt-2
-
-                      text-[14px]
-
-                      text-[#867c73]
-
-                      whitespace-nowrap
-                    "
-                  >
+                  <p className="mt-2 whitespace-nowrap text-[14px] text-[#867c73]">
                     {user.email}
                   </p>
                 </div>
               </div>
             </div>
 
+            {/* Links & Actions */}
             <div className="p-4">
               <DropdownItem
                 to="/profile"
@@ -542,42 +282,16 @@ function ProfileDropdown({ user, logout }) {
                 />
               )}
 
-              <div className="h-px bg-[#eee3d7] my-3" />
+              <div className="my-3 h-px bg-[#eee3d7]" />
 
               <button
                 onClick={() => {
                   setOpen(false);
                   setShowLogout(true);
                 }}
-                className="
-                w-full
-
-                flex items-center gap-4
-
-                px-5 py-4
-
-                rounded-2xl
-
-                bg-gradient-to-r
-                from-[#fff1f1]
-                to-[#fff6f6]
-
-                border border-[#f3d6d6]
-
-                text-[#b14d4d]
-
-                hover:from-[#ffe5e5]
-                hover:to-[#fff0f0]
-
-                hover:border-[#efc4c4]
-
-                transition-all duration-300
-
-                cursor-pointer
-              "
+                className="flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-[#f3d6d6] bg-gradient-to-r from-[#fff1f1] to-[#fff6f6] px-5 py-4 text-[#b14d4d] transition-all duration-300 hover:border-[#efc4c4] hover:from-[#ffe5e5] hover:to-[#fff0f0]"
               >
                 <LogOut size={18} />
-
                 <span className="font-medium">Logout</span>
               </button>
             </div>
@@ -599,128 +313,45 @@ function DropdownItem({ to, icon, label, onClick }) {
     <Link
       to={to}
       onClick={onClick}
-      className="
-      flex items-center gap-4
-
-      px-5 py-4
-
-      rounded-2xl
-
-      text-[#5e554d]
-
-      hover:bg-[#f1e8dd]
-
-      transition-all duration-300
-    "
+      className="flex items-center gap-4 rounded-2xl px-5 py-4 text-[#5e554d] transition-all duration-300 hover:bg-[#f1e8dd]"
     >
       {icon}
-
       <span className="text-[15px]">{label}</span>
     </Link>
   );
 }
 
-/* ======================================================
-   PREMIUM MOBILE DRAWER
-====================================================== */
-
 function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
   const [showLogout, setShowLogout] = useState(false);
 
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [open]);
+  useLockBodyScroll(open);
 
   return (
     <>
+      {/* Backdrop */}
       <div
         onClick={() => setOpen(false)}
-        className={`
-        fixed inset-0 z-[90]
-
-        bg-black/50
-        backdrop-blur-md
-
-        transition-all duration-500
-
-        ${open ? "opacity-100 visible" : "opacity-0 invisible"}
-      `}
+        className={`fixed inset-0 z-[90] bg-black/50 backdrop-blur-md transition-all duration-500 ${
+          open ? "visible opacity-100" : "invisible opacity-0"
+        }`}
       />
 
+      {/* Drawer Container */}
       <div
-        className={`
-        fixed top-0 right-0 z-[100]
-
-        overscroll-contain
-
-        h-screen
-        w-[90%]
-        max-w-[390px]
-
-        bg-[#f8f4ee]/98
-        backdrop-blur-3xl
-
-        border-l border-[#eadfce]
-
-        shadow-[-20px_0_60px_rgba(0,0,0,0.18)]
-
-        transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-
-        flex flex-col
-
-        ${open ? "translate-x-0" : "translate-x-full"}
-      `}
+        className={`fixed top-0 right-0 z-[100] flex h-screen w-[90%] max-w-[390px] overscroll-contain flex-col border-l border-[#eadfce] bg-[#f8f4ee]/98 backdrop-blur-3xl shadow-[-20px_0_60px_rgba(0,0,0,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <div
-          className="
-          relative
-
-          px-6 pt-7 pb-6
-
-          border-b border-[#ece1d4]
-
-          bg-gradient-to-b
-          from-[#fdfaf6]
-          to-[#f8f4ee]
-        "
-        >
+        {/* Header */}
+        <div className="relative border-b border-[#ece1d4] bg-gradient-to-b from-[#fdfaf6] to-[#f8f4ee] px-6 pt-7 pb-6">
           <div className="flex items-center gap-4">
-            <div
-              className="
-              w-12 h-12 rounded-full
-
-              bg-white
-
-              border border-[#eadfce]
-
-              shadow-sm
-
-              flex items-center justify-center
-            "
-            >
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#eadfce] bg-white shadow-sm">
               <Feather size={20} className="text-[#665e57]" />
             </div>
 
             <div>
               <p
-                className="
-                text-[2.2rem]
-
-                leading-none
-
-                text-[#1f1a17]
-              "
+                className="text-[2.2rem] leading-none text-[#1f1a17]"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontWeight: 700,
@@ -728,20 +359,7 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
               >
                 Satinder Poetry
               </p>
-
-              <p
-                className="
-                mt-1
-
-                text-[10px]
-
-                uppercase
-
-                tracking-[0.28em]
-
-                text-[#8b8178]
-              "
-              >
+              <p className="mt-1 text-[10px] uppercase tracking-[0.28em] text-[#8b8178]">
                 Poetry Space
               </p>
             </div>
@@ -749,103 +367,27 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
 
           <button
             onClick={() => setOpen(false)}
-            className="
-            absolute top-6 right-6
-
-            w-11 h-11 rounded-full
-
-            bg-white
-
-            border border-[#eadfce]
-
-            shadow-sm
-
-            flex items-center justify-center
-
-            text-[#5e554d]
-
-            hover:scale-105
-
-            transition-all duration-300
-            cursor-pointer
-          "
+            className="absolute top-6 right-6 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[#eadfce] bg-white text-[#5e554d] shadow-sm transition-all duration-300 hover:scale-105"
+            aria-label="Close menu"
           >
             <X size={20} />
           </button>
         </div>
 
+        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-7">
           {user && (
-            <div
-              className="
-              relative
-
-              overflow-hidden
-
-              rounded-[30px]
-
-              bg-gradient-to-br
-              from-[#f7efe6]
-              via-[#fffdfa]
-              to-[#f8f1e8]
-
-              border border-[#ebdfd2]
-
-              p-5
-
-              mb-8
-
-              shadow-[0_10px_35px_rgba(0,0,0,0.04)]
-            "
-            >
-              <div
-                className="
-                absolute -top-10 -right-10
-
-                w-32 h-32 rounded-full
-
-                bg-[#fff7ef]
-
-                blur-3xl
-
-                opacity-70
-              "
-              />
+            <div className="relative mb-8 overflow-hidden rounded-[30px] border border-[#ebdfd2] bg-gradient-to-br from-[#f7efe6] via-[#fffdfa] to-[#f8f1e8] p-5 shadow-[0_10px_35px_rgba(0,0,0,0.04)]">
+              <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#fff7ef] opacity-70 blur-3xl" />
 
               <div className="relative flex items-center gap-4">
-                <div
-                  className="
-                  shrink-0
-
-                  w-16 h-16 rounded-full
-
-                  bg-gradient-to-br
-                  from-[#473d37]
-                  to-[#221d1a]
-
-                  text-white
-
-                  flex items-center justify-center
-
-                  text-xl
-
-                  shadow-[0_10px_25px_rgba(0,0,0,0.14)]
-                "
-                >
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#473d37] to-[#221d1a] text-xl text-white shadow-[0_10px_25px_rgba(0,0,0,0.14)]">
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
 
                 <div className="min-w-0">
                   <p
-                    className="
-                    text-[1.2rem]
-
-                    text-[#201b18]
-
-                    leading-tight
-
-                    break-words
-                  "
+                    className="break-words text-[1.2rem] leading-tight text-[#201b18]"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       fontWeight: 700,
@@ -853,18 +395,7 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
                   >
                     {user.name}
                   </p>
-
-                  <p
-                    className="
-                    mt-1
-
-                    text-[13px]
-
-                    text-[#877d74]
-
-                    break-all
-                  "
-                  >
+                  <p className="mt-1 break-all text-[13px] text-[#877d74]">
                     {user.email}
                   </p>
                 </div>
@@ -872,24 +403,14 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
             </div>
           )}
 
+          {/* Links Grid */}
           <div className="flex flex-col gap-4">
             <button
               onClick={() => {
                 setOpen(false);
                 onOpenNavModal();
               }}
-              className="
-                flex items-center gap-4
-                px-5 py-5
-                rounded-[24px]
-                bg-[#efe6d6]
-                border border-amber-900/20
-                text-stone-900
-                shadow-sm
-                hover:bg-[#e6dac4]
-                transition-all duration-300
-                cursor-pointer
-              "
+              className="flex cursor-pointer items-center gap-4 rounded-[24px] border border-amber-900/20 bg-[#efe6d6] px-5 py-5 text-stone-900 shadow-sm transition-all duration-300 hover:bg-[#e6dac4]"
             >
               <Compass size={20} className="text-amber-800" />
               <span className="text-[15px] font-medium tracking-wide">
@@ -916,58 +437,16 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
             <Link
               to="/about-me"
               onClick={() => setOpen(false)}
-              className="
-              group
-              relative
-              overflow-hidden
-
-              flex flex-col
-
-              p-6
-
-              border-2
-              border-stone-900
-
-              bg-[#efe6d6]
-
-              shadow-[5px_5px_0px_0px_rgba(28,24,20,0.18)]
-
-              transition-all
-              duration-300
-
-              hover:translate-x-[2px]
-              hover:translate-y-[2px]
-
-              hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.14)]
-            "
+              className="group relative flex flex-col overflow-hidden border-2 border-stone-900 bg-[#efe6d6] p-6 shadow-[5px_5px_0px_0px_rgba(28,24,20,0.18)] transition-all duration-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(28,24,20,0.14)]"
             >
-              <div
-                className="
-                absolute inset-0 opacity-[0.05]
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,#000_1px,transparent_1px)] bg-[size:10px_10px] opacity-[0.05]" />
 
-                bg-[radial-gradient(circle,#000_1px,transparent_1px)]
-                bg-[size:10px_10px]
-
-                pointer-events-none
-              "
-              />
-
-              <span className="relative z-10 font-mono text-[10px] tracking-[0.3em] uppercase text-amber-800">
+              <span className="relative z-10 font-mono text-[10px] uppercase tracking-[0.3em] text-amber-800">
                 Editorial Feature
               </span>
 
               <h3
-                className="
-                relative z-10
-
-                mt-3
-
-                text-[2.4rem]
-
-                leading-[0.9]
-
-                text-stone-900
-              "
+                className="relative z-10 mt-3 text-[2.4rem] leading-[0.9] text-stone-900"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: "italic",
@@ -983,50 +462,20 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
               </p>
 
               <div className="relative z-10 mt-6 flex items-center justify-between">
-                <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-stone-500">
+                <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500">
                   Enter Chapter 01
                 </span>
-
-                <span
-                  className="
-                  text-[22px]
-
-                  text-stone-700
-
-                  transition-transform
-                  duration-300
-
-                  group-hover:translate-x-1
-                  group-hover:-translate-y-[1px]
-                "
-                >
+                <span className="text-[22px] text-stone-700 transition-transform duration-300 group-hover:-translate-y-[1px] group-hover:translate-x-1">
                   ↗
                 </span>
               </div>
 
-              <div
-                className="
-                  absolute top-3 right-3
-
-                  border border-stone-900/20
-
-                  px-2 py-1
-
-                  font-mono text-[8px]
-
-                  tracking-[0.2em]
-                  uppercase
-
-                  text-stone-500
-
-                  bg-[#f7f0e3]
-                "
-              >
+              <div className="absolute top-3 right-3 border border-stone-900/20 bg-[#f7f0e3] px-2 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-stone-500">
                 Vol. 01
               </div>
             </Link>
 
-            {!user && (
+            {!user ? (
               <>
                 <MobileItem
                   to="/login"
@@ -1044,9 +493,7 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
                   Join the Verse
                 </MobileItem>
               </>
-            )}
-
-            {user && (
+            ) : (
               <>
                 <MobileItem
                   to="/profile"
@@ -1071,34 +518,9 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
                     setOpen(false);
                     setShowLogout(true);
                   }}
-                  className="
-                  flex items-center gap-4
-
-                  px-5 py-5
-
-                  rounded-[24px]
-
-                  bg-gradient-to-r
-                  from-[#fff0f0]
-                  to-[#fff6f6]
-
-                  border border-[#f1d0d0]
-
-                  text-[#b34b4b]
-
-                  shadow-sm
-
-                  hover:from-[#ffe6e6]
-                  hover:to-[#fff1f1]
-
-                  hover:border-[#e8bcbc]
-
-                  transition-all duration-300
-                  cursor-pointer
-                "
+                  className="flex cursor-pointer items-center gap-4 rounded-[24px] border border-[#f1d0d0] bg-gradient-to-r from-[#fff0f0] to-[#fff6f6] px-5 py-5 text-[#b34b4b] shadow-sm transition-all duration-300 hover:border-[#e8bcbc] hover:from-[#ffe6e6] hover:to-[#fff1f1]"
                 >
                   <LogOut size={20} />
-
                   <span className="font-medium">Logout</span>
                 </button>
               </>
@@ -1106,57 +528,17 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
           </div>
         </div>
 
-        <div
-          className="
-          relative
-
-          shrink-0
-
-          px-6 py-5
-
-          border-t border-[#ece1d4]
-
-          bg-gradient-to-b
-          from-[#faf6f1]
-          to-[#f6f1ea]
-        "
-        >
-          <div
-            className="
-            absolute inset-x-0 top-0
-
-            h-px
-
-            bg-gradient-to-r
-            from-transparent
-            via-[#d9cbbb]
-            to-transparent
-          "
-          />
+        {/* Footer Info */}
+        <div className="relative shrink-0 border-t border-[#ece1d4] bg-gradient-to-b from-[#faf6f1] to-[#f6f1ea] px-6 py-5">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d9cbbb] to-transparent" />
 
           <div className="flex flex-col items-center text-center">
-            <p
-              className="
-              text-[10px]
-
-              uppercase
-
-              tracking-[0.28em]
-
-              text-[#9a8f84]
-            "
-            >
+            <p className="text-[10px] uppercase tracking-[0.28em] text-[#9a8f84]">
               Crafted with Elegance
             </p>
 
             <p
-              className="
-              mt-2
-
-              text-[14px]
-
-              text-[#2a241f]
-            "
+              className="mt-2 text-[14px] text-[#2a241f]"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontWeight: 600,
@@ -1165,17 +547,7 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
               Developed by Satinder Singh Sall
             </p>
 
-            <p
-              className="
-              mt-1
-
-              text-[11px]
-
-              tracking-wide
-
-              text-[#9a9085]
-            "
-            >
+            <p className="mt-1 text-[11px] tracking-wide text-[#9a9085]">
               Satinder Poetry • v7.5.0
             </p>
           </div>
@@ -1196,41 +568,10 @@ function MobileItem({ to, children, icon, setOpen }) {
     <Link
       to={to}
       onClick={() => setOpen(false)}
-      className="
-      flex items-center gap-4
-
-      px-5 py-5
-
-      rounded-[24px]
-
-      bg-white
-
-      border border-[#ece1d4]
-
-      text-[#4e463f]
-
-      hover:bg-[#f6efe7]
-
-      transition-all duration-300
-    "
+      className="flex items-center gap-4 rounded-[24px] border border-[#ece1d4] bg-white px-5 py-5 text-[#4e463f] transition-all duration-300 hover:bg-[#f6efe7]"
     >
       {icon}
-
       <span className="text-[15px] tracking-wide">{children}</span>
     </Link>
   );
-}
-
-function useClickOutside(ref, handler) {
-  useEffect(() => {
-    const listener = (e) => {
-      if (!ref.current || ref.current.contains(e.target)) return;
-
-      handler();
-    };
-
-    document.addEventListener("mousedown", listener);
-
-    return () => document.removeEventListener("mousedown", listener);
-  }, [ref, handler]);
 }
