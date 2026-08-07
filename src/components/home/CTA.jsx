@@ -9,6 +9,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import { Plus } from "lucide-react"; // Import Plus icon (or use a simple "+" text/svg if lucide isn't installed)
 
 export default function CTA() {
   return (
@@ -148,21 +149,21 @@ export default function CTA() {
                 </DialogDescription>
 
                 {/* Bottom actions */}
-                <div className="mt-10 flex items-center justify-center gap-4">
+                <div className="mt-8 flex flex-col items-center justify-center gap-3">
                   <DialogClose asChild>
                     <Button
                       variant="outline"
                       className="
-    group relative overflow-hidden rounded-full
-    border border-[#d6b98c]/30 bg-white/5 px-8 py-6
-    text-sm font-medium uppercase tracking-[0.2em] text-[#f5efe6]
+    w-full max-w-xs group relative overflow-hidden rounded-full
+    border border-[#d6b98c]/30 bg-white/5 px-8 py-5
+    text-xs sm:text-sm font-medium uppercase tracking-[0.2em] text-[#f5efe6]
     backdrop-blur-md transition-all duration-300
     hover:border-[#d6b98c]/80 hover:bg-white/10 hover:text-white
     hover:shadow-[0_0_20px_rgba(214,185,140,0.25)]
     active:scale-95 cursor-pointer
   "
                     >
-                      <span className="relative z-10 flex items-center gap-2">
+                      <span className="relative z-10 flex items-center justify-center gap-2">
                         I’ll Be Back
                         <span className="transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125">
                           ✨
@@ -170,6 +171,26 @@ export default function CTA() {
                       </span>
                     </Button>
                   </DialogClose>
+
+                  {/* Poet's Access Portal Button */}
+                  <Link to="/add-poem-portal" className="w-full max-w-xs">
+                    <Button
+                      className="
+                        w-full rounded-full
+                        bg-[#d6b98c] text-[#111111]
+                        px-8 py-5
+                        text-xs sm:text-sm font-semibold uppercase tracking-[0.2em]
+                        transition-all duration-300
+                        hover:bg-[#e4ccaa] hover:shadow-[0_0_25px_rgba(214,185,140,0.4)]
+                        hover:-translate-y-0.5 active:scale-95 cursor-pointer
+                      "
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        <Plus className="h-4 w-4 stroke-[2.5]" />
+                        Poet's Access Portal
+                      </span>
+                    </Button>
+                  </Link>
                 </div>
 
                 {/* Footer text */}
