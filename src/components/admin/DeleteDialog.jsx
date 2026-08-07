@@ -16,7 +16,7 @@ export default function DeletePoemDialog({ onConfirm }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="destructive">
+        <Button size="sm" variant="destructive" className="cursor-pointer">
           <Trash2 className="w-4 h-4" />
         </Button>
       </AlertDialogTrigger>
@@ -30,10 +30,10 @@ export default function DeletePoemDialog({ onConfirm }) {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-red-600 hover:bg-red-700 cursor-pointer"
           >
             Delete
           </AlertDialogAction>

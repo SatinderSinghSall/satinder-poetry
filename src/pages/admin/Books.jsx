@@ -6,7 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { Library, Edit, Search, Loader2, RefreshCw, Eye } from "lucide-react";
+import {
+  Library,
+  Edit,
+  Search,
+  Loader2,
+  RefreshCw,
+  Eye,
+  PlusCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import DeleteDialog from "@/components/admin/DeleteDialog";
 
@@ -27,19 +37,23 @@ export default function Books() {
   const [loading, setLoading] = useState(true);
   const [selectedBook, setSelectedBook] = useState(null);
 
+  // 📄 Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
   useEffect(() => {
     const q = search.toLowerCase();
-    setFiltered(
-      books.filter(
-        (b) =>
-          b.title?.toLowerCase().includes(q) ||
-          b.author?.toLowerCase().includes(q),
-      ),
+    const result = books.filter(
+      (b) =>
+        b.title?.toLowerCase().includes(q) ||
+        b.author?.toLowerCase().includes(q),
     );
+    setFiltered(result);
+    setCurrentPage(1); // Reset to page 1 on search change
   }, [search, books]);
 
   const fetchBooks = async () => {
@@ -68,6 +82,12 @@ export default function Books() {
       toast.error("Delete failed");
     }
   };
+
+  // 📄 Pagination Calculations
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentBooks = filtered.slice(startIndex, endIndex);
 
   if (loading) {
     return (
@@ -120,13 +140,21 @@ export default function Books() {
               />
             </div>
 
-            <Button variant="outline" onClick={fetchBooks} className="cursor-pointer">
+            <Button
+              variant="outline"
+              onClick={fetchBooks}
+              className="cursor-pointer"
+            >
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
             </Button>
 
-            <Button onClick={() => navigate("/admin/add-book")} className="cursor-pointer">
-              Add Book
+            <Button
+              onClick={() => navigate("/admin/add-book")}
+              className="inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Add Book</span>
             </Button>
           </div>
         </div>
@@ -145,11 +173,12 @@ export default function Books() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden">
+        {/* Table Container */}
+        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col justify-between">
           <table className="w-full text-sm">
             <thead className="bg-slate-100">
               <tr>
+                <th className="p-4 text-left w-16">S.No.</th>
                 <th className="p-4 text-left">Title</th>
                 <th className="p-4 text-left">Author</th>
                 <th className="p-4 text-right">Actions</th>
@@ -157,8 +186,11 @@ export default function Books() {
             </thead>
 
             <tbody>
-              {filtered.map((book) => (
-                <tr key={book._id} className="border-t">
+              {currentBooks.map((book, index) => (
+                <tr key={book._id} className="border-t hover:bg-slate-50/50">
+                  <td className="p-4 text-muted-foreground font-medium">
+                    {startIndex + index + 1}
+                  </td>
                   <td className="p-4 font-medium">{book.title}</td>
                   <td className="p-4 text-muted-foreground">{book.author}</td>
 
@@ -168,6 +200,7 @@ export default function Books() {
                       size="sm"
                       variant="outline"
                       onClick={() => setSelectedBook(book)}
+                      className="cursor-pointer"
                     >
                       <Eye className="w-4 h-4" />
                     </Button>
@@ -176,6 +209,7 @@ export default function Books() {
                     <Button
                       size="sm"
                       variant="outline"
+                      className="cursor-pointer"
                       onClick={() => navigate(`/admin/edit-book/${book._id}`)}
                     >
                       <Edit className="w-4 h-4" />
@@ -192,91 +226,173 @@ export default function Books() {
             </tbody>
           </table>
 
-          {/* ================================= */}
-          {/* 👁 VIEW BOOK MODAL */}
-          {/* ================================= */}
-
-          {selectedBook && (
-            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
-              <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Book Details</h2>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedBook(null)}
-                  >
-                    Close
-                  </Button>
-                </div>
-
-                {/* Content */}
-                <div className="grid gap-4 text-sm">
-                  <Field label="Title" value={selectedBook.title} />
-                  <Field label="Author" value={selectedBook.author} />
-                  <Field label="Description" value={selectedBook.description} />
-                  <Field
-                    label="Price"
-                    value={
-                      selectedBook.price ? `$${selectedBook.price}` : "Free"
-                    }
-                  />
-                  <Field
-                    label="Purchase Link"
-                    value={
-                      selectedBook.purchaseLink ? (
-                        <a
-                          href={selectedBook.purchaseLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-600 underline"
-                        >
-                          {selectedBook.purchaseLink}
-                        </a>
-                      ) : null
-                    }
-                  />
-                  <Field
-                    label="Created At"
-                    value={
-                      selectedBook.createdAt
-                        ? new Date(selectedBook.createdAt).toLocaleString()
-                        : "—"
-                    }
-                  />
-                  <Field
-                    label="Updated At"
-                    value={
-                      selectedBook.updatedAt
-                        ? new Date(selectedBook.updatedAt).toLocaleString()
-                        : "—"
-                    }
-                  />
-
-                  {/* Cover image */}
-                  {selectedBook.coverImage && (
-                    <div>
-                      <p className="font-medium mb-2">Cover Image</p>
-                      <img
-                        src={selectedBook.coverImage}
-                        alt={selectedBook.title}
-                        className="rounded-xl w-full max-h-60 object-cover border"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
           {filtered.length === 0 && (
             <div className="p-10 text-center text-muted-foreground">
               No books found
             </div>
           )}
+
+          {/* 📄 PAGINATION CONTROLS */}
+          {filtered.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t p-4 bg-slate-50/50">
+              {/* Left side: Row info & Items per page dropdown */}
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>
+                  Showing {startIndex + 1}–{Math.min(endIndex, filtered.length)}{" "}
+                  of {filtered.length} books
+                </span>
+
+                <div className="flex items-center gap-2">
+                  <span>Per page:</span>
+                  <select
+                    className="h-8 w-16 rounded-md border bg-white px-2 text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Right side: Navigation buttons */}
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="h-8 w-8 p-0 cursor-pointer disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((page) => {
+                    return (
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 1
+                    );
+                  })
+                  .map((page, index, array) => {
+                    const prevPage = array[index - 1];
+                    const showEllipsis = prevPage && page - prevPage > 1;
+
+                    return (
+                      <div key={page} className="flex items-center">
+                        {showEllipsis && (
+                          <span className="px-2 text-muted-foreground text-xs">
+                            ...
+                          </span>
+                        )}
+                        <Button
+                          variant={currentPage === page ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(page)}
+                          className="h-8 w-8 p-0 text-xs cursor-pointer"
+                        >
+                          {page}
+                        </Button>
+                      </div>
+                    );
+                  })}
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="h-8 w-8 p-0 cursor-pointer disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* ================================= */}
+        {/* 👁 VIEW BOOK MODAL */}
+        {/* ================================= */}
+        {selectedBook && (
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Book Details</h2>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedBook(null)}
+                  className="cursor-pointer"
+                >
+                  Close
+                </Button>
+              </div>
+
+              {/* Content */}
+              <div className="grid gap-4 text-sm">
+                <Field label="Title" value={selectedBook.title} />
+                <Field label="Author" value={selectedBook.author} />
+                <Field label="Description" value={selectedBook.description} />
+                <Field
+                  label="Price"
+                  value={selectedBook.price ? `$${selectedBook.price}` : "Free"}
+                />
+                <Field
+                  label="Purchase Link"
+                  value={
+                    selectedBook.purchaseLink ? (
+                      <a
+                        href={selectedBook.purchaseLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 underline"
+                      >
+                        {selectedBook.purchaseLink}
+                      </a>
+                    ) : null
+                  }
+                />
+                <Field
+                  label="Created At"
+                  value={
+                    selectedBook.createdAt
+                      ? new Date(selectedBook.createdAt).toLocaleString()
+                      : "—"
+                  }
+                />
+                <Field
+                  label="Updated At"
+                  value={
+                    selectedBook.updatedAt
+                      ? new Date(selectedBook.updatedAt).toLocaleString()
+                      : "—"
+                  }
+                />
+
+                {/* Cover image */}
+                {selectedBook.coverImage && (
+                  <div>
+                    <p className="font-medium mb-2">Cover Image</p>
+                    <img
+                      src={selectedBook.coverImage}
+                      alt={selectedBook.title}
+                      className="rounded-xl w-full max-h-60 object-cover border"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

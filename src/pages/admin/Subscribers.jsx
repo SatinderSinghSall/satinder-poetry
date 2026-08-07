@@ -116,17 +116,11 @@ export default function Subscribers() {
           </div>
         </div>
 
-        {/* 🧾 Table / Empty state */}
-        {filtered.length > 0 ? (
-          <SubscribersTable
-            subscribers={filtered}
-            setSubscribers={setSubscribers}
-          />
-        ) : (
-          <div className="rounded-2xl border bg-white p-10 text-center text-muted-foreground">
-            No subscribers found.
-          </div>
-        )}
+        {/* 🧾 Table Component */}
+        <SubscribersTable
+          subscribers={filtered}
+          setSubscribers={setSubscribers}
+        />
       </div>
     </div>
   );

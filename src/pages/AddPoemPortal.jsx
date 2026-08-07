@@ -26,6 +26,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { submitPoemDraftApi } from "../api/api";
+import AddPoemCTA from "@/components/AddPoemCTA_Main";
 
 export default function AddPoemPortal() {
   const { user } = useAuth();
@@ -539,6 +540,8 @@ export default function AddPoemPortal() {
             </div>
           </div>
         </div>
+
+        <AddPoemCTA />
       </div>
 
       {/* SUCCESS MODAL OVERLAY */}

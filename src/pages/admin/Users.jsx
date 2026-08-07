@@ -6,13 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import {
-  RefreshCw,
-  Users as UsersIcon,
-  Loader2,
-  Search,
-  Eye,
-} from "lucide-react";
+import { RefreshCw, Users as UsersIcon, Loader2, Search } from "lucide-react";
 
 const Field = ({ label, value }) => (
   <div className="grid grid-cols-3 gap-4 border-b pb-2">
@@ -142,19 +136,14 @@ export default function Users() {
           </div>
         </div>
 
-        {/* 🧾 Table / Empty state */}
-        {filtered.length > 0 ? (
-          <UsersTable
-            users={filtered}
-            setUsers={setUsers}
-            onView={setSelectedUser}
-          />
-        ) : (
-          <div className="rounded-2xl border bg-white p-10 text-center text-muted-foreground">
-            No users found.
-          </div>
-        )}
+        {/* 🧾 Table Component */}
+        <UsersTable
+          users={filtered}
+          setUsers={setUsers}
+          onView={setSelectedUser}
+        />
 
+        {/* Modal */}
         {selectedUser && (
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
             <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-8 space-y-6 max-h-[90vh] overflow-y-auto">
@@ -166,6 +155,7 @@ export default function Users() {
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedUser(null)}
+                  className="cursor-pointer"
                 >
                   Close
                 </Button>
@@ -178,13 +168,24 @@ export default function Users() {
                 <Field label="Role" value={selectedUser.role} />
                 <Field
                   label="Created At"
-                  value={new Date(selectedUser.createdAt).toLocaleString()}
+                  value={
+                    selectedUser.createdAt
+                      ? new Date(selectedUser.createdAt).toLocaleString()
+                      : "—"
+                  }
                 />
                 <Field
                   label="Updated At"
-                  value={new Date(selectedUser.updatedAt).toLocaleString()}
+                  value={
+                    selectedUser.updatedAt
+                      ? new Date(selectedUser.updatedAt).toLocaleString()
+                      : "—"
+                  }
                 />
-                <Field label="User ID" value={selectedUser._id} />
+                <Field
+                  label="User ID"
+                  value={selectedUser._id || selectedUser.id}
+                />
               </div>
             </div>
           </div>
