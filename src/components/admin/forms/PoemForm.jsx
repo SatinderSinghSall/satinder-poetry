@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { Loader2, PenLine, Eye } from "lucide-react";
+import { Loader2, PenLine, Eye, AlertCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const DRAFT_KEY = "poem_draft";
 
+// @desc    Form component for creating, editing, and previewing poetry posts
+// @route   N/A (UI Component)
+// @access  Private/Admin
 export default function PoemForm({ initialData, mode = "add", onSubmit }) {
   const [form, setForm] = useState({
     title: "",
@@ -25,25 +28,34 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(false);
   const [sendNotification, setSendNotification] = useState(true);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
-  /* ---------- Load draft (ADD mode only) ---------- */
+  // @desc    Load saved draft from localStorage on initial render (Add mode only)
+  // @route   N/A (Effect)
+  // @access  Internal
   useEffect(() => {
     if (mode === "add") {
       const draft = localStorage.getItem(DRAFT_KEY);
       if (draft) {
-        setForm(JSON.parse(draft));
+        try {
+          setForm(JSON.parse(draft));
+        } catch (e) {
+          console.error("Failed to parse local draft", e);
+        }
       }
     }
   }, [mode]);
 
-  /* ---------- Load edit data ---------- */
+  // @desc    Populate form fields with initial data when editing an existing poem
+  // @route   N/A (Effect)
+  // @access  Internal
   useEffect(() => {
     if (mode === "edit" && initialData) {
       setForm({
         title: initialData.title || "",
         author: initialData.author || "",
         content: initialData.content || "",
-
         summary: initialData.summary || "",
         theme: initialData.theme || "",
         tags: initialData.tags ? initialData.tags.join(", ") : "",
@@ -54,14 +66,18 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
     }
   }, [initialData, mode]);
 
-  /* ---------- Autosave draft (ADD mode only) ---------- */
+  // @desc    Autosave active form inputs to localStorage as a draft (Add mode only)
+  // @route   N/A (Effect)
+  // @access  Internal
   useEffect(() => {
     if (mode === "add") {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     }
   }, [form, mode]);
 
-  /* ---------- Keyboard shortcut ---------- */
+  // @desc    Register global keyboard shortcut (Ctrl/Cmd + Enter) to trigger submission
+  // @route   N/A (Effect)
+  // @access  Internal
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -74,15 +90,38 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
 
   const wordCount = form.content.trim().split(/\s+/).filter(Boolean).length;
 
-  /* ---------- Submit ---------- */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // @desc    Update field value and clear associated field/global errors
+  // @route   N/A (Helper)
+  // @access  Internal
+  const handleInputChange = (field, value) => {
+    if (errorMessage) setErrorMessage("");
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: null }));
+    }
+  };
 
-    if (!form.title || !form.author || !form.content) {
-      toast.error("Please complete all * fields");
+  // @desc    Handle poem form validation, data formatting, and submission handling
+  // @route   POST /api/poems OR PUT /api/poems/:id
+  // @access  Private/Admin
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
+    setErrorMessage("");
+
+    const errors = {};
+    if (!form.title?.trim()) errors.title = "Poem title is required";
+    if (!form.author?.trim()) errors.author = "Author name is required";
+    if (!form.content?.trim()) errors.content = "Poem content cannot be empty";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const valErrorMsg = "Please fill in all required fields";
+      setErrorMessage(valErrorMsg);
+      toast.error(valErrorMsg);
       return;
     }
 
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -122,8 +161,23 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
         localStorage.removeItem(DRAFT_KEY);
       }
     } catch (err) {
-      toast.error("Failed to save poem");
-      console.error(err);
+      console.error("Submission Error:", err);
+
+      const backendMessage = err.response?.data?.message;
+      const backendErrors = err.response?.data?.errors;
+      let extractedError = "";
+
+      if (Array.isArray(backendErrors) && backendErrors.length > 0) {
+        extractedError = `${backendMessage || "Validation Error"}: ${backendErrors.join(", ")}`;
+      } else if (backendMessage) {
+        extractedError = backendMessage;
+      } else {
+        extractedError =
+          err.message || "Failed to save poem. Please try again.";
+      }
+
+      setErrorMessage(extractedError);
+      toast.error(extractedError);
     } finally {
       setLoading(false);
     }
@@ -150,6 +204,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
           </div>
 
           <Button
+            type="button"
             variant="outline"
             onClick={() => setPreview(!preview)}
             className="flex items-center gap-2 cursor-pointer"
@@ -199,11 +254,6 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   </p>
                 )}
 
-                {form.tags && (
-                  <p className="text-sm text-muted-foreground">
-                    Tags: {form.tags}
-                  </p>
-                )}
                 {form.status === "draft" && (
                   <p className="text-xs text-amber-600 font-medium">
                     Draft (not published)
@@ -223,10 +273,19 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   <Input
                     placeholder="Enter poem title"
                     value={form.title}
-                    onChange={(e) =>
-                      setForm({ ...form, title: e.target.value })
+                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    className={
+                      fieldErrors.title
+                        ? "border-red-500 focus-visible:ring-red-500"
+                        : ""
                     }
                   />
+                  {fieldErrors.title && (
+                    <div className="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{fieldErrors.title}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Author */}
@@ -236,9 +295,20 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                     placeholder="Author name"
                     value={form.author}
                     onChange={(e) =>
-                      setForm({ ...form, author: e.target.value })
+                      handleInputChange("author", e.target.value)
+                    }
+                    className={
+                      fieldErrors.author
+                        ? "border-red-500 focus-visible:ring-red-500"
+                        : ""
                     }
                   />
+                  {fieldErrors.author && (
+                    <div className="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{fieldErrors.author}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Summary */}
@@ -248,7 +318,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                     placeholder="Short preview text"
                     value={form.summary}
                     onChange={(e) =>
-                      setForm({ ...form, summary: e.target.value })
+                      handleInputChange("summary", e.target.value)
                     }
                   />
                 </div>
@@ -259,9 +329,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   <Input
                     placeholder="Love, Life, Nature..."
                     value={form.theme}
-                    onChange={(e) =>
-                      setForm({ ...form, theme: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange("theme", e.target.value)}
                   />
                 </div>
 
@@ -271,7 +339,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   <Input
                     placeholder="comma separated tags"
                     value={form.tags}
-                    onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                    onChange={(e) => handleInputChange("tags", e.target.value)}
                   />
                 </div>
 
@@ -282,7 +350,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                     placeholder="https://..."
                     value={form.coverImage}
                     onChange={(e) =>
-                      setForm({ ...form, coverImage: e.target.value })
+                      handleInputChange("coverImage", e.target.value)
                     }
                   />
                 </div>
@@ -293,7 +361,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   <select
                     value={form.status}
                     onChange={(e) =>
-                      setForm({ ...form, status: e.target.value })
+                      handleInputChange("status", e.target.value)
                     }
                     className="w-full rounded-2xl border bg-muted/30 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                   >
@@ -313,18 +381,25 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
 
                   <textarea
                     rows={10}
-                    className="
+                    className={`
                       w-full rounded-2xl border
                       bg-muted/30 px-4 py-3 text-sm
                       focus:outline-none focus:ring-2 focus:ring-slate-900
                       resize-none
-                    "
+                      ${fieldErrors.content ? "border-red-500 focus:ring-red-500" : ""}
+                    `}
                     placeholder="Write your poem here..."
                     value={form.content}
                     onChange={(e) =>
-                      setForm({ ...form, content: e.target.value })
+                      handleInputChange("content", e.target.value)
                     }
                   />
+                  {fieldErrors.content && (
+                    <div className="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{fieldErrors.content}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Publishing Options */}
@@ -341,9 +416,9 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                         id="featured"
                         checked={form.featured}
                         onChange={(e) =>
-                          setForm({ ...form, featured: e.target.checked })
+                          handleInputChange("featured", e.target.checked)
                         }
-                        className="h-4 w-4 rounded border-slate-300"
+                        className="h-4 w-4 rounded border-slate-300 cursor-pointer"
                       />
                       <label
                         htmlFor="featured"
@@ -363,7 +438,7 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                           onChange={(e) =>
                             setSendNotification(e.target.checked)
                           }
-                          className="h-4 w-4 rounded border-slate-300"
+                          className="h-4 w-4 rounded border-slate-300 cursor-pointer"
                         />
                         <label
                           htmlFor="sendNotification"
@@ -376,28 +451,55 @@ export default function PoemForm({ initialData, mode = "add", onSubmit }) {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={loading || !form.content}
-                  className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md cursor-pointer"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving…
-                    </>
-                  ) : (
-                    <>
-                      {mode === "edit" ? "Update Poem" : "Publish Poem"}
-                      <PenLine className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
+                {/* Global Error Message Banner */}
+                {errorMessage && (
+                  <div className="flex items-start justify-between gap-3 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                      <div className="text-sm font-medium leading-relaxed">
+                        {errorMessage}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setErrorMessage("")}
+                      className="text-red-500 hover:text-red-700 p-0.5 rounded-lg transition-colors cursor-pointer"
+                      aria-label="Dismiss error"
+                    >
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
 
-                <p className="text-xs text-center text-muted-foreground">
-                  Tip: Press Ctrl / Cmd + Enter to save
-                </p>
+                <div className="space-y-2">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={
+                      loading ||
+                      !form.title?.trim() ||
+                      !form.author?.trim() ||
+                      !form.content?.trim()
+                    }
+                    className="w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving…
+                      </>
+                    ) : (
+                      <>
+                        {mode === "edit" ? "Update Poem" : "Publish Poem"}
+                        <PenLine className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-center text-muted-foreground">
+                    Tip: Press Ctrl / Cmd + Enter to save
+                  </p>
+                </div>
               </form>
             )}
           </CardContent>

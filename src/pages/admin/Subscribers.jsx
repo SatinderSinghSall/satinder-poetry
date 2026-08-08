@@ -8,11 +8,22 @@ import { Button } from "@/components/ui/button";
 
 import { RefreshCw, Mail, Loader2, Search } from "lucide-react";
 
+// Helper field display component for modal
+const Field = ({ label, value }) => (
+  <div className="grid grid-cols-3 gap-4 border-b pb-2 items-center">
+    <span className="font-medium text-slate-600">{label}</span>
+    <span className="col-span-2 text-muted-foreground break-words">
+      {value || "—"}
+    </span>
+  </div>
+);
+
 export default function Subscribers() {
   const [subscribers, setSubscribers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedSubscriber, setSelectedSubscriber] = useState(null);
 
   useEffect(() => {
     fetchSubscribers();
@@ -120,7 +131,54 @@ export default function Subscribers() {
         <SubscribersTable
           subscribers={filtered}
           setSubscribers={setSubscribers}
+          onView={setSelectedSubscriber}
         />
+
+        {/* 👁️ Subscriber Details Modal */}
+        {selectedSubscriber && (
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Subscriber Details</h2>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedSubscriber(null)}
+                  className="cursor-pointer"
+                >
+                  Close
+                </Button>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-3 text-sm">
+                <Field label="Email" value={selectedSubscriber.email} />
+                <Field
+                  label="Subscribed At"
+                  value={
+                    selectedSubscriber.createdAt
+                      ? new Date(selectedSubscriber.createdAt).toLocaleString()
+                      : "—"
+                  }
+                />
+                <Field
+                  label="Updated At"
+                  value={
+                    selectedSubscriber.updatedAt
+                      ? new Date(selectedSubscriber.updatedAt).toLocaleString()
+                      : "—"
+                  }
+                />
+                <Field
+                  label="Subscriber ID"
+                  value={selectedSubscriber._id || selectedSubscriber.id}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

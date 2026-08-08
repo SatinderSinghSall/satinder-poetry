@@ -14,11 +14,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { Copy, Trash2, Mail, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Copy,
+  Trash2,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+} from "lucide-react";
 import { toast } from "sonner";
 import API from "@/api/api";
 
-export default function SubscribersTable({ subscribers, setSubscribers }) {
+export default function SubscribersTable({
+  subscribers,
+  setSubscribers,
+  onView,
+}) {
   // 📄 Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -107,12 +118,24 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
                   {/* ACTIONS */}
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
+                      {/* View Details (Eye Button) */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onView && onView(s)}
+                        className="hover:bg-slate-100 cursor-pointer"
+                        title="View Details"
+                      >
+                        <Eye className="w-4 h-4 text-slate-600" />
+                      </Button>
+
                       {/* Copy */}
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => copyEmail(s.email)}
                         className="hover:bg-slate-100 cursor-pointer"
+                        title="Copy Email"
                       >
                         <Copy className="w-4 h-4 text-slate-600" />
                       </Button>
@@ -124,6 +147,7 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
                             variant="ghost"
                             size="icon"
                             className="hover:bg-red-50 cursor-pointer"
+                            title="Delete Subscriber"
                           >
                             <Trash2 className="w-4 h-4 text-red-500" />
                           </Button>
@@ -175,7 +199,7 @@ export default function SubscribersTable({ subscribers, setSubscribers }) {
           <div className="flex items-center gap-2">
             <span>Per page:</span>
             <select
-              className="h-8 w-16 rounded-md border bg-white px-2 text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
+              className="h-8 w-16 rounded-md border bg-white px-2 text-xs focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer"
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(Number(e.target.value));

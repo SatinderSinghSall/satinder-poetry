@@ -6,10 +6,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { RefreshCw, Users as UsersIcon, Loader2, Search } from "lucide-react";
+import {
+  RefreshCw,
+  Users as UsersIcon,
+  Loader2,
+  Search,
+  Check,
+} from "lucide-react";
+import { toast } from "sonner";
 
 const Field = ({ label, value }) => (
-  <div className="grid grid-cols-3 gap-4 border-b pb-2">
+  <div className="grid grid-cols-3 gap-4 border-b pb-2 items-center">
     <span className="font-medium text-slate-600">{label}</span>
     <span className="col-span-2 text-muted-foreground break-words">
       {value || "—"}
@@ -21,6 +28,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [updatingRole, setUpdatingRole] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -59,6 +67,33 @@ export default function Users() {
       setFiltered([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // @desc    Handle updating a user's role via backend API
+  const handleRoleChange = async (newRole) => {
+    if (!selectedUser || selectedUser.role === newRole) return;
+
+    try {
+      setUpdatingRole(true);
+      const userId = selectedUser._id || selectedUser.id;
+
+      const res = await API.patch(`/users/${userId}/role`, { role: newRole });
+
+      const updatedUser = res.data?.user || { ...selectedUser, role: newRole };
+
+      // Update local array state
+      setUsers((prev) =>
+        prev.map((u) => ((u._id || u.id) === userId ? updatedUser : u)),
+      );
+
+      setSelectedUser(updatedUser);
+      toast.success(`Role updated to ${newRole}`);
+    } catch (err) {
+      console.error("Role update failed:", err);
+      toast.error(err.response?.data?.message || "Failed to update user role");
+    } finally {
+      setUpdatingRole(false);
     }
   };
 
@@ -165,7 +200,27 @@ export default function Users() {
               <div className="space-y-3 text-sm">
                 <Field label="Name" value={selectedUser.name} />
                 <Field label="Email" value={selectedUser.email} />
-                <Field label="Role" value={selectedUser.role} />
+
+                {/* Role Update Field */}
+                <div className="grid grid-cols-3 gap-4 border-b pb-2 items-center">
+                  <span className="font-medium text-slate-600">Role</span>
+                  <div className="col-span-2 flex items-center gap-3">
+                    <select
+                      value={selectedUser.role || "user"}
+                      disabled={updatingRole}
+                      onChange={(e) => handleRoleChange(e.target.value)}
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+
+                    {updatingRole && (
+                      <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
+                    )}
+                  </div>
+                </div>
+
                 <Field
                   label="Created At"
                   value={

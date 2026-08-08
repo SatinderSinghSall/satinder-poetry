@@ -6,8 +6,11 @@ export default function AddBook() {
   const navigate = useNavigate();
 
   const handleAddBook = async (data) => {
-    // Axios interceptor handles Authorization automatically
+    // Calling the backend API.
+    // Errors will throw and be cleanly handled by BookForm's catch block.
     const res = await createBook(data);
+
+    // Only navigate to the list page if the API call was successful
     navigate("/admin/books");
     return res;
   };
