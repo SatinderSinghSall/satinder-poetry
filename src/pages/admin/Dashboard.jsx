@@ -97,9 +97,7 @@ export default function Dashboard() {
         API.get("/books").catch(() => ({ data: [] })),
         API.get("/subscribe").catch(() => ({ data: [] })),
         API.get("/book-suggestions").catch(() => ({ data: [] })),
-        API.get("/submissions")
-          .catch(() => API.get("/poem-submissions"))
-          .catch(() => ({ data: [] })),
+        API.get("/poems/submissions").catch(() => ({ data: [] })),
       ]);
 
       const poems = Array.isArray(poemsRes.data) ? poemsRes.data : [];

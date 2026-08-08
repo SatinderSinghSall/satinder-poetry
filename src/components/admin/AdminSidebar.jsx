@@ -83,193 +83,189 @@ export default function AdminSidebar() {
               : "-translate-x-full md:translate-x-0"
           }
 
-          /* Desktop Sizing - Increased width to w-72 for larger feel */
+          /* Desktop Sizing */
           ${collapsed ? "md:w-24" : "md:w-72"}
         `}
       >
-        <div>
-          {/* ---------- Header ---------- */}
-          <div className="px-6 py-5 border-b border-slate-200/80 flex items-center justify-between relative bg-white/50">
-            <div
-              className={`flex items-center gap-3.5 overflow-hidden ${
-                collapsed ? "md:justify-center md:w-full" : ""
-              }`}
-            >
-              <div className="p-2.5 rounded-xl bg-slate-900 text-white shadow-sm flex-shrink-0">
-                <Shield size={22} />
-              </div>
-
-              {(!collapsed || mobileOpen) && (
-                <div className="whitespace-nowrap transition-opacity duration-200">
-                  <h2 className="text-lg font-bold tracking-tight text-slate-900">
-                    Admin Panel
-                  </h2>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Poetry Management
-                  </p>
-                </div>
-              )}
+        {/* ---------- Header ---------- */}
+        <div className="px-6 py-5 border-b border-slate-200/80 flex items-center justify-between relative bg-white/50 flex-shrink-0">
+          <div
+            className={`flex items-center gap-3.5 overflow-hidden ${
+              collapsed ? "md:justify-center md:w-full" : ""
+            }`}
+          >
+            <div className="p-2.5 rounded-xl bg-slate-900 text-white shadow-sm flex-shrink-0">
+              <Shield size={22} />
             </div>
 
-            {/* Mobile Close Button */}
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="md:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100"
-            >
-              <X size={20} />
-            </button>
-
-            {/* Desktop Collapse Toggle Button */}
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:flex absolute -right-4 top-6 p-1.5 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-slate-900 shadow-sm transition-all hover:scale-105 cursor-pointer"
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {collapsed ? (
-                <ChevronRight size={16} />
-              ) : (
-                <ChevronLeft size={16} />
-              )}
-            </button>
+            {(!collapsed || mobileOpen) && (
+              <div className="whitespace-nowrap transition-opacity duration-200">
+                <h2 className="text-lg font-bold tracking-tight text-slate-900">
+                  Admin Panel
+                </h2>
+                <p className="text-xs text-slate-500 font-medium">
+                  Poetry Management
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* ---------- Navigation ---------- */}
-          <nav className="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-thin">
-            {/* VISIT MAIN WEBSITE BUTTON */}
-            <div>
-              <Link
-                to="/"
-                onClick={() => setMobileOpen(false)}
-                title={
-                  collapsed && !mobileOpen ? "Visit Main Website" : undefined
-                }
-                className={`
-                  group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-base font-semibold
-                  bg-amber-500/10 text-amber-900 border border-amber-300/80 hover:bg-amber-100/80
-                  transition-all duration-150 cursor-pointer
-                  ${collapsed && !mobileOpen ? "justify-center" : "justify-between"}
-                `}
-              >
-                <div className="flex items-center gap-3.5 truncate">
-                  <Globe size={20} className="text-amber-600 flex-shrink-0" />
-                  {(!collapsed || mobileOpen) && (
-                    <span className="truncate font-bold text-amber-950">
-                      Visit Main Website
-                    </span>
-                  )}
-                </div>
-                {(!collapsed || mobileOpen) && (
-                  <ExternalLink
-                    size={15}
-                    className="text-amber-700 flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
-                  />
-                )}
-              </Link>
-            </div>
+          {/* Mobile Close Button */}
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="md:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100"
+          >
+            <X size={20} />
+          </button>
 
-            {/* OVERVIEW */}
-            <Section label="Overview" collapsed={collapsed && !mobileOpen}>
-              <SideItem
-                to="/admin"
-                icon={LayoutDashboard}
-                label="Dashboard"
-                end
-                collapsed={collapsed && !mobileOpen}
-                onNavigate={() => setMobileOpen(false)}
-              />
-            </Section>
-
-            {/* CONTENT */}
-            <Section label="Content" collapsed={collapsed && !mobileOpen}>
-              {/* Poems Management Dropdown Group */}
-              <CollapsibleGroup
-                label="Poems Management"
-                icon={ScrollText}
-                isOpen={poemsOpen}
-                onToggle={() => setPoemsOpen(!poemsOpen)}
-                collapsed={collapsed && !mobileOpen}
-                isActive={location.pathname.includes("/admin/poem")}
-              >
-                <SubSideItem
-                  to="/admin/poems"
-                  icon={List}
-                  label="All Poems"
-                  collapsed={collapsed && !mobileOpen}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-                <SubSideItem
-                  to="/admin/add-poem"
-                  icon={Plus}
-                  label="Add Poem"
-                  collapsed={collapsed && !mobileOpen}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-              </CollapsibleGroup>
-
-              {/* Book Management Dropdown Group */}
-              <CollapsibleGroup
-                label="Book Management"
-                icon={Library}
-                isOpen={booksOpen}
-                onToggle={() => setBooksOpen(!booksOpen)}
-                collapsed={collapsed && !mobileOpen}
-                isActive={location.pathname.includes("/admin/book")}
-              >
-                <SubSideItem
-                  to="/admin/books"
-                  icon={BookOpen}
-                  label="All Books"
-                  collapsed={collapsed && !mobileOpen}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-                <SubSideItem
-                  to="/admin/add-book"
-                  icon={Plus}
-                  label="Add Book"
-                  collapsed={collapsed && !mobileOpen}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-              </CollapsibleGroup>
-
-              <SideItem
-                to="/admin/suggestions"
-                icon={Sparkles}
-                label="Suggestions"
-                collapsed={collapsed && !mobileOpen}
-                onNavigate={() => setMobileOpen(false)}
-              />
-
-              <SideItem
-                to="/admin/poem-submissions"
-                icon={FileText}
-                label="Submissions"
-                collapsed={collapsed && !mobileOpen}
-                onNavigate={() => setMobileOpen(false)}
-              />
-            </Section>
-
-            {/* AUDIENCE */}
-            <Section label="Audience" collapsed={collapsed && !mobileOpen}>
-              <SideItem
-                to="/admin/users"
-                icon={Users}
-                label="Users"
-                collapsed={collapsed && !mobileOpen}
-                onNavigate={() => setMobileOpen(false)}
-              />
-              <SideItem
-                to="/admin/subscribers"
-                icon={Mail}
-                label="Subscribers"
-                collapsed={collapsed && !mobileOpen}
-                onNavigate={() => setMobileOpen(false)}
-              />
-            </Section>
-          </nav>
+          {/* Desktop Collapse Toggle Button */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="hidden md:flex absolute -right-4 top-6 p-1.5 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-slate-900 shadow-sm transition-all hover:scale-105 cursor-pointer z-10"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
         </div>
 
+        {/* ---------- Navigation ---------- */}
+        <nav className="p-4 space-y-6 overflow-y-auto flex-1 scrollbar-thin">
+          {/* VISIT MAIN WEBSITE BUTTON */}
+          <div>
+            <Link
+              to="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileOpen(false)}
+              title={
+                collapsed && !mobileOpen ? "Visit Main Website" : undefined
+              }
+              className={`
+                group flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-base font-semibold
+                bg-amber-500/10 text-amber-900 border border-amber-300/80 hover:bg-amber-100/80
+                transition-all duration-150 cursor-pointer
+                ${collapsed && !mobileOpen ? "justify-center" : "justify-between"}
+              `}
+            >
+              <div className="flex items-center gap-3.5 truncate">
+                <Globe size={20} className="text-amber-600 flex-shrink-0" />
+                {(!collapsed || mobileOpen) && (
+                  <span className="truncate font-bold text-amber-950">
+                    Visit Main Website
+                  </span>
+                )}
+              </div>
+              {(!collapsed || mobileOpen) && (
+                <ExternalLink
+                  size={15}
+                  className="text-amber-700 flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+                />
+              )}
+            </Link>
+          </div>
+
+          {/* OVERVIEW */}
+          <Section label="Overview" collapsed={collapsed && !mobileOpen}>
+            <SideItem
+              to="/admin"
+              icon={LayoutDashboard}
+              label="Dashboard"
+              end
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+          </Section>
+
+          {/* CONTENT */}
+          <Section label="Content" collapsed={collapsed && !mobileOpen}>
+            {/* Poems Management Dropdown Group */}
+            <CollapsibleGroup
+              label="Poems Management"
+              icon={ScrollText}
+              isOpen={poemsOpen}
+              onToggle={() => setPoemsOpen(!poemsOpen)}
+              collapsed={collapsed && !mobileOpen}
+              isActive={location.pathname.includes("/admin/poem")}
+            >
+              <SubSideItem
+                to="/admin/poems"
+                icon={List}
+                label="All Poems"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+              <SubSideItem
+                to="/admin/add-poem"
+                icon={Plus}
+                label="Add Poem"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </CollapsibleGroup>
+
+            {/* Book Management Dropdown Group */}
+            <CollapsibleGroup
+              label="Book Management"
+              icon={Library}
+              isOpen={booksOpen}
+              onToggle={() => setBooksOpen(!booksOpen)}
+              collapsed={collapsed && !mobileOpen}
+              isActive={location.pathname.includes("/admin/book")}
+            >
+              <SubSideItem
+                to="/admin/books"
+                icon={BookOpen}
+                label="All Books"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+              <SubSideItem
+                to="/admin/add-book"
+                icon={Plus}
+                label="Add Book"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </CollapsibleGroup>
+
+            <SideItem
+              to="/admin/suggestions"
+              icon={Sparkles}
+              label="Suggestions"
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+
+            <SideItem
+              to="/admin/poem-submissions"
+              icon={FileText}
+              label="Submissions"
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+          </Section>
+
+          {/* AUDIENCE */}
+          <Section label="Audience" collapsed={collapsed && !mobileOpen}>
+            <SideItem
+              to="/admin/users"
+              icon={Users}
+              label="Users"
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+            <SideItem
+              to="/admin/subscribers"
+              icon={Mail}
+              label="Subscribers"
+              collapsed={collapsed && !mobileOpen}
+              onNavigate={() => setMobileOpen(false)}
+            />
+          </Section>
+        </nav>
+
         {/* ---------- Footer ---------- */}
-        <div className="p-5 border-t border-slate-200/80 bg-white/40">
+        <div className="p-5 border-t border-slate-200/80 bg-white/40 flex-shrink-0">
           <div
             className={`flex items-center text-sm text-slate-500 font-semibold ${
               collapsed && !mobileOpen ? "justify-center" : "justify-between"
@@ -277,7 +273,7 @@ export default function AdminSidebar() {
           >
             {(!collapsed || mobileOpen) && <span>Poetry Admin</span>}
             <span className="px-2.5 py-1 rounded bg-slate-200/80 text-xs text-slate-700 font-mono font-bold">
-              v2.0
+              v5.0.0
             </span>
           </div>
         </div>
