@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import AddPoemCTA_Main from "@/components/AddPoemCTA_Main";
+import NoPoemsFound from "@/components/NoPoemsFound";
 
 const POEMS_PER_PAGE = 6;
 
@@ -52,38 +53,41 @@ export default function Poems() {
     return [...new Set(poems.map((p) => p.theme).filter(Boolean))];
   }, [poems]);
 
+  // Step 1: Filter poems
   const filteredPoems = useMemo(() => {
-    let result = poems.filter((poem) => {
+    return poems.filter((poem) => {
       const matchesSearch =
         poem.title?.toLowerCase().includes(search.toLowerCase()) ||
         poem.author?.toLowerCase().includes(search.toLowerCase()) ||
         poem.content?.toLowerCase().includes(search.toLowerCase());
 
       const matchesTheme = themeFilter === "all" || poem.theme === themeFilter;
-
       const matchesFeatured = !featuredOnly || poem.featured === true;
 
       return matchesSearch && matchesTheme && matchesFeatured;
     });
+  }, [poems, search, themeFilter, featuredOnly]);
 
-    if (sortBy === "newest") {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
+  // Step 2: Sort the filtered poems
+  const sortedPoems = useMemo(() => {
+    return [...filteredPoems].sort((a, b) => {
+      if (sortBy === "newest" || sortBy === "oldest") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      if (sortBy === "mostViewed") {
+        return (b.views || 0) - (a.views || 0);
+      }
+      if (sortBy === "shortestRead") {
+        return (a.readingTime || 0) - (b.readingTime || 0);
+      }
+      return 0;
+    });
+  }, [filteredPoems, sortBy]);
 
-    if (sortBy === "views") {
-      result.sort((a, b) => (b.views || 0) - (a.views || 0));
-    }
-
-    if (sortBy === "reading") {
-      result.sort((a, b) => (a.readingTime || 0) - (b.readingTime || 0));
-    }
-
-    return result;
-  }, [poems, search, themeFilter, featuredOnly, sortBy]);
-
-  const totalPages = Math.ceil(filteredPoems.length / POEMS_PER_PAGE);
+  // Step 3: Pagination calculation
+  const totalPages = Math.ceil(sortedPoems.length / POEMS_PER_PAGE);
   const start = (page - 1) * POEMS_PER_PAGE;
-  const currentPoems = filteredPoems.slice(start, start + POEMS_PER_PAGE);
+  const currentPoems = sortedPoems.slice(start, start + POEMS_PER_PAGE);
 
   return (
     <div
@@ -398,7 +402,8 @@ export default function Poems() {
                     left-4
                     top-1/2
                     -translate-y-1/2
-                    text-black
+                    text-stone-500
+                    pointer-events-none
                   "
                 />
 
@@ -459,6 +464,9 @@ export default function Poems() {
                   }}
                   className="
                     h-12
+                    w-full
+                    sm:w-48
+                    truncate
 
                     rounded-2xl
 
@@ -484,12 +492,14 @@ export default function Poems() {
 
                   {themes.map((theme) => (
                     <option key={theme} value={theme}>
-                      {theme}
+                      {theme.length > 25
+                        ? `${theme.substring(0, 25)}...`
+                        : theme}
                     </option>
                   ))}
                 </select>
 
-                <div className="relative">
+                <div className="relative w-full sm:w-56">
                   <SlidersHorizontal
                     size={16}
                     className="
@@ -497,15 +507,30 @@ export default function Poems() {
                       left-4
                       top-1/2
                       -translate-y-1/2
-                      text-black
+                      text-stone-500
+                      pointer-events-none
+                      z-10
                     "
                   />
 
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => {
+                      const newSort = e.target.value;
+                      setSortBy(newSort);
+
+                      if (newSort === "oldest") {
+                        const total = Math.ceil(
+                          filteredPoems.length / POEMS_PER_PAGE,
+                        );
+                        setPage(total || 1);
+                      } else {
+                        setPage(1);
+                      }
+                    }}
                     className="
                       h-12
+                      w-full
 
                       rounded-2xl
 
@@ -515,8 +540,8 @@ export default function Poems() {
                       bg-white/70
                       backdrop-blur-xl
 
-                      pl-10
-                      pr-4
+                      pl-11
+                      pr-8
 
                       text-sm
                       text-stone-700
@@ -528,9 +553,12 @@ export default function Poems() {
                       focus:ring-amber-200
                     "
                   >
-                    <option value="newest">Newest</option>
-                    <option value="views">Most Viewed</option>
-                    <option value="reading">Shortest Read</option>
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">
+                      Oldest First (Go to Last Page)
+                    </option>
+                    <option value="mostViewed">Most Viewed</option>
+                    <option value="shortestRead">Shortest Read</option>
                   </select>
                 </div>
 
@@ -555,6 +583,7 @@ export default function Poems() {
                   text-stone-700
 
                   shadow-sm
+                  cursor-pointer
                 "
                 >
                   <input
@@ -619,62 +648,7 @@ export default function Poems() {
 
         {!loading && filteredPoems.length === 0 && (
           <div className="py-24 flex justify-center">
-            <div className="text-center max-w-md">
-              <div className="text-6xl mb-4">📜</div>
-
-              <h3
-                className="
-                font-serif
-                text-3xl
-                text-stone-900
-              "
-              >
-                No Poems Found
-              </h3>
-
-              <p
-                className="
-                mt-4
-                text-stone-500
-                leading-relaxed
-              "
-              >
-                Try adjusting your search or filters. Sometimes the quietest
-                verses hide the deepest meanings.
-              </p>
-
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setThemeFilter("all");
-                  setFeaturedOnly(false);
-                  setPage(1);
-                }}
-                className="
-                  mt-6
-
-                  rounded-full
-
-                  bg-white/70
-                  backdrop-blur-xl
-
-                  border
-                  border-stone-200
-
-                  px-6
-                  py-3
-
-                  text-sm
-                  text-stone-700
-
-                  hover:bg-white
-
-                  transition
-                "
-              >
-                Reset Filters
-              </button>
-            </div>
+            <NoPoemsFound />
           </div>
         )}
 
@@ -948,12 +922,9 @@ export default function Poems() {
                 className="
                 flex
                 flex-wrap
-
                 items-center
                 justify-center
-
                 gap-4
-
                 pt-8
                 sm:pt-12
               "
@@ -965,16 +936,11 @@ export default function Poems() {
                     inline-flex
                     items-center
                     gap-2
-
                     rounded-full
-
                     px-5
                     py-3
-
                     text-sm
-
                     transition-all
-
                     ${
                       page === 1
                         ? `
@@ -983,12 +949,11 @@ export default function Poems() {
                           bg-white/40
                         `
                         : `
+                          cursor-pointer
                           bg-white/70
                           backdrop-blur-xl
-
                           border
                           border-white/60
-
                           hover:bg-white
                           hover:shadow-lg
                         `
@@ -1001,21 +966,17 @@ export default function Poems() {
 
                 <div
                   className="
-                  rounded-full
-
-                  bg-white/70
-                  backdrop-blur-xl
-
-                  border
-                  border-white/60
-
-                  px-5
-                  py-3
-
-                  text-sm
-                  italic
-                  text-stone-600
-                "
+                    rounded-full
+                    bg-white/70
+                    backdrop-blur-xl
+                    border
+                    border-white/60
+                    px-5
+                    py-3
+                    text-sm
+                    italic
+                    text-stone-600
+                  "
                 >
                   Page {page} of {totalPages}
                 </div>
@@ -1027,16 +988,11 @@ export default function Poems() {
                     inline-flex
                     items-center
                     gap-2
-
                     rounded-full
-
                     px-5
                     py-3
-
                     text-sm
-
                     transition-all
-
                     ${
                       page === totalPages
                         ? `
@@ -1045,12 +1001,11 @@ export default function Poems() {
                           bg-white/40
                         `
                         : `
+                          cursor-pointer
                           bg-white/70
                           backdrop-blur-xl
-
                           border
                           border-white/60
-
                           hover:bg-white
                           hover:shadow-lg
                         `

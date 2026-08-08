@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Feather,
   Trash2,
@@ -10,6 +10,10 @@ import {
   User,
   AlertCircle,
   Tag,
+  Search,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   getSubmissionsApi,
@@ -25,6 +29,11 @@ export function AdminPoemSubmissions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
+
+  // Search & Pagination States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
 
   // Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -55,7 +64,39 @@ export function AdminPoemSubmissions() {
     loadSubmissions();
   }, []);
 
-  // Update Status directly (Approve or Reject)
+  // Reset pagination when search, filter, or items per page changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filter, itemsPerPage]);
+
+  // Filter & Search Logic
+  const filteredSubmissions = useMemo(() => {
+    return submissions.filter((item) => {
+      // 1. Status Filter
+      const matchesStatus = filter === "all" || item.status === filter;
+
+      // 2. Search Query Filter
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !query ||
+        item.title?.toLowerCase().includes(query) ||
+        item.genre?.toLowerCase().includes(query) ||
+        item.content?.toLowerCase().includes(query) ||
+        item.user?.name?.toLowerCase().includes(query) ||
+        item.user?.username?.toLowerCase().includes(query) ||
+        item.user?.email?.toLowerCase().includes(query);
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [submissions, filter, searchQuery]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredSubmissions.slice(startIndex, endIndex);
+
+  // Update Status directly (Approve, Reject, Pending)
   const handleStatusChange = async (id, newStatus) => {
     try {
       if (newStatus === "approved") {
@@ -103,12 +144,6 @@ export function AdminPoemSubmissions() {
       setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
     }
   };
-
-  // Filter Logic
-  const filteredSubmissions = submissions.filter((item) => {
-    if (filter === "all") return true;
-    return item.status === filter;
-  });
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -171,21 +206,44 @@ export function AdminPoemSubmissions() {
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-stone-200 pb-3">
-        {["all", "pending", "approved", "rejected"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilter(tab)}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium capitalize transition-all cursor-pointer ${
-              filter === tab
-                ? "bg-stone-900 text-white shadow-sm"
-                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-            }`}
-          >
-            {tab.replace(/_/g, " ")}
-          </button>
-        ))}
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-stone-200 pb-4">
+        {/* Status Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {["all", "pending", "approved", "rejected"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setFilter(tab)}
+              className={`px-4 py-1.5 rounded-full text-xs font-medium capitalize transition-all cursor-pointer ${
+                filter === tab
+                  ? "bg-stone-900 text-white shadow-sm"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+              }`}
+            >
+              {tab.replace(/_/g, " ")}
+            </button>
+          ))}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative w-full md:w-72">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search title, genre, content, author..."
+            className="w-full pl-9 pr-8 py-2 border border-stone-300 rounded-xl text-xs bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-0.5"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Error Message */}
@@ -202,12 +260,19 @@ export function AdminPoemSubmissions() {
           Loading poem submissions...
         </div>
       ) : filteredSubmissions.length === 0 ? (
-        <div className="py-20 text-center text-stone-400 bg-stone-50 rounded-2xl border border-dashed border-stone-200">
-          No poem submissions found under this filter.
+        <div className="py-20 text-center text-stone-400 bg-stone-50 rounded-2xl border border-dashed border-stone-200 space-y-2">
+          <p className="font-medium text-stone-600">
+            No poem submissions found.
+          </p>
+          <p className="text-xs">
+            {searchQuery
+              ? `No results matching "${searchQuery}"`
+              : "Try changing your status filter."}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSubmissions.map((item) => (
+          {currentItems.map((item) => (
             <div
               key={item._id}
               className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-4"
@@ -297,6 +362,66 @@ export function AdminPoemSubmissions() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Admin Pagination Controls */}
+      {!loading && filteredSubmissions.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-stone-200 text-xs text-stone-600">
+          {/* Item Count Summary & Per-Page Selector */}
+          <div className="flex items-center gap-4">
+            <span>
+              Showing{" "}
+              <strong className="text-stone-900">
+                {startIndex + 1}-
+                {Math.min(endIndex, filteredSubmissions.length)}
+              </strong>{" "}
+              of{" "}
+              <strong className="text-stone-900">
+                {filteredSubmissions.length}
+              </strong>{" "}
+              entries
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <span>Per page:</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="border border-stone-300 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-stone-900"
+              >
+                <option value={6}>6</option>
+                <option value={9}>9</option>
+                <option value={12}>12</option>
+                <option value={24}>24</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Page Buttons */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-stone-300 hover:bg-stone-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            <span className="px-3 py-1 font-medium text-stone-800">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-stone-300 hover:bg-stone-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

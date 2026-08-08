@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "@/api/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import PoemNotFound from "@/components/PoemNotFound";
 
 export default function PoemDetail() {
   const { id } = useParams();
@@ -62,24 +63,7 @@ export default function PoemDetail() {
         )}
 
         {/* ---------- Not Found ---------- */}
-        {!loading && notFound && (
-          <div className="rounded-3xl bg-white/80 backdrop-blur border border-stone-200 shadow-lg px-8 py-16 text-center space-y-4 animate-in fade-in">
-            <h2 className="font-serif text-2xl text-stone-800">
-              No poem found
-            </h2>
-            <p className="text-sm text-stone-500 max-w-md mx-auto">
-              The poem you’re looking for may have been moved, renamed, or never
-              written.
-            </p>
-
-            <Link
-              to="/poems"
-              className="inline-block mt-4 text-sm text-stone-700 hover:text-stone-900 transition"
-            >
-              Browse all poems →
-            </Link>
-          </div>
-        )}
+        {!loading && notFound && <PoemNotFound />}
 
         {/* ---------- Poem ---------- */}
         {!loading && poem && !notFound && (
