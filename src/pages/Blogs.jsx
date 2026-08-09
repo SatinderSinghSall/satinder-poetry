@@ -241,7 +241,7 @@ export default function Blogs() {
                     variant="ghost"
                     size="sm"
                     onClick={handleReset}
-                    className="rounded-xl text-xs gap-1.5 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                    className="rounded-xl text-xs gap-1.5 text-muted-foreground hover:text-destructive transition-colors shrink-0 cursor-pointer"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     Reset
@@ -262,7 +262,7 @@ export default function Blogs() {
                     <button
                       key={tag}
                       onClick={() => updateFilters("tag", isActive ? "" : tag)}
-                      className={`text-xs px-3 py-1 rounded-full font-medium transition-all shrink-0 ${
+                      className={`text-xs px-3 py-1 rounded-full font-medium transition-all shrink-0 cursor-pointer ${
                         isActive
                           ? "bg-primary text-primary-foreground shadow-2xs"
                           : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -306,7 +306,7 @@ export default function Blogs() {
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="mt-2 rounded-xl"
+                  className="mt-2 rounded-xl cursor-pointer"
                 >
                   Clear All Filters
                 </Button>

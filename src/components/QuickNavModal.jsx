@@ -15,6 +15,7 @@ import {
   BookMarked,
   Command,
   PenTool,
+  FileText,
 } from "lucide-react";
 
 export default function QuickNavModal({ isOpen, onClose, onOpen }) {
@@ -214,6 +215,27 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
                 </h4>
                 <p className="text-xs text-stone-400 font-light mt-1 line-clamp-2">
                   Welcome portal for quiet reflections and poetry.
+                </p>
+              </div>
+            </Link>
+
+            {/* Blogs Page Card */}
+            <Link
+              to="/blogs"
+              onClick={onClose}
+              className="p-4 rounded-xl bg-stone-900/60 border border-stone-800/80 hover:border-amber-500/40 hover:bg-stone-800/60 transition-all duration-200 group flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <FileText className="w-4 h-4 text-stone-400 group-hover:text-amber-400 transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 text-stone-500 group-hover:text-stone-200 transition-colors" />
+                </div>
+                <h4 className="font-serif text-sm sm:text-base text-stone-200 group-hover:text-amber-200 transition-colors">
+                  Essays & Blogs
+                </h4>
+                <p className="text-xs text-stone-400 font-light mt-1 line-clamp-2">
+                  Literary reflections, creative insights, and long-form
+                  writing.
                 </p>
               </div>
             </Link>

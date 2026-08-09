@@ -29,6 +29,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
+import BlogNotFound from "./BlogNotFound";
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -46,17 +47,19 @@ export default function BlogDetail() {
         const res = await API.get(`/blogs/${slug}`);
         if (res.data.success) {
           setBlog(res.data.data);
+        } else {
+          setBlog(null);
         }
       } catch (error) {
-        toast.error(error.response?.data?.message || "Blog post not found");
-        navigate("/blogs");
+        toast.error(error.response?.data?.message || "Blog post not found.");
+        setBlog(null);
       } finally {
         setLoading(false);
       }
     };
 
     if (slug) fetchBlogDetail();
-  }, [slug, navigate]);
+  }, [slug]);
 
   // Reading progress tracker bar
   useEffect(() => {
@@ -122,7 +125,9 @@ export default function BlogDetail() {
     );
   }
 
-  if (!blog) return null;
+  if (!blog) {
+    return <BlogNotFound />;
+  }
 
   const sanitizedContent = DOMPurify.sanitize(blog.content || "");
   const isHtml = /<[a-z][\s\S]*>/i.test(blog.content || "");
