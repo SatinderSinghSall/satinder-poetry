@@ -302,7 +302,7 @@ export default function AdminSidebar() {
           >
             {(!collapsed || mobileOpen) && <span>Poetry Admin</span>}
             <span className="px-2.5 py-1 rounded bg-slate-200/80 text-xs text-slate-700 font-mono font-bold">
-              v5.0.0
+              v5.1.0
             </span>
           </div>
         </div>

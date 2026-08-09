@@ -26,6 +26,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import AddPoemCTA from "@/components/AddPoemCTA_Main";
+import NewsletterCTA from "@/components/NewsletterCTA";
 
 const POPULAR_TAGS = [
   "poetry",
@@ -461,6 +462,7 @@ export default function Blogs() {
           </div>
         </div>
 
+        <NewsletterCTA />
         <AddPoemCTA />
       </div>
     </>
