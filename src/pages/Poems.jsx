@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import API from "@/api/api";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,7 +72,10 @@ export default function Poems() {
   // Step 2: Sort the filtered poems
   const sortedPoems = useMemo(() => {
     return [...filteredPoems].sort((a, b) => {
-      if (sortBy === "newest" || sortBy === "oldest") {
+      if (sortBy === "oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      if (sortBy === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
       }
       if (sortBy === "mostViewed") {
@@ -88,6 +92,43 @@ export default function Poems() {
   const totalPages = Math.ceil(sortedPoems.length / POEMS_PER_PAGE);
   const start = (page - 1) * POEMS_PER_PAGE;
   const currentPoems = sortedPoems.slice(start, start + POEMS_PER_PAGE);
+
+  /* ---------- Dynamic SEO Config ---------- */
+  const canonicalUrl = "https://satinderpoetry.com/poems"; // Adjust domain as needed
+  const seoTitle =
+    themeFilter !== "all"
+      ? `${themeFilter} Poems & Verses | Satinder Poetry`
+      : "Timeless Poetry & Quiet Reflections | Satinder Poetry";
+  const seoDescription =
+    "Discover a curated sanctuary of verses, midnight thoughts, fleeting emotions, and quiet reflections written softly for wandering souls.";
+
+  // Schema.org Structured Data for Poetry Collection
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: seoTitle,
+    description: seoDescription,
+    url: canonicalUrl,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: currentPoems.map((poem, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "CreativeWork",
+          genre: poem.theme || "Poetry",
+          name: poem.title,
+          author: {
+            "@type": "Person",
+            name: poem.author || "Satinder Singh Sall",
+          },
+          ...(poem.coverImage && { image: poem.coverImage }),
+          abstract: poem.summary || poem.content?.substring(0, 150),
+          url: `https://satinderpoetry.com/poems/${poem._id}`,
+        },
+      })),
+    },
+  };
 
   return (
     <div
@@ -106,6 +147,34 @@ export default function Poems() {
       sm:py-10
     "
     >
+      {/* ---------- SEO Meta Tags ---------- */}
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta
+          name="keywords"
+          content="Satinder Poetry, timeless poetry, verses, midnight thoughts, emotional poems, literature, Punjabi poetry, English poetry, reflections"
+        />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+
+        {/* JSON-LD Schema.org Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      </Helmet>
+
       <div
         className="
         absolute
@@ -725,7 +794,8 @@ export default function Poems() {
                       <>
                         <img
                           src={poem.coverImage}
-                          alt={poem.title}
+                          alt={`${poem.title} poem illustration`}
+                          loading="lazy"
                           className="
                           h-52
                           sm:h-56

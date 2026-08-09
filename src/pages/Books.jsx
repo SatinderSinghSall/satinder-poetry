@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { fetchBooks } from "../api/api";
 import {
   Star,
@@ -75,8 +76,81 @@ export default function Books() {
     window.scrollTo({ top: 250, behavior: "smooth" });
   };
 
+  /* ---------- Dynamic SEO Config ---------- */
+  const canonicalUrl = "https://satinderpoetry.com/books"; // Adjust to your domain
+  const seoTitle =
+    activeTab === "recommended"
+      ? "Recommended Books & Reading Room | Satinder Poetry"
+      : "Poetry & Literature Reading Wishlist | Satinder Poetry";
+  const seoDescription =
+    "Explore curated literature, poetry collections, and artistic inspirations recommended by Satinder Singh Sall. Discover world poetry, philosophy, and classic reads.";
+
+  // Schema.org Structured Data (ItemCollection / Book List)
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: seoTitle,
+    description: seoDescription,
+    url: canonicalUrl,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: paginatedBooks.map((book, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Book",
+          name: book.title,
+          author: {
+            "@type": "Person",
+            name: book.author || "Unknown",
+          },
+          ...(book.coverImage && { image: book.coverImage }),
+          ...(book.genre && { genre: book.genre }),
+          ...(book.buyUrl && { url: book.buyUrl }),
+        },
+      })),
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-slate-900 selection:bg-stone-200 relative">
+      {/* ---------- SEO Meta Tags ---------- */}
+      <Helmet>
+        {/* Basic Meta Tags */}
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta
+          name="keywords"
+          content="Satinder Poetry books, recommended poetry books, poetry reading list, literature recommendations, Satinder Singh Sall, poetry collections, classic literature"
+        />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta
+          property="og:image"
+          content="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80"
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta
+          name="twitter:image"
+          content="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80"
+        />
+
+        {/* JSON-LD Schema.org Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      </Helmet>
+
       {/* Premium Full-Screen Loader Overlay */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FAF9F6]/80 backdrop-blur-md transition-all duration-500">
@@ -201,7 +275,7 @@ export default function Books() {
                         book.coverImage ||
                         "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80"
                       }
-                      alt={book.title}
+                      alt={`${book.title} cover by ${book.author}`}
                       loading="lazy"
                       className="h-full w-auto object-cover rounded-md shadow-md group-hover:scale-105 transition-transform duration-500 ease-out"
                     />

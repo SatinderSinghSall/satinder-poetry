@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   ArrowRight,
   Quote,
@@ -83,9 +84,6 @@ function useCounter(target, durationMs = 1400) {
 
 const EditorialAbout = () => {
   const yrs = useCounter(3);
-  const issues = useCounter(32);
-  const subs = useCounter(14820);
-  const hands = useCounter(4);
 
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -98,10 +96,85 @@ const EditorialAbout = () => {
   }, []);
 
   return (
-    <div
+    <main
       className="bg-[#ede7d6] text-stone-900 min-h-screen"
       style={{ fontFamily: '"Space Grotesk", ui-sans-serif, system-ui' }}
     >
+      {/* Helmet Managed SEO Metadata */}
+      <Helmet>
+        {/* Primary Meta Tags */}
+        <title>
+          About Satinder Singh Sall | Developer, Author & Storyteller
+        </title>
+        <meta
+          name="title"
+          content="About Satinder Singh Sall | Developer, Author & Storyteller"
+        />
+        <meta
+          name="description"
+          content="Explore the story of Satinder Singh Sall—full-stack developer by day, storyteller and poet by night. Discover the duality behind Satinder Poetry."
+        />
+        <meta
+          name="keywords"
+          content="Satinder Singh Sall, Satinder Poetry, Poet, Author, Full-stack developer, Literature, Storytelling"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://satinderpoetry.com/about" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content="https://satinderpoetry.com/about" />
+        <meta
+          property="og:title"
+          content="About Satinder Singh Sall | Author & Storyteller"
+        />
+        <meta
+          property="og:description"
+          content="By day I build systems. By night I build worlds. Read about the human and code behind Satinder Poetry."
+        />
+        <meta
+          property="og:image"
+          content="https://satinderpoetry.com/assets/images/main-background.jpg"
+        />
+
+        {/* Twitter Card */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:url"
+          content="https://satinderpoetry.com/about"
+        />
+        <meta
+          property="twitter:title"
+          content="About Satinder Singh Sall | Author & Storyteller"
+        />
+        <meta
+          property="twitter:description"
+          content="By day I build systems. By night I build worlds. Read about the human and code behind Satinder Poetry."
+        />
+        <meta
+          property="twitter:image"
+          content="https://satinderpoetry.com/assets/images/main-background.jpg"
+        />
+      </Helmet>
+
+      {/* JSON-LD Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Satinder Singh Sall",
+            alternateName: "Satinder Poetry",
+            jobTitle: ["Full-Stack Developer", "Author", "Poet"],
+            url: "https://satinderpoetry.com",
+            sameAs: ["https://satinder-portfolio.vercel.app/"],
+            description:
+              "Full-stack developer building systems by day and writer creating poetry and stories by night.",
+          }),
+        }}
+      />
+
       {/* Top strip */}
       <div className="border-b border-stone-900/20">
         <div className="mx-auto max-w-[1240px] px-6 py-3 flex items-center justify-between font-mono text-[11px] tracking-[0.2em] uppercase text-stone-600">
@@ -125,8 +198,9 @@ const EditorialAbout = () => {
 
           {/* Main Typography Block */}
           <div className="relative text-center">
-            {/* Background Word */}
-            <h1
+            {/* Background Decorative Word */}
+            <span
+              aria-hidden="true"
               className="absolute left-1/2 -translate-x-1/2 top-0 text-[90px] sm:text-[150px] md:text-[220px] lg:text-[300px] leading-none font-bold text-stone-900/[0.04] pointer-events-none select-none"
               style={{
                 fontFamily: '"Instrument Serif", serif',
@@ -135,27 +209,29 @@ const EditorialAbout = () => {
               }}
             >
               Poetry
-            </h1>
+            </span>
 
             {/* Foreground */}
             <div className="relative z-10">
-              <h2 className="text-[52px] sm:text-[82px] md:text-[120px] lg:text-[150px] leading-[0.9] tracking-[-0.06em] font-bold text-stone-900">
-                About the
-              </h2>
-
-              <h1
-                className="-mt-2 sm:-mt-4 text-[64px] sm:text-[110px] md:text-[160px] lg:text-[200px] leading-[0.85]"
-                style={{
-                  fontFamily: '"Instrument Serif", serif',
-                  fontStyle: "italic",
-                  fontWeight: 400,
-                  color: "#b45309",
-                }}
-              >
-                Author
+              {/* Consolidated Main Heading for SEO Hierarchy */}
+              <h1 className="text-stone-900">
+                <span className="block text-[52px] sm:text-[82px] md:text-[120px] lg:text-[150px] leading-[0.9] tracking-[-0.06em] font-bold">
+                  About the
+                </span>
+                <span
+                  className="-mt-2 sm:-mt-4 block text-[64px] sm:text-[110px] md:text-[160px] lg:text-[200px] leading-[0.85]"
+                  style={{
+                    fontFamily: '"Instrument Serif", serif',
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: "#b45309",
+                  }}
+                >
+                  Author
+                </span>
               </h1>
 
-              {/* Name */}
+              {/* Name Subheading */}
               <div className="mt-8 sm:mt-10">
                 <h2
                   className="mt-8 text-[28px] sm:text-[42px] md:text-[54px] lg:text-[68px] leading-none tracking-[-0.04em] text-stone-900"
@@ -204,7 +280,7 @@ const EditorialAbout = () => {
             <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-amber-800 mb-5">
               ◆ About · the long version
             </p>
-            <h1 className="text-[56px] sm:text-[88px] leading-[0.92] tracking-[-0.04em] font-bold">
+            <h2 className="text-[56px] sm:text-[88px] leading-[0.92] tracking-[-0.04em] font-bold">
               Words became the place{" "}
               <span
                 style={{
@@ -216,7 +292,7 @@ const EditorialAbout = () => {
               >
                 I returned to.
               </span>
-            </h1>
+            </h2>
             <p className="mt-7 text-[17.5px] leading-[1.6] max-w-xl text-stone-700">
               Satinder Poetry began quietly — somewhere between late-night
               thoughts, unfinished stories, airport windows, rain, music, and
@@ -242,7 +318,7 @@ const EditorialAbout = () => {
               {/* Image Layer */}
               <img
                 src={aboutImages[currentImage]}
-                alt="Satinder Poetry"
+                alt="Satinder Singh Sall - Author and Storyteller visual fragment"
                 className="absolute inset-0 w-full h-full object-cover opacity-85 transition-opacity duration-1000"
               />
 
@@ -404,9 +480,9 @@ const EditorialAbout = () => {
                   />
                 </div>
 
-                <h4 className="mt-4 text-[20px] tracking-[-0.02em] font-bold">
+                <h3 className="mt-4 text-[20px] tracking-[-0.02em] font-bold">
                   {m.title}
-                </h4>
+                </h3>
 
                 <p className="mt-2 text-[14px] leading-relaxed text-stone-600">
                   {m.text}
@@ -443,9 +519,9 @@ const EditorialAbout = () => {
           ].map((v) => (
             <div key={v.t}>
               <v.Icon className="w-5 h-5 text-amber-800" strokeWidth={1.5} />
-              <h4 className="mt-4 text-[20px] tracking-[-0.02em] font-bold">
+              <h3 className="mt-4 text-[20px] tracking-[-0.02em] font-bold">
                 {v.t}
-              </h4>
+              </h3>
               <p className="mt-1.5 text-[14.5px] text-stone-700 leading-relaxed">
                 {v.d}
               </p>
@@ -459,7 +535,7 @@ const EditorialAbout = () => {
         <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-amber-800">
           ◆ Next move
         </p>
-        <h3 className="mt-3 text-[44px] sm:text-[64px] leading-[0.95] tracking-[-0.035em] font-bold">
+        <h2 className="mt-3 text-[44px] sm:text-[64px] leading-[0.95] tracking-[-0.035em] font-bold">
           Maybe{" "}
           <span
             style={{
@@ -470,9 +546,9 @@ const EditorialAbout = () => {
           >
             you'll find a piece of yourself here.
           </span>
-        </h3>
+        </h2>
         <div className="mt-8 inline-flex items-center gap-5">
-          <Link to="/poems">
+          <Link to="/poems" aria-label="Browse Poems collection">
             <button
               className="
                 group
@@ -502,29 +578,16 @@ const EditorialAbout = () => {
                 active:shadow-[2px_2px_0px_0px_rgba(120,113,108,0.4)]
             "
             >
-              {/* Vintage texture overlay */}
               <span className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle,#fff_1px,transparent_1px)] bg-[size:10px_10px]" />
-
-              {/* Text */}
               <span className="relative z-10">Browse Poems</span>
-
-              {/* Arrow */}
-              <ArrowRight
-                className="
-                    relative
-                    z-10
-                    w-4
-                    h-4
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-1
-                    group-hover:-translate-y-[1px]
-                "
-              />
+              <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-[1px]" />
             </button>
           </Link>
 
-          <Link to="/newsletter">
+          <Link
+            to="/newsletter"
+            aria-label="Subscribe to Satinder Poetry newsletter"
+          >
             <button
               className="
                 relative
@@ -563,8 +626,8 @@ const EditorialAbout = () => {
       {/* Portfolio CTA */}
       <section className="px-6 py-28 border-t border-stone-900/20 bg-[#e7e0cf] overflow-hidden">
         <div className="mx-auto max-w-[1240px] relative">
-          {/* Background Word */}
-          <h2
+          <span
+            aria-hidden="true"
             className="absolute right-0 top-1/2 -translate-y-1/2 text-[120px] sm:text-[180px] lg:text-[260px] leading-none text-stone-900/[0.04] pointer-events-none select-none"
             style={{
               fontFamily: '"Instrument Serif", serif',
@@ -573,16 +636,15 @@ const EditorialAbout = () => {
             }}
           >
             Portfolio
-          </h2>
+          </span>
 
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left */}
             <div className="lg:col-span-7">
               <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-amber-800 mb-5">
                 ◆ Beyond the poetry
               </p>
 
-              <h3 className="text-[42px] sm:text-[64px] md:text-[82px] leading-[0.92] tracking-[-0.05em] font-bold text-stone-900">
+              <h2 className="text-[42px] sm:text-[64px] md:text-[82px] leading-[0.92] tracking-[-0.05em] font-bold text-stone-900">
                 The developer{" "}
                 <span
                   style={{
@@ -595,7 +657,7 @@ const EditorialAbout = () => {
                   behind
                 </span>{" "}
                 the words.
-              </h3>
+              </h2>
 
               <p className="mt-7 text-[16px] sm:text-[18px] leading-[1.8] text-stone-700 max-w-2xl">
                 Satinder Poetry is only one side of the story. Beyond literature
@@ -611,12 +673,12 @@ const EditorialAbout = () => {
               </p>
             </div>
 
-            {/* Right */}
             <div className="lg:col-span-5 flex lg:justify-end">
               <a
                 href="https://satinder-portfolio.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Visit Satinder Singh Sall's Developer Portfolio"
                 className="
                     group
                     relative
@@ -642,11 +704,8 @@ const EditorialAbout = () => {
                     hover:shadow-[10px_10px_0px_0px_rgba(120,113,108,0.35)]
                 "
               >
-                {/* Texture */}
                 <span className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle,#fff_1px,transparent_1px)] bg-[size:10px_10px]" />
-
                 <span className="relative z-10">Explore Full Portfolio</span>
-
                 <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
             </div>
@@ -662,7 +721,7 @@ const EditorialAbout = () => {
           <span>satinderpoetry.com</span>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 

@@ -107,4 +107,42 @@ export const resetSubmissionToPendingApi = async (id) => {
   return res.data;
 };
 
+// ---------- BLOGS ----------
+
+// Fetch published blogs for readers (with search/pagination support)
+export const fetchPublishedBlogs = async (params = {}) => {
+  const res = await API.get("/blogs", { params });
+  return res.data;
+};
+
+// Fetch single blog post by slug
+export const fetchBlogBySlug = async (slug) => {
+  const res = await API.get(`/blogs/${slug}`);
+  return res.data;
+};
+
+// Fetch all blogs (Drafts + Published) for Admin dashboard
+export const fetchAdminBlogs = async () => {
+  const res = await API.get("/blogs/admin/all");
+  return res.data;
+};
+
+// Create a new blog post (Admin)
+export const createBlog = async (blogData) => {
+  const res = await API.post("/blogs", blogData);
+  return res.data;
+};
+
+// Update an existing blog post (Admin)
+export const updateBlog = async (id, blogData) => {
+  const res = await API.put(`/blogs/${id}`, blogData);
+  return res.data;
+};
+
+// Delete a blog post (Admin)
+export const deleteBlog = async (id) => {
+  const res = await API.delete(`/blogs/${id}`);
+  return res.data;
+};
+
 export default API;

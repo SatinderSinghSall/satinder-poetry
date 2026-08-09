@@ -12,6 +12,7 @@ import {
   Library,
   Compass,
   PenTool,
+  FileText,
 } from "lucide-react";
 
 import { LogoutModal } from "./LogoutModal";
@@ -74,7 +75,8 @@ export default function Navbar() {
           <div className="hidden items-center gap-6 xl:flex 2xl:gap-8">
             <NavLink to="/poems" label="Poems" />
 
-            {/* Added Poet's Portal right after Poems */}
+            <NavLink to="/blogs" label="Blogs" />
+
             <NavLink to="/add-poem-portal" label="Poet's Portal" />
 
             <NavLink to="/books" label="Books" />
@@ -431,7 +433,14 @@ function MobileDrawer({ open, setOpen, user, logout, onOpenNavModal }) {
               Poems
             </MobileItem>
 
-            {/* Added Poet's Portal right after Poems in Mobile Drawer */}
+            <MobileItem
+              to="/blogs"
+              icon={<FileText size={20} />}
+              setOpen={setOpen}
+            >
+              Blogs
+            </MobileItem>
+
             <MobileItem
               to="/add-poem-portal"
               icon={<PenTool size={20} />}

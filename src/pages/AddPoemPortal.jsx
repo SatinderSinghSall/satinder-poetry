@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "../context/AuthContext";
 import {
   Feather,
@@ -111,13 +112,11 @@ export default function AddPoemPortal() {
     try {
       await submitPoemDraftApi(formData);
 
-      // Original toast notification
       toast.success("Submission Sent for Review!", {
         description:
           "Satinder Singh Sall will review your poem and grant access/publish upon approval.",
       });
 
-      // Reset form & errors, then trigger success modal
       setFormData({ title: "", genre: "Poetry", content: "", noteToAdmin: "" });
       setErrors({});
       setShowSuccessModal(true);
@@ -201,8 +200,55 @@ export default function AddPoemPortal() {
     "Once approved by Satinder, your poem will be featured with full author credit.",
   ];
 
+  /* ---------- SEO Metadata Config ---------- */
+  const canonicalUrl = "https://satinderpoetry.com/add-poem";
+  const seoTitle = "Submit Poem Drafts & Author Portal | Satinder Poetry";
+  const seoDescription =
+    "Submit your original poems to Satinder Poetry for editorial evaluation. Review submission guidelines and request publishing authorization directly from founder Satinder Singh Sall.";
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: seoTitle,
+    description: seoDescription,
+    url: canonicalUrl,
+    publisher: {
+      "@type": "Organization",
+      name: "Satinder Poetry",
+      url: "https://satinderpoetry.com",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-slate-900 selection:bg-stone-200 relative">
+      {/* ---------- SEO Meta Tags ---------- */}
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta
+          name="keywords"
+          content="submit poem, author contribution, poetry submissions, publish poetry, Satinder Poetry, poem submission guidelines"
+        />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+
+        {/* JSON-LD Schema.org Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      </Helmet>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* Header Section */}
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">

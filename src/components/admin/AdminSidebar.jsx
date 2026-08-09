@@ -19,6 +19,7 @@ import {
   List,
   Globe,
   ExternalLink,
+  PenTool,
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -32,6 +33,9 @@ export default function AdminSidebar() {
   );
   const [booksOpen, setBooksOpen] = useState(
     location.pathname.includes("/admin/book"),
+  );
+  const [blogsOpen, setBlogsOpen] = useState(
+    location.pathname.includes("/admin/blog"),
   );
 
   return (
@@ -223,6 +227,31 @@ export default function AdminSidebar() {
                 to="/admin/add-book"
                 icon={Plus}
                 label="Add Book"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </CollapsibleGroup>
+
+            {/* Blog Management Dropdown Group */}
+            <CollapsibleGroup
+              label="Blog Management"
+              icon={PenTool}
+              isOpen={blogsOpen}
+              onToggle={() => setBlogsOpen(!blogsOpen)}
+              collapsed={collapsed && !mobileOpen}
+              isActive={location.pathname.includes("/admin/blog")}
+            >
+              <SubSideItem
+                to="/admin/blogs"
+                icon={List}
+                label="All Blogs"
+                collapsed={collapsed && !mobileOpen}
+                onNavigate={() => setMobileOpen(false)}
+              />
+              <SubSideItem
+                to="/admin/add-blog"
+                icon={Plus}
+                label="Add Blog"
                 collapsed={collapsed && !mobileOpen}
                 onNavigate={() => setMobileOpen(false)}
               />

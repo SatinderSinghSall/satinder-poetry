@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import API from "@/api/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import PoemNotFound from "@/components/PoemNotFound";
@@ -36,12 +37,87 @@ export default function PoemDetail() {
     ? new Date(poem.createdAt).toLocaleDateString()
     : "";
 
-  /* ✅ NEW helpers (added only) */
   const readingTime = poem?.readingTime ? `${poem.readingTime} min read` : "";
   const views = poem?.views ? `${poem.views} views` : "";
 
+  /* ---------- Dynamic SEO Config ---------- */
+  const canonicalUrl = `https://satinderpoetry.com/poems/${id}`;
+  const pageTitle = poem?.title
+    ? `${poem.title} — Poem by ${poem.author || "Satinder Singh Sall"}`
+    : "Poem Details | Satinder Poetry";
+
+  const rawDescription =
+    poem?.summary ||
+    poem?.content?.substring(0, 155).replace(/\n/g, " ") ||
+    "Read this evocative poem on Satinder Poetry.";
+
+  const pageDescription =
+    rawDescription.length > 155
+      ? `${rawDescription.substring(0, 152)}...`
+      : rawDescription;
+
+  // Schema.org Structured Data for individual Poem
+  const structuredData = poem
+    ? {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        genre: poem.theme || "Poetry",
+        name: poem.title,
+        author: {
+          "@type": "Person",
+          name: poem.author || "Satinder Singh Sall",
+        },
+        datePublished: poem.createdAt,
+        text: poem.content,
+        abstract: poem.summary || pageDescription,
+        url: canonicalUrl,
+        ...(poem.coverImage && { image: poem.coverImage }),
+        keywords: poem.tags?.join(", ") || poem.theme || "Poetry",
+      }
+    : null;
+
   return (
     <div className="relative min-h-screen flex justify-center bg-gradient-to-br from-amber-50 via-stone-50 to-rose-50">
+      {/* ---------- Dynamic SEO Tags ---------- */}
+      {poem && !notFound && (
+        <Helmet>
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          {poem.tags?.length > 0 && (
+            <meta name="keywords" content={poem.tags.join(", ")} />
+          )}
+          <link rel="canonical" href={canonicalUrl} />
+
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={canonicalUrl} />
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+          {poem.coverImage && (
+            <meta property="og:image" content={poem.coverImage} />
+          )}
+
+          {/* Twitter Card */}
+          <meta
+            name="twitter:card"
+            content={poem.coverImage ? "summary_large_image" : "summary"}
+          />
+          <meta name="twitter:url" content={canonicalUrl} />
+          <meta name="twitter:title" content={pageTitle} />
+          <meta name="twitter:description" content={pageDescription} />
+          {poem.coverImage && (
+            <meta name="twitter:image" content={poem.coverImage} />
+          )}
+
+          {/* Schema.org JSON-LD */}
+          {structuredData && (
+            <script type="application/ld+json">
+              {JSON.stringify(structuredData)}
+            </script>
+          )}
+        </Helmet>
+      )}
+
       <div className="absolute inset-0 blur-3xl opacity-40 bg-[radial-gradient(circle_at_20%_20%,#fde68a,transparent_40%),radial-gradient(circle_at_80%_70%,#fbcfe8,transparent_40%)]" />
 
       <div className="relative w-full max-w-[820px] px-4 sm:px-6 md:px-8 py-10 space-y-8">
@@ -68,11 +144,12 @@ export default function PoemDetail() {
         {/* ---------- Poem ---------- */}
         {!loading && poem && !notFound && (
           <article className="animate-in fade-in duration-700 rounded-3xl bg-white/80 backdrop-blur-xl border border-stone-200/60 shadow-xl px-6 sm:px-10 py-10">
-            {/* ✅ NEW Cover Image */}
+            {/* Cover Image */}
             {poem.coverImage && (
               <img
                 src={poem.coverImage}
-                alt="cover"
+                alt={`${poem.title} cover image`}
+                loading="eager"
                 className="w-full h-64 object-cover rounded-2xl mb-8"
               />
             )}
@@ -92,14 +169,14 @@ export default function PoemDetail() {
 
             <div className="my-8 h-px bg-stone-200" />
 
-            {/* ✅ NEW Summary */}
+            {/* Summary */}
             {poem.summary && (
               <p className="text-center italic text-stone-500 mb-8 max-w-2xl mx-auto">
                 {poem.summary}
               </p>
             )}
 
-            {/* ✅ NEW Metadata row */}
+            {/* Metadata row */}
             <div className="flex flex-wrap justify-center gap-3 mb-8 text-xs">
               {poem.featured && (
                 <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-medium">
@@ -130,7 +207,7 @@ export default function PoemDetail() {
               {views && <span className="text-stone-400">{views}</span>}
             </div>
 
-            {/* Poem text (UNCHANGED) */}
+            {/* Poem text */}
             <div className="whitespace-pre-line font-serif text-base sm:text-lg leading-relaxed text-stone-700 tracking-wide">
               {poem.content}
             </div>

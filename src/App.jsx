@@ -25,6 +25,8 @@ import NewsletterSignup from "./pages/NewsletterSignup";
 import About from "./pages/About";
 import Books from "./pages/Books";
 import AddPoemPortal from "./pages/AddPoemPortal";
+import Blogs from "@/pages/Blogs";
+import BlogDetail from "@/pages/BlogDetail";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -39,6 +41,9 @@ import AddBook from "./pages/admin/AddBook";
 import EditBook from "./pages/admin/EditBook";
 import { AdminBookSuggestions } from "./components/admin/AdminBookSuggestions";
 import { AdminPoemSubmissions } from "./components/admin/AdminPoemSubmissions";
+import BlogsAdmin from "./pages/admin/Blogs";
+import AddBlog from "./pages/admin/AddBlog";
+import EditBlog from "./pages/admin/EditBlog";
 
 /* Components: */
 import ScrollToTopButton from "./components/ScrollToTopButton";
@@ -141,6 +146,8 @@ export default function App() {
           <Route path="/about-me" element={<About />} />
           <Route path="/books" element={<Books />} />
           <Route path="/add-poem-portal" element={<AddPoemPortal />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:slug" element={<BlogDetail />} />
 
           {/* protected profile */}
           <Route element={<AuthRoute />}>
@@ -172,6 +179,11 @@ export default function App() {
             <Route path="books" element={<BooksAdmin />} />
             <Route path="add-book" element={<AddBook />} />
             <Route path="edit-book/:id" element={<EditBook />} />
+
+            {/* ===== BLOG ADMIN ROUTES ===== */}
+            <Route path="blogs" element={<BlogsAdmin />} />
+            <Route path="add-blog" element={<AddBlog />} />
+            <Route path="edit-blog/:id" element={<EditBlog />} />
           </Route>
         </Route>
       </Routes>
