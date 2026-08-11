@@ -211,86 +211,90 @@ export default function Blogs() {
 
         {/* Table Container */}
         <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col justify-between">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="p-4 text-left w-16">S.No.</th>
-                <th className="p-4 text-left">Title</th>
-                <th className="p-4 text-left">Tags</th>
-                <th className="p-4 text-left">Status</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {currentBlogs.map((blog, index) => (
-                <tr key={blog._id} className="border-t hover:bg-slate-50/50">
-                  <td className="p-4 text-muted-foreground font-medium">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="p-4 font-medium max-w-xs truncate">
-                    {blog.title}
-                  </td>
-                  <td className="p-4 text-muted-foreground">
-                    {Array.isArray(blog.tags) && blog.tags.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {blog.tags.map((tag, tIdx) => (
-                          <span
-                            key={tIdx}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium"
-                          >
-                            <Tag className="w-3 h-3 text-slate-400" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        blog.status === "published"
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : "bg-amber-50 text-amber-700 border border-amber-200"
-                      }`}
-                    >
-                      {blog.status === "published" ? "Published" : "Draft"}
-                    </span>
-                  </td>
-
-                  <td className="p-4 text-right space-x-2">
-                    {/* View */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedBlog(blog)}
-                      className="cursor-pointer"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-
-                    {/* Edit */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="cursor-pointer"
-                      onClick={() => navigate(`/admin/edit-blog/${blog._id}`)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-
-                    {/* Delete */}
-                    <DeleteDialog
-                      onConfirm={() => handleDelete(blog._id)}
-                      label="Delete Blog"
-                    />
-                  </td>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm min-w-[700px]">
+              <thead className="bg-slate-100">
+                <tr>
+                  <th className="p-4 text-left w-16 whitespace-nowrap">
+                    S.No.
+                  </th>
+                  <th className="p-4 text-left whitespace-nowrap">Title</th>
+                  <th className="p-4 text-left whitespace-nowrap">Tags</th>
+                  <th className="p-4 text-left whitespace-nowrap">Status</th>
+                  <th className="p-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {currentBlogs.map((blog, index) => (
+                  <tr key={blog._id} className="border-t hover:bg-slate-50/50">
+                    <td className="p-4 text-muted-foreground font-medium whitespace-nowrap">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="p-4 font-medium max-w-xs truncate whitespace-nowrap">
+                      {blog.title}
+                    </td>
+                    <td className="p-4 text-muted-foreground whitespace-nowrap">
+                      {Array.isArray(blog.tags) && blog.tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {blog.tags.map((tag, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium whitespace-nowrap"
+                            >
+                              <Tag className="w-3 h-3 text-slate-400" />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                          blog.status === "published"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                        }`}
+                      >
+                        {blog.status === "published" ? "Published" : "Draft"}
+                      </span>
+                    </td>
+
+                    <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                      {/* View */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedBlog(blog)}
+                        className="cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+
+                      {/* Edit */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="cursor-pointer"
+                        onClick={() => navigate(`/admin/edit-blog/${blog._id}`)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+
+                      {/* Delete */}
+                      <DeleteDialog
+                        onConfirm={() => handleDelete(blog._id)}
+                        label="Delete Blog"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center py-14 px-4 text-center bg-stone-50/50 rounded-2xl border border-dashed border-stone-200 my-2">

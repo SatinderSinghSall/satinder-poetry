@@ -375,15 +375,17 @@ export default function Dashboard() {
         <div className="space-y-4">
           <h2 className="text-lg font-medium">Recent Activity</h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Grid responsive adjustments */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* 1. Recent Poems */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-slate-700" /> Recent Poems
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <FileText className="w-4 h-4 text-slate-700 shrink-0" />
+                    <span className="truncate">Recent Poems</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.poems}
                   </span>
                 </div>
@@ -396,12 +398,12 @@ export default function Dashboard() {
                     recentPoems.map((p) => (
                       <div
                         key={p._id || p.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {p.title || "Untitled"}
                         </span>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
                           {p.createdAt
                             ? new Date(p.createdAt).toLocaleDateString()
                             : "—"}
@@ -414,14 +416,14 @@ export default function Dashboard() {
             </div>
 
             {/* 2. Recent Blogs */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-emerald-600" /> Recent
-                    Blogs
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <BookOpen className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="truncate">Recent Blogs</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.blogs}
                   </span>
                 </div>
@@ -434,12 +436,12 @@ export default function Dashboard() {
                     recentBlogs.map((b) => (
                       <div
                         key={b._id || b.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {b.title || "Untitled Post"}
                         </span>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
                           {b.createdAt
                             ? new Date(b.createdAt).toLocaleDateString()
                             : "—"}
@@ -452,13 +454,14 @@ export default function Dashboard() {
             </div>
 
             {/* 3. Recent Books */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <Library className="w-4 h-4 text-slate-700" /> Recent Books
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <Library className="w-4 h-4 text-slate-700 shrink-0" />
+                    <span className="truncate">Recent Books</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.books}
                   </span>
                 </div>
@@ -471,12 +474,12 @@ export default function Dashboard() {
                     recentBooks.map((b) => (
                       <div
                         key={b._id || b.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {b.title || b.name || "Untitled Book"}
                         </span>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
                           {b.createdAt
                             ? new Date(b.createdAt).toLocaleDateString()
                             : "—"}
@@ -489,13 +492,14 @@ export default function Dashboard() {
             </div>
 
             {/* 4. Recent Users */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <Users className="w-4 h-4 text-slate-700" /> Recent Users
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <Users className="w-4 h-4 text-slate-700 shrink-0" />
+                    <span className="truncate">Recent Users</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.users}
                   </span>
                 </div>
@@ -508,12 +512,12 @@ export default function Dashboard() {
                     recentUsers.map((u) => (
                       <div
                         key={u._id || u.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="font-medium text-slate-700 truncate">
+                        <span className="font-medium text-slate-700 truncate min-w-0 flex-1">
                           {u.name || "User"}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate max-w-[140px]">
+                        <span className="text-xs text-muted-foreground truncate max-w-[120px] sm:max-w-[140px] text-right shrink-0">
                           {u.email}
                         </span>
                       </div>
@@ -524,14 +528,14 @@ export default function Dashboard() {
             </div>
 
             {/* 5. Book Suggestions */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-500" /> Book
-                    Suggestions
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Book Suggestions</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.suggestions}
                   </span>
                 </div>
@@ -544,12 +548,12 @@ export default function Dashboard() {
                     recentSuggestions.map((s) => (
                       <div
                         key={s._id || s.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {s.title || s.bookTitle || s.name || "Suggestion"}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        <span className="text-xs text-muted-foreground truncate max-w-[100px] sm:max-w-[120px] text-right shrink-0">
                           {s.author || s.suggestedBy || "Anonymous"}
                         </span>
                       </div>
@@ -560,14 +564,14 @@ export default function Dashboard() {
             </div>
 
             {/* 6. Poem Submissions */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <Send className="w-4 h-4 text-indigo-600" /> Poem
-                    Submissions
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <Send className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span className="truncate">Poem Submissions</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {submissionsCount}
                   </span>
                 </div>
@@ -580,12 +584,12 @@ export default function Dashboard() {
                     recentSubmissions.map((sub) => (
                       <div
                         key={sub._id || sub.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {sub.title || sub.poemTitle || "Submitted Poem"}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        <span className="text-xs text-muted-foreground truncate max-w-[100px] sm:max-w-[120px] text-right shrink-0">
                           {sub.author || sub.submittedBy || sub.email || "User"}
                         </span>
                       </div>
@@ -596,14 +600,14 @@ export default function Dashboard() {
             </div>
 
             {/* 7. Email Subscribers */}
-            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="rounded-xl border bg-white p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-slate-700" /> Newsletter
-                    Subscribers
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <h3 className="font-medium text-slate-900 flex items-center gap-2 truncate">
+                    <Mail className="w-4 h-4 text-slate-700 shrink-0" />
+                    <span className="truncate">Newsletter Subscribers</span>
                   </h3>
-                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono shrink-0">
                     {stats.subscribers}
                   </span>
                 </div>
@@ -616,12 +620,12 @@ export default function Dashboard() {
                     recentSubscribers.map((e) => (
                       <div
                         key={e._id || e.id}
-                        className="flex justify-between border-b pb-2 gap-2"
+                        className="flex items-center justify-between border-b pb-2 gap-2"
                       >
-                        <span className="truncate font-medium text-slate-700">
+                        <span className="truncate font-medium text-slate-700 min-w-0 flex-1">
                           {e.email || e.address}
                         </span>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
                           {e.createdAt
                             ? new Date(e.createdAt).toLocaleDateString()
                             : "Subscribed"}

@@ -14,6 +14,12 @@ import ClearHistoryModal from "./ClearHistoryModal";
 export default function WelcomeBackModal({ open, onClose }) {
   const [showClearModal, setShowClearModal] = useState(false);
 
+  // Set cooldown in localStorage and close modal
+  const handleDismiss = () => {
+    localStorage.setItem("welcomeModalDismissedAt", Date.now().toString());
+    onClose();
+  };
+
   useEffect(() => {
     if (open) {
       document.documentElement.style.overflow = "hidden";
@@ -36,7 +42,7 @@ export default function WelcomeBackModal({ open, onClose }) {
 
     const handleEscape = (e) => {
       if (e.key === "Escape") {
-        onClose();
+        handleDismiss();
       }
     };
 
@@ -47,7 +53,7 @@ export default function WelcomeBackModal({ open, onClose }) {
 
       window.removeEventListener("keydown", handleEscape);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -104,7 +110,7 @@ export default function WelcomeBackModal({ open, onClose }) {
             {/* close */}
             <button
               aria-label="Close modal"
-              onClick={onClose}
+              onClick={handleDismiss}
               className="
             absolute right-4 top-4 z-20
 
@@ -491,7 +497,7 @@ export default function WelcomeBackModal({ open, onClose }) {
                 "
               >
                 <button
-                  onClick={onClose}
+                  onClick={handleDismiss}
                   className="
                     inline-flex items-center justify-center gap-2
 

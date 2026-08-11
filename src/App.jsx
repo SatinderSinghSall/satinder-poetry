@@ -65,31 +65,32 @@ export default function App() {
 
   useEffect(() => {
     const excludedRoutes = ["/login", "/register", "/newsletter"];
-
     const isExcludedRoute = excludedRoutes.includes(location.pathname);
-
     const isAdminRoute = location.pathname.startsWith("/admin");
 
     if (isExcludedRoute || isAdminRoute) return;
 
     const hasAccount = localStorage.getItem("hasAccount");
-
     const hasNewsletter = localStorage.getItem("hasNewsletter");
 
     const missingAccount = !hasAccount;
-
     const missingNewsletter = !hasNewsletter;
 
     setNeedsAccount(missingAccount);
-
     setNeedsNewsletter(missingNewsletter);
 
+    // Check 30-minute cooldown for WelcomeBackModal
+    const lastDismissed = localStorage.getItem("welcomeModalDismissedAt");
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const isCooldownActive =
+      lastDismissed &&
+      Date.now() - parseInt(lastDismissed, 10) < THIRTY_MINUTES;
+
     const timer = setTimeout(() => {
-      // USER COMPLETED EVERYTHING
-      if (hasAccount && hasNewsletter) {
+      // USER COMPLETED EVERYTHING & COOLDOWN EXPIRED
+      if (hasAccount && hasNewsletter && !isCooldownActive) {
         setShowWelcomeModal(true);
       }
-
       // USER STILL MISSING SOMETHING
       else if (missingAccount || missingNewsletter) {
         setShowEngagementModal(true);

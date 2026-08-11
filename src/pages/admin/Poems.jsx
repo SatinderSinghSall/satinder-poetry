@@ -181,57 +181,65 @@ export default function Poems() {
 
         {/* Table Container */}
         <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col justify-between">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="p-4 text-left w-16">S.No.</th>
-                <th className="p-4 text-left">Title</th>
-                <th className="p-4 text-left">Author</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {currentPoems.map((poem, index) => (
-                <tr key={poem._id} className="border-t hover:bg-slate-50/50">
-                  {/* Dynamic S.No. calculation based on pagination */}
-                  <td className="p-4 text-muted-foreground font-medium">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="p-4 font-medium">{poem.title}</td>
-                  <td className="p-4 text-muted-foreground">{poem.author}</td>
-
-                  <td className="p-4 text-right space-x-2">
-                    {/* View Button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="cursor-pointer"
-                      onClick={() => setSelectedPoem(poem)}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-
-                    {/* Edit Button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="cursor-pointer"
-                      onClick={() => navigate(`/admin/edit-poem/${poem._id}`)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-
-                    {/* Delete Dialog */}
-                    <DeleteDialog
-                      onConfirm={() => handleDelete(poem._id)}
-                      label="Delete Poem"
-                    />
-                  </td>
+          {/* Horizontal Scroll Wrapper */}
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead className="bg-slate-100">
+                <tr>
+                  <th className="p-4 text-left w-16 whitespace-nowrap">
+                    S.No.
+                  </th>
+                  <th className="p-4 text-left whitespace-nowrap">Title</th>
+                  <th className="p-4 text-left whitespace-nowrap">Author</th>
+                  <th className="p-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {currentPoems.map((poem, index) => (
+                  <tr key={poem._id} className="border-t hover:bg-slate-50/50">
+                    <td className="p-4 text-muted-foreground font-medium whitespace-nowrap">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="p-4 font-medium whitespace-nowrap">
+                      {poem.title}
+                    </td>
+                    <td className="p-4 text-muted-foreground whitespace-nowrap">
+                      {poem.author}
+                    </td>
+
+                    <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                      {/* View Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="cursor-pointer"
+                        onClick={() => setSelectedPoem(poem)}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+
+                      {/* Edit Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="cursor-pointer"
+                        onClick={() => navigate(`/admin/edit-poem/${poem._id}`)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+
+                      {/* Delete Dialog */}
+                      <DeleteDialog
+                        onConfirm={() => handleDelete(poem._id)}
+                        label="Delete Poem"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center py-14 px-4 text-center bg-stone-50/50 rounded-2xl border border-dashed border-stone-200 my-2">
