@@ -13,6 +13,11 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Calendar,
+  FileText,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import {
   fetchBookSuggestions,
@@ -32,12 +37,42 @@ export function AdminBookSuggestions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(9);
 
-  // Modal State
+  // View Modal State
+  const [viewModal, setViewModal] = useState({
+    isOpen: false,
+    item: null,
+  });
+
+  // Status Change Confirmation Modal State
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    item: null,
+    newStatus: "",
+    isUpdating: false,
+  });
+
+  // Delete Modal State
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     item: null,
     isDeleting: false,
   });
+
+  // 🛑 Lock background body scrolling whenever ANY modal is active
+  const isAnyModalOpen =
+    viewModal.isOpen || statusModal.isOpen || deleteModal.isOpen;
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isAnyModalOpen]);
 
   // Fetch Suggestions
   const loadSuggestions = async () => {
@@ -91,18 +126,44 @@ export function AdminBookSuggestions() {
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filteredSuggestions.slice(startIndex, endIndex);
 
-  // Update Suggestion Status
-  const handleStatusChange = async (id, newStatus) => {
+  // Prompt Status Change Modal
+  const promptStatusChange = (item, newStatus) => {
+    if (item.status === newStatus) return;
+    setStatusModal({
+      isOpen: true,
+      item,
+      newStatus,
+      isUpdating: false,
+    });
+  };
+
+  // Perform Actual Status Update from Modal
+  const confirmStatusChange = async () => {
+    if (!statusModal.item || !statusModal.newStatus) return;
+
+    setStatusModal((prev) => ({ ...prev, isUpdating: true }));
     try {
-      await updateBookSuggestionStatus(id, newStatus);
+      await updateBookSuggestionStatus(
+        statusModal.item._id,
+        statusModal.newStatus,
+      );
       setSuggestions((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, status: newStatus } : item,
+          item._id === statusModal.item._id
+            ? { ...item, status: statusModal.newStatus }
+            : item,
         ),
       );
+      setStatusModal({
+        isOpen: false,
+        item: null,
+        newStatus: "",
+        isUpdating: false,
+      });
     } catch (err) {
       console.error(err);
       alert("Failed to update status.");
+      setStatusModal((prev) => ({ ...prev, isUpdating: false }));
     }
   };
 
@@ -160,6 +221,15 @@ export function AdminBookSuggestions() {
     }
   };
 
+  const formatStatusLabel = (status) => {
+    switch (status) {
+      case "added_to_shelf":
+        return "Add to Shelf";
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
+
   return (
     <div className="p-6 sm:p-10 max-w-7xl mx-auto space-y-8 font-sans">
       {/* Delete Confirmation Modal */}
@@ -176,6 +246,221 @@ export function AdminBookSuggestions() {
         }
         onConfirm={confirmDelete}
       />
+
+      {/* Status Change Confirmation Modal */}
+      {statusModal.isOpen && (
+        <div className="fixed inset-0 z-[100] w-screen h-screen flex items-center justify-center bg-black/40 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-5 border border-stone-100 relative my-auto">
+            <button
+              onClick={() =>
+                setStatusModal({
+                  isOpen: false,
+                  item: null,
+                  newStatus: "",
+                  isUpdating: false,
+                })
+              }
+              disabled={statusModal.isUpdating}
+              className="absolute top-4 right-4 h-8 w-8 rounded-full bg-stone-100 text-stone-500 hover:text-stone-800 flex items-center justify-center transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3.5 pr-6">
+              <div className="p-3 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 shrink-0">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                  Update Status
+                </span>
+                <h3 className="text-lg font-bold text-stone-900 mt-1">
+                  Change recommendation status?
+                </h3>
+              </div>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Are you sure you want to change the status of{" "}
+              <strong className="text-stone-900">
+                "{statusModal.item?.title}"
+              </strong>{" "}
+              to{" "}
+              <strong className="text-stone-900 capitalize">
+                "{formatStatusLabel(statusModal.newStatus)}"
+              </strong>
+              ?
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-stone-100">
+              <button
+                type="button"
+                disabled={statusModal.isUpdating}
+                onClick={() =>
+                  setStatusModal({
+                    isOpen: false,
+                    item: null,
+                    newStatus: "",
+                    isUpdating: false,
+                  })
+                }
+                className="px-4 py-2 text-xs font-semibold rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={statusModal.isUpdating}
+                onClick={confirmStatusChange}
+                className="px-5 py-2 text-xs font-bold rounded-xl bg-stone-900 text-white hover:bg-stone-800 transition cursor-pointer inline-flex items-center gap-2"
+              >
+                {statusModal.isUpdating ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Updating...</span>
+                  </>
+                ) : (
+                  <span>Confirm Change</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Detail View Modal */}
+      {viewModal.isOpen && viewModal.item && (
+        <div className="fixed inset-0 z-[100] w-screen h-screen flex items-center justify-center bg-stone-900/50 backdrop-blur-md p-3 sm:p-6 overflow-hidden">
+          <div className="w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-100 flex flex-col max-h-[88vh] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+            {/* Pinned Header */}
+            <div className="p-4 sm:p-6 pb-4 border-b border-stone-100 shrink-0 bg-white space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-block text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100/80">
+                  Book Suggestion Details
+                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  {getStatusBadge(viewModal.item.status)}
+                  <button
+                    onClick={() => setViewModal({ isOpen: false, item: null })}
+                    className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-800 flex items-center justify-center transition cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg sm:text-2xl font-serif font-bold text-stone-900 leading-snug">
+                  {viewModal.item.title}
+                </h2>
+                <p className="text-xs font-semibold text-amber-800 pt-0.5">
+                  by {viewModal.item.author}
+                </p>
+              </div>
+            </div>
+
+            {/* Scrollable Content Body */}
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto custom-scrollbar flex-1">
+              {/* Reader Note */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] sm:text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-stone-400" /> Reader
+                  Note
+                </label>
+                <div className="p-4 sm:p-5 rounded-2xl bg-stone-50/80 border border-stone-200/80 text-xs sm:text-sm text-stone-800 font-serif italic whitespace-pre-wrap leading-relaxed shadow-inner">
+                  {viewModal.item.note
+                    ? `"${viewModal.item.note}"`
+                    : "No note provided."}
+                </div>
+              </div>
+
+              {/* Reader Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                <div className="p-3 sm:p-3.5 rounded-2xl border border-stone-100 bg-stone-50/50 space-y-0.5">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 flex items-center gap-1">
+                    <User className="w-3 h-3 text-stone-400" /> Suggested By
+                  </span>
+                  <p className="text-xs font-semibold text-stone-800 truncate">
+                    {viewModal.item.suggestedBy || "Anonymous Reader"}
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-3.5 rounded-2xl border border-stone-100 bg-stone-50/50 space-y-0.5">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 flex items-center gap-1">
+                    <Mail className="w-3 h-3 text-stone-400" /> Email Address
+                  </span>
+                  <p className="text-xs font-semibold text-stone-800 truncate">
+                    {viewModal.item.email ? (
+                      <a
+                        href={`mailto:${viewModal.item.email}`}
+                        className="hover:underline text-indigo-600"
+                      >
+                        {viewModal.item.email}
+                      </a>
+                    ) : (
+                      <span className="text-stone-400 italic">
+                        Not provided
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Timestamp Meta Grid (createdAt & updatedAt) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="p-3 sm:p-3.5 rounded-2xl border border-stone-100 bg-stone-50/50 space-y-0.5">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-stone-400" /> Date
+                    Submitted
+                  </span>
+                  <p className="text-xs font-semibold text-stone-800">
+                    {new Date(viewModal.item.createdAt).toLocaleString(
+                      "en-US",
+                      {
+                        dateStyle: "medium",
+                        timeStyle: "medium",
+                      },
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-3.5 rounded-2xl border border-stone-100 bg-stone-50/50 space-y-0.5">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-stone-400" /> Last Updated
+                  </span>
+                  <p className="text-xs font-semibold text-stone-800">
+                    {viewModal.item.updatedAt
+                      ? new Date(viewModal.item.updatedAt).toLocaleString(
+                          "en-US",
+                          {
+                            dateStyle: "medium",
+                            timeStyle: "medium",
+                          },
+                        )
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pinned Footer with Document ID */}
+            <div className="p-3.5 px-4 sm:p-4 sm:px-6 border-t border-stone-100 bg-stone-50/50 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-stone-500 font-mono">
+                <span className="font-bold text-stone-400">ID:</span>
+                <span className="bg-stone-200/60 px-2 py-0.5 rounded-md text-stone-700 select-all">
+                  {viewModal.item._id}
+                </span>
+              </div>
+              <button
+                onClick={() => setViewModal({ isOpen: false, item: null })}
+                className="px-4 py-1.5 sm:px-5 sm:py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold transition cursor-pointer shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-200 pb-6">
@@ -294,7 +579,7 @@ export function AdminBookSuggestions() {
                 </div>
 
                 {item.note && (
-                  <p className="text-xs text-stone-600 bg-stone-50 p-3 rounded-xl italic border border-stone-100 leading-relaxed">
+                  <p className="text-xs text-stone-600 bg-stone-50 p-3 rounded-xl italic border border-stone-100 leading-relaxed line-clamp-3">
                     "{item.note}"
                   </p>
                 )}
@@ -311,7 +596,7 @@ export function AdminBookSuggestions() {
                       <Mail className="w-3.5 h-3.5 text-stone-400" />
                       <a
                         href={`mailto:${item.email}`}
-                        className="hover:underline text-stone-700"
+                        className="hover:underline text-stone-700 truncate"
                       >
                         {item.email}
                       </a>
@@ -322,10 +607,8 @@ export function AdminBookSuggestions() {
                 <div className="flex items-center justify-between gap-2 pt-2">
                   <select
                     value={item.status}
-                    onChange={(e) =>
-                      handleStatusChange(item._id, e.target.value)
-                    }
-                    className="text-xs border border-stone-300 rounded-lg px-2.5 py-1.5 bg-white font-medium text-stone-700 focus:outline-none focus:ring-1 focus:ring-stone-900"
+                    onChange={(e) => promptStatusChange(item, e.target.value)}
+                    className="text-xs border border-stone-300 rounded-lg px-2.5 py-1.5 bg-white font-medium text-stone-700 focus:outline-none focus:ring-1 focus:ring-stone-900 cursor-pointer"
                   >
                     <option value="pending">Pending</option>
                     <option value="reviewed">Reviewed</option>
@@ -333,13 +616,27 @@ export function AdminBookSuggestions() {
                     <option value="archived">Archive</option>
                   </select>
 
-                  <button
-                    onClick={() => promptDelete(item)}
-                    className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                    title="Delete suggestion"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    {/* View Details Button */}
+                    <button
+                      type="button"
+                      onClick={() => setViewModal({ isOpen: true, item })}
+                      className="h-8 w-8 rounded-full border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 flex items-center justify-center transition cursor-pointer shadow-xs"
+                      title="View Suggestion Details"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      onClick={() => promptDelete(item)}
+                      className="h-8 w-8 rounded-full bg-red-600 hover:bg-red-700 active:bg-red-800 text-white flex items-center justify-center transition cursor-pointer shadow-sm shadow-red-500/20"
+                      title="Delete Suggestion"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -370,7 +667,7 @@ export function AdminBookSuggestions() {
               <select
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="border border-stone-300 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-stone-900"
+                className="border border-stone-300 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-stone-900 cursor-pointer"
               >
                 <option value={6}>6</option>
                 <option value={9}>9</option>

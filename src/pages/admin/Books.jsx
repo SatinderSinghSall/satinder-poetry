@@ -18,6 +18,9 @@ import {
   ChevronRight,
   Plus,
   BookOpen,
+  X,
+  ExternalLink,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import DeleteDialog from "@/components/admin/DeleteDialog";
@@ -86,6 +89,20 @@ export default function Books() {
       toast.error("Delete failed");
     }
   };
+
+  // 🔒 Lock background scroll when modal is open
+  useEffect(() => {
+    if (selectedBook) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedBook]);
 
   // 📄 Pagination Calculations
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
@@ -228,8 +245,11 @@ export default function Books() {
 
                       {/* Delete */}
                       <DeleteDialog
+                        sNo={startIndex + index + 1}
+                        title={book.title}
+                        author={book.author}
+                        itemType="book"
                         onConfirm={() => handleDelete(book._id)}
-                        label="Delete Book"
                       />
                     </td>
                   </tr>
@@ -359,77 +379,245 @@ export default function Books() {
         </div>
 
         {/* ================================= */}
-        {/* 👁 VIEW BOOK MODAL */}
+        {/* 👁 PREMIUM VIEW BOOK MODAL */}
         {/* ================================= */}
         {selectedBook && (
-          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 space-y-6">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Book Details</h2>
+          <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-slate-900 w-full max-w-3xl max-h-[92vh] flex flex-col rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+              {/* 📌 Header with Top-Right Cross Icon */}
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20 shrink-0">
+                    <BookOpen className="w-5 h-5 stroke-[2.2]" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-serif font-bold text-slate-900 dark:text-slate-100 leading-tight">
+                      Book Specification
+                    </h2>
+                    <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500">
+                      ID: {selectedBook._id}
+                    </p>
+                  </div>
+                </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
+                {/* Top Cross (X) Close Button */}
+                <button
                   onClick={() => setSelectedBook(null)}
-                  className="cursor-pointer"
+                  className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  title="Close Modal"
                 >
-                  Close
-                </Button>
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Content */}
-              <div className="grid gap-4 text-sm">
-                <Field label="Title" value={selectedBook.title} />
-                <Field label="Author" value={selectedBook.author} />
-                <Field label="Description" value={selectedBook.description} />
-                <Field
-                  label="Price"
-                  value={selectedBook.price ? `$${selectedBook.price}` : "Free"}
-                />
-                <Field
-                  label="Purchase Link"
-                  value={
-                    selectedBook.purchaseLink ? (
-                      <a
-                        href={selectedBook.purchaseLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        {selectedBook.purchaseLink}
-                      </a>
-                    ) : null
-                  }
-                />
-                <Field
-                  label="Created At"
-                  value={
-                    selectedBook.createdAt
-                      ? new Date(selectedBook.createdAt).toLocaleString()
-                      : "—"
-                  }
-                />
-                <Field
-                  label="Updated At"
-                  value={
-                    selectedBook.updatedAt
-                      ? new Date(selectedBook.updatedAt).toLocaleString()
-                      : "—"
-                  }
-                />
-
-                {/* Cover image */}
-                {selectedBook.coverImage && (
-                  <div>
-                    <p className="font-medium mb-2">Cover Image</p>
+              {/* 📜 Scrollable Body Area */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
+                {/* 🖼️ Hero Spotlight Card */}
+                <div className="flex flex-col sm:flex-row gap-6 bg-gradient-to-br from-slate-50 to-amber-50/30 dark:from-slate-800/60 dark:to-slate-800/20 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                  {selectedBook.coverImage ? (
                     <img
                       src={selectedBook.coverImage}
                       alt={selectedBook.title}
-                      className="rounded-xl w-full max-h-60 object-cover border"
+                      className="w-full sm:w-36 h-48 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-md shrink-0"
                     />
+                  ) : (
+                    <div className="w-full sm:w-36 h-48 bg-slate-200/70 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 text-xs font-semibold shrink-0 border border-dashed border-slate-300 dark:border-slate-700">
+                      No Cover
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Status Badge */}
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md ${
+                          selectedBook.status === "published"
+                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
+                        {selectedBook.status || "published"}
+                      </span>
+
+                      {/* Category */}
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-200/80 text-slate-700 dark:bg-slate-700/60 dark:text-slate-300">
+                        {selectedBook.category || "Literature"}
+                      </span>
+
+                      {/* Featured Badge */}
+                      {selectedBook.featured && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-500/20">
+                          ★ Featured
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100 leading-snug">
+                        {selectedBook.title}
+                      </h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                        by{" "}
+                        <span className="text-slate-800 dark:text-slate-200 font-semibold">
+                          {selectedBook.author}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* Price & Type Info */}
+                    <div className="pt-2 flex flex-wrap items-center gap-4 text-xs">
+                      <div className="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 font-semibold text-slate-800 dark:text-slate-200">
+                        Price:{" "}
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                          {selectedBook.price
+                            ? `$${selectedBook.price}`
+                            : "Free"}
+                        </span>
+                      </div>
+                      <div className="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 font-medium text-slate-600 dark:text-slate-400 capitalize">
+                        Type:{" "}
+                        <span className="text-slate-900 dark:text-slate-100 font-semibold">
+                          {selectedBook.type || "recommended"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
+
+                {/* 📊 Detailed Schema Grid */}
+                <div className="space-y-4 text-xs sm:text-sm">
+                  {/* Rating & Genre Row */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                        Rating
+                      </span>
+                      {selectedBook.rating ? (
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < selectedBook.rating
+                                  ? "text-amber-400 fill-amber-400"
+                                  : "text-slate-300 dark:text-slate-700"
+                              }`}
+                            />
+                          ))}
+                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 ml-1.5">
+                            {selectedBook.rating} / 5
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-400 italic">
+                          No rating provided
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                        Genre
+                      </span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                        {selectedBook.genre || "—"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Buy URL */}
+                  <Field
+                    label="Purchase Link"
+                    value={
+                      selectedBook.buyUrl ? (
+                        <a
+                          href={selectedBook.buyUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline font-medium break-all"
+                        >
+                          <span>{selectedBook.buyUrl}</span>
+                          <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                        </a>
+                      ) : null
+                    }
+                  />
+
+                  {/* Description */}
+                  <Field label="Description" value={selectedBook.description} />
+
+                  {/* Review / Critical Notes */}
+                  {selectedBook.review && (
+                    <Field label="Review / Notes" value={selectedBook.review} />
+                  )}
+
+                  {/* Tags */}
+                  <Field
+                    label="Tags"
+                    value={
+                      selectedBook.tags && selectedBook.tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedBook.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-mono border border-slate-200 dark:border-slate-700"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null
+                    }
+                  />
+
+                  {/* Created & Updated Timestamps */}
+                  <div className="grid sm:grid-cols-2 gap-4 pt-2 border-t dark:border-slate-800">
+                    <div>
+                      <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+                        Created At
+                      </span>
+                      <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+                        {selectedBook.createdAt
+                          ? new Date(selectedBook.createdAt).toLocaleString()
+                          : "—"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+                        Last Updated
+                      </span>
+                      <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+                        {selectedBook.updatedAt
+                          ? new Date(selectedBook.updatedAt).toLocaleString()
+                          : "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 📌 Bottom Sticky Action Footer */}
+              <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const id = selectedBook._id;
+                    setSelectedBook(null);
+                    navigate(`/admin/edit-book/${id}`);
+                  }}
+                  className="rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer text-xs font-semibold"
+                >
+                  <Edit className="w-3.5 h-3.5 mr-1.5" />
+                  Edit Book
+                </Button>
+
+                <Button
+                  onClick={() => setSelectedBook(null)}
+                  className="rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900 text-white text-xs font-semibold px-5 cursor-pointer shadow-sm"
+                >
+                  Close Specification
+                </Button>
               </div>
             </div>
           </div>
