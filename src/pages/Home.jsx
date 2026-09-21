@@ -14,6 +14,7 @@ import AddPoemCTA from "@/components/home/AddPoemCTA";
 import UniversalNavigationCTA from "@/components/UniversalNavigationCTA";
 import BlogNavigationCTA from "@/components/BlogNavigationCTA.jsx";
 import NewsletterCTA from "@/components/NewsletterCTA";
+import GalleriesCTA from "@/components/GalleriesCTA";
 
 export default function Home() {
   const websiteUrl = "https://satinderpoetry.com";
@@ -101,6 +102,7 @@ export default function Home() {
         <Hero />
         <AboutMeCTA />
         <UniversalNavigationCTA />
+        <GalleriesCTA />
         <StoriesSection />
         <AddPoemCTA />
         <BlogNavigationCTA />

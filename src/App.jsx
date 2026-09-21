@@ -27,6 +27,7 @@ import Books from "./pages/Books";
 import AddPoemPortal from "./pages/AddPoemPortal";
 import Blogs from "@/pages/Blogs";
 import BlogDetail from "@/pages/BlogDetail";
+import Gallery from "./pages/Gallery";
 
 /* Admin Pages */
 import Dashboard from "./pages/admin/Dashboard";
@@ -149,6 +150,7 @@ export default function App() {
           <Route path="/add-poem-portal" element={<AddPoemPortal />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:slug" element={<BlogDetail />} />
+          <Route path="/gallery" element={<Gallery />} />
 
           {/* protected profile */}
           <Route element={<AuthRoute />}>
