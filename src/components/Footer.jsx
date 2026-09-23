@@ -30,12 +30,14 @@ export default function Footer() {
                 <p className="text-sm font-semibold text-slate-800 mb-5">
                   Explore
                 </p>
+
                 <ul className="space-y-3 text-sm text-slate-600">
                   <li>
                     <Link to="/" className="hover:text-slate-900 transition">
                       Home
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/newsletter"
@@ -44,6 +46,7 @@ export default function Footer() {
                       Newsletter
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/poems"
@@ -52,6 +55,7 @@ export default function Footer() {
                       Poems
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/books"
@@ -60,6 +64,17 @@ export default function Footer() {
                       Books
                     </Link>
                   </li>
+
+                  {/* Gallery */}
+                  <li>
+                    <Link
+                      to="/gallery"
+                      className="hover:text-slate-900 transition"
+                    >
+                      Galleries & Images
+                    </Link>
+                  </li>
+
                   <li>
                     <Link
                       to="/about-me"
@@ -68,6 +83,7 @@ export default function Footer() {
                       About
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/add-poem-portal"
@@ -79,6 +95,7 @@ export default function Footer() {
                       </span>
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/login"
@@ -87,6 +104,7 @@ export default function Footer() {
                       Login
                     </Link>
                   </li>
+
                   <li>
                     <Link
                       to="/register"

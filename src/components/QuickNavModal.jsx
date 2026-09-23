@@ -16,6 +16,7 @@ import {
   Command,
   PenTool,
   FileText,
+  Images,
 } from "lucide-react";
 
 export default function QuickNavModal({ isOpen, onClose, onOpen }) {
@@ -257,6 +258,30 @@ export default function QuickNavModal({ isOpen, onClose, onOpen }) {
                 <p className="text-xs text-stone-400 font-light mt-1 line-clamp-2">
                   Verses, midnight thoughts, fleeting emotions, and quiet
                   stories.
+                </p>
+              </div>
+            </Link>
+
+            {/* Gallery Page */}
+            <Link
+              to="/gallery"
+              onClick={onClose}
+              className="p-4 rounded-xl bg-stone-900/60 border border-stone-800/80 hover:border-amber-500/40 hover:bg-stone-800/60 transition-all duration-200 group flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Images className="w-4 h-4 text-stone-400 group-hover:text-amber-400 transition-colors" />
+
+                  <ArrowUpRight className="w-4 h-4 text-stone-500 group-hover:text-stone-200 transition-colors" />
+                </div>
+
+                <h4 className="font-serif text-sm sm:text-base text-stone-200 group-hover:text-amber-200 transition-colors">
+                  Galleries & Images
+                </h4>
+
+                <p className="text-xs text-stone-400 font-light mt-1 line-clamp-2">
+                  Photographs, places, fragments, and memories from the visual
+                  archive.
                 </p>
               </div>
             </Link>
